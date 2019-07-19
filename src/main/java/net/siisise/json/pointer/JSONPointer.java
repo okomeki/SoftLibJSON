@@ -8,8 +8,8 @@ import net.siisise.abnf.AbstractABNF;
 import net.siisise.io.Packet;
 
 /**
- *
- * @author okome
+ * RFC 6901 JSON Pointer
+ * @author okome twitter.okomeki
  */
 public class JSONPointer {
     String[] path;
