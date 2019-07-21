@@ -11,6 +11,7 @@ import net.siisise.json.JSONValue;
 
 /**
  * JSONChar の代わりにIntegerを使用する
+ *
  * @author okome
  */
 public class JSONCharP extends ABNFBaseParser<Integer, JSONValue> {

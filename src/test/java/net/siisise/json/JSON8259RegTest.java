@@ -6,38 +6,36 @@
 package net.siisise.json;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
  * @author okome
  */
 public class JSON8259RegTest {
-    
+
     public JSON8259RegTest() {
     }
-    
+
     @BeforeAll
     public static void setUpClass() {
     }
-    
+
     @AfterAll
     public static void tearDownClass() {
     }
-    
+
     @BeforeEach
     public void setUp() {
     }
-    
+
     @AfterEach
     public void tearDown() {
     }
@@ -66,7 +64,7 @@ public class JSON8259RegTest {
         System.out.println(JSONValue.valueOf(s));
         int[] n = new int[]{1, 2, 3};
         System.out.println(JSONValue.valueOf(n));
-        int[][] d = new int[][] {n,n};
+        int[][] d = new int[][]{n, n};
         System.out.println(JSONValue.valueOf(d));
         r = JSONValue.valueOf("[\r\n"
                 + "  {\r\n"
@@ -90,7 +88,7 @@ public class JSON8259RegTest {
                 + "]");
         System.out.println(r);
         System.out.println(r.map());
-        
+
     }
-    
+
 }

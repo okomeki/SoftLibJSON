@@ -13,27 +13,28 @@ import java.util.Map;
  * @param <T>
  */
 public abstract class JSONValue<T> implements JSON<T> {
+
     T value;
 
     @Override
     public T value() {
         return value;
     }
-    
+
     @Override
     public String toString() {
         return value.toString();
     }
-    
+
     String tab(String val) {
         return val.replace("\r\n", "\r\n  ");
     }
-    
+
     /**
-     * 
-     * プリミティブ型、配列、Collection、Object
-     * boolean byte short char int long float double
-     * List Map Number null String
+     *
+     * プリミティブ型、配列、Collection、Object boolean byte short char int long float
+     * double List Map Number null String
+     *
      * @param src データ型なんでも
      * @return
      */
@@ -53,14 +54,14 @@ public abstract class JSONValue<T> implements JSON<T> {
         } else if (src.getClass().isArray()) {
             Class ar = src.getClass().getComponentType();
             List cnv;
-            if ( ar.isPrimitive() ) {
+            if (ar.isPrimitive()) {
                 int len = Array.getLength(src);
                 cnv = new ArrayList();
-                for ( int i = 0; i < len; i++ ) {
+                for (int i = 0; i < len; i++) {
                     cnv.add(Array.get(src, i));
                 }
             } else {
-                cnv = Arrays.asList((Object[])src);
+                cnv = Arrays.asList((Object[]) src);
             }
             return JSONArray.convList(cnv);
         } else if (src instanceof Map) {
@@ -69,9 +70,9 @@ public abstract class JSONValue<T> implements JSON<T> {
             return JSONObject.convObject(src);
         }
     }
-    
+
     @Override
     public boolean equals(Object o) {
-        return o != null && getClass() == o.getClass() && value.equals(((JSONValue)o).value);
+        return o != null && getClass() == o.getClass() && value.equals(((JSONValue) o).value);
     }
 }

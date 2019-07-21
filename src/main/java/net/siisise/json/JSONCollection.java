@@ -3,24 +3,38 @@ package net.siisise.json;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import net.siisise.json.pointer.JSONPointer;
 
 /**
  * JavaのCollection系classと互換性のありそうなJSON要素
  * 内部に要素を持つArrayとObjectが該当。
  * ListとMap、Beanっぽいclassに自動マッピング可能
+ * Mapのkey と Arrayのindexを統合してみたもの
  * @author okome
  * @param <T>
  */
 abstract public class JSONCollection<T> extends JSONValue<T> {
 
-    abstract public JSONValue get(String key);
+    /**
+     * JSON Patchで使う
+     * @param key Map継承できるようObject
+     * @return 
+     */
+    abstract public JSONValue get(Object key);
 
     abstract public void set(String key, Object obj);
 
     abstract public void add(String key, Object obj);
 
-    abstract public void remove(String key);
+    abstract public JSONValue remove(Object key);
+    
+    // Collection系の機能
+    abstract public int size();
+    abstract public void clear();
+    abstract public boolean isEmpty();
+    abstract public Set<String> keySet();
     
     /**
      * プリミティブを含む配列、Collection、などに変換する。
@@ -81,11 +95,9 @@ abstract public class JSONCollection<T> extends JSONValue<T> {
         JSONValue tg = src;
         if (ds.length == 1) {
             return new VR(tg, null);
-        }
-        if (ds.length == 2 && keep) {
+        } else if (ds.length == 2 && keep) {
             return new VR(tg, jp);
-        }
-        if (tg instanceof JSONCollection) {
+        } else if (tg instanceof JSONCollection) {
             tg = ((JSONCollection) tg).get(ds[1]);
 //            if ( ds.length == 2 ) {
 //                return new VR(tg,null);

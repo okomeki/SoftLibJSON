@@ -13,26 +13,26 @@ import net.siisise.json.JSONValue;
  * @author okome
  */
 public class JSONValueP extends ABNFSelect<JSONValue> {
-    
+
     public JSONValueP(ABNFReg reg) {
         super(JSON8259Reg.value, reg, JSONObjectP.class, JSONArrayP.class, JSONNumberP.class, JSONStringP.class);
     }
-    
+
     @Override
     protected JSONValue other(Packet pac) {
         Packet p = JSON8259Reg.FALSE.is(pac);
-        if ( p != null ) {
+        if (p != null) {
             return new JSONBoolean(false);
         }
         p = JSON8259Reg.NULL.is(pac);
-        if ( p != null ) {
+        if (p != null) {
             return new JSONNULL();
         }
         p = JSON8259Reg.TRUE.is(pac);
-        if ( p != null ) {
+        if (p != null) {
             return new JSONBoolean(true);
         }
         return null;
     }
-    
+
 }

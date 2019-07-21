@@ -12,7 +12,7 @@ import net.siisise.json.parser.JSONtextParser;
  */
 public class JSON8259Reg {
 
-    static ABNFReg REG = new ABNFReg(ABNF5234.BASE,ABNF5234.REG);
+    static ABNFReg REG = new ABNFReg(ABNF5234.BASE, ABNF5234.REG);
 
     public static final ABNF FALSE = REG.rule("false", "%x66.61.6c.73.65");
     public static final ABNF NULL = REG.rule("null", "%x6e.75.6c.6c");
@@ -30,21 +30,21 @@ public class JSON8259Reg {
     public static final ABNF escape = REG.rule("escape", ABNF.bin(0x5c));
     static final ABNF quotation_mark = REG.rule("quotation-mark", ABNF.bin(0x22));
     public static final ABNF CHAR = REG.rule("char", "unescaped / escape ( %x22 / %x5C / %x2F / %x62 / %x66 / %x6E / %x72 / %x74 / %x75 4HEXDIG )");
-    public static final ABNF string = REG.rule("string", quotation_mark.pl(CHAR.x(),quotation_mark));
+    public static final ABNF string = REG.rule("string", quotation_mark.pl(CHAR.x(), quotation_mark));
     static final ABNF e = REG.rule("e", "%x65 / %x45");
     static final ABNF minus = REG.rule("minus", ABNF.bin(0x2d));
     static final ABNF plus = REG.rule("plus", ABNF.bin(0x2b));
     static final ABNF exp = REG.rule("exp", "e [ minus / plus ] 1*DIGIT");
-    static final ABNF digit1_9 = REG.rule("digit1-9", ABNF.range(0x31,0x39));
+    static final ABNF digit1_9 = REG.rule("digit1-9", ABNF.range(0x31, 0x39));
     static final ABNF decimal_point = REG.rule("decimal-point", ABNF.bin(0x2e));
     static final ABNF frac = REG.rule("frac", decimal_point.pl(ABNF5234.DIGIT.ix()));
     static final ABNF zero = REG.rule("zero", ABNF.bin(0x30));
     static final ABNF INT = REG.rule("int", zero.or(digit1_9.pl(ABNF5234.DIGIT.x())));
-    public static final ABNF number = REG.rule("number", minus.c().pl(INT,frac.c(),exp.c()));
+    public static final ABNF number = REG.rule("number", minus.c().pl(INT, frac.c(), exp.c()));
     public static final ABNF array = REG.rule("array", "begin-array [ value *( value-separator value ) ] end-array");
-    public static final ABNF member = REG.rule("member", string.pl(name_separator,REG.ref("value")));
+    public static final ABNF member = REG.rule("member", string.pl(name_separator, REG.ref("value")));
     public static final ABNF object = REG.rule("object", "begin-object [ member *( value-separator member ) ] end-object");
-    public static final ABNF value = REG.rule("value", FALSE.or(NULL,TRUE,object,array,number,string));
+    public static final ABNF value = REG.rule("value", FALSE.or(NULL, TRUE, object, array, number, string));
 
     public static final ABNF JSONtext = REG.rule("JSON-text", "ws value ws");
 

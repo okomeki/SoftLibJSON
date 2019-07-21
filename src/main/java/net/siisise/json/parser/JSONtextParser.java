@@ -10,9 +10,9 @@ import net.siisise.json.JSONValue;
  * @author okome
  */
 public class JSONtextParser extends ABNFSub<JSONValue> {
-    
+
     public JSONtextParser(ABNFReg reg) {
         super(JSON8259Reg.JSONtext, reg, JSONValueP.class);
     }
-    
+
 }

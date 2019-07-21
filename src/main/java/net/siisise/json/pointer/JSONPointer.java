@@ -9,56 +9,58 @@ import net.siisise.io.Packet;
 
 /**
  * RFC 6901 JSON Pointer
+ *
  * @author okome twitter.okomeki
  */
 public class JSONPointer {
+
     String[] path;
-    
+
     public JSONPointer(String escapedPath) {
-        if ( !JSONPointerReg.jsonPointer.eq(escapedPath)) {
+        if (!JSONPointerReg.jsonPointer.eq(escapedPath)) {
             throw new java.lang.UnsupportedOperationException();
         }
         this.path = escapedPath.split("/");
     }
-    
+
     JSONPointer(List<Packet> lp) {
         path = new String[lp.size() + 1];
         path[0] = "";
         int i = 1;
-        for ( Packet p : lp ) {
+        for (Packet p : lp) {
             path[i] = AbstractABNF.str(p);
-            if ( !JSONPointerReg.referenceToken.eq(path[i++])) {
+            if (!JSONPointerReg.referenceToken.eq(path[i++])) {
                 throw new java.lang.UnsupportedOperationException();
             }
         }
     }
-    
+
     public JSONPointer sub() {
         List<Packet> lp = new ArrayList<>();
-        if ( path.length <= 1 ) {
+        if (path.length <= 1) {
             return null;
         }
-        for ( int i = 2; i < path.length; i++ ) {
+        for (int i = 2; i < path.length; i++) {
             lp.add(AbstractABNF.pac(path[i]));
         }
         return new JSONPointer(lp);
     }
-    
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(100);
-        for ( int i = 0; i < path.length; i++ ) {
-            if ( i != 0 ) {
+        for (int i = 0; i < path.length; i++) {
+            if (i != 0) {
                 sb.append("/");
             }
             sb.append(path[i]);
         }
         return sb.toString();
     }
-    
+
     public String[] toDecodeString() {
         String[] dec = new String[path.length];
-        for ( int i = 0; i < path.length; i++ ) {
+        for (int i = 0; i < path.length; i++) {
             try {
                 dec[i] = decode(path[i]);
             } catch (MalformedInputException ex) {
@@ -68,16 +70,17 @@ public class JSONPointer {
         }
         return dec;
     }
-    
+
     /**
      * RFC 3986
-     * @return 
+     *
+     * @return
      */
     String toURIEncode() {
         StringBuilder sb = new StringBuilder();
         List<String> n = Arrays.asList(path);
         n.remove(0);
-        for ( String s : n ) {
+        for (String s : n) {
             sb.append("/");
             try {
                 sb.append(urlEnc(decode(s)));
@@ -113,23 +116,23 @@ public class JSONPointer {
         }
         return sb.toString();
     }
-    
+
     /**
-     * utf-16?
-     * RFC 3986
+     * utf-16? RFC 3986
+     *
      * @param str
-     * @return 
+     * @return
      */
     static String urlEnc(String str) {
         char[] chs = str.toCharArray();
         StringBuilder sb = new StringBuilder(str.length() * 2);
-        for ( char ch : chs ) {
-            if ( ch < 0x20 ) {
+        for (char ch : chs) {
+            if (ch < 0x20) {
                 sb.append("%");
                 sb.append(Integer.toHexString(0x100 + ch).substring(1));
             } else {
                 sb.append(ch);
-                
+
             }
         }
         return sb.toString();

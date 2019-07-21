@@ -13,7 +13,7 @@ import net.siisise.json.JSONValue;
  *
  * @author okome
  */
-public class JSONMemberP extends ABNFBaseParser<JSONMember,JSONValue> {
+public class JSONMemberP extends ABNFBaseParser<JSONMember, JSONValue> {
 
     public JSONMemberP(ABNFReg reg) {
         super(JSON8259Reg.member, reg, JSONStringP.class, JSONValueP.class);
@@ -23,10 +23,12 @@ public class JSONMemberP extends ABNFBaseParser<JSONMember,JSONValue> {
     public JSONMember parse(Packet pac) {
         inst();
         ABNF.C<JSONValue> ret = def.findx(pac, subs);
-        if ( ret == null ) return null;
-        JSONString str = (JSONString)ret.get(JSON8259Reg.string).get(0);
+        if (ret == null) {
+            return null;
+        }
+        JSONString str = (JSONString) ret.get(JSON8259Reg.string).get(0);
         JSONValue val = ret.get(JSON8259Reg.value).get(0);
-        return new JSONMember(str,val);
+        return new JSONMember(str, val);
     }
-    
+
 }

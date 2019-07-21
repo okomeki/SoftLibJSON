@@ -4,6 +4,7 @@ package net.siisise.json;
  * RFC 8259
  * https://tools.ietf.org/html/rfc8259
  * 書式の情報は保存しない
+ *
  * @author okome
  * @param <T>
  */
@@ -24,10 +25,10 @@ public interface JSON<T> {
     Object map();
 
     /**
-     * 
+     *
      * @param <T>
      * @param cls
-     * @return 
+     * @return
      */
     <T> T map(Class<T> cls);
 
@@ -38,4 +39,34 @@ public interface JSON<T> {
      */
     @Override
     String toString();
+    
+    public static JSONValue parse(String src) {
+        return JSON8259Reg.value(src);
+    }
+    
+    /**
+     * 変換方法のひとつ
+     * @param src
+     * @return 
+     */
+    public static Object parseToObj(String src, Class target) {
+        return parse(src).map(target);
+    }
+    
+    public static String stringify(Object o) {
+        return JSONValue.valueOf(o).toString();
+    }
+    /*
+    public static String stringify(Object o, JSONReplacer r) {
+        //return JSONValue.valueOf(o).toString();
+    }
+    
+    public static String stringify(Object o, String[] replacer) {
+        return JSONValue.valueOf(o).toString();
+    }
+    
+    public static String stringify(Object o, Object nu, int tab) {
+        throw new java.lang.UnsupportedOperationException();
+    }*/
+    
 }

@@ -5,16 +5,16 @@ package net.siisise.json;
  * @author okome
  */
 public class JSONNULL extends JSONValue {
-    
+
     public JSONNULL() {
-        
+
     }
-    
+
     @Override
     public Object value() {
         return null;
     }
-    
+
     @Override
     public String toString() {
         return "null";
@@ -29,5 +29,5 @@ public class JSONNULL extends JSONValue {
     public Object map(Class cls) {
         return null;
     }
-    
+
 }

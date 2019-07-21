@@ -10,7 +10,7 @@ import net.siisise.json.JSONString;
  *
  * @author okome
  */
-public class JSONStringP extends ABNFList<JSONString,Integer> {
+public class JSONStringP extends ABNFList<JSONString, Integer> {
 
     public JSONStringP(ABNFReg reg) {
         super(JSON8259Reg.string, reg, JSONCharP.class);
@@ -19,12 +19,12 @@ public class JSONStringP extends ABNFList<JSONString,Integer> {
     @Override
     public JSONString parse(List<Integer> val) {
         StringBuilder sb = new StringBuilder();
-        if ( val != null ) {
-            for ( Integer ch : val ) {
+        if (val != null) {
+            for (Integer ch : val) {
                 sb.appendCodePoint(ch);
             }
         }
         return new JSONString(sb.toString());
     }
-    
+
 }
