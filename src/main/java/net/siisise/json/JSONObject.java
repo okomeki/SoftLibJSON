@@ -2,6 +2,7 @@ package net.siisise.json;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -163,8 +164,28 @@ public class JSONObject extends JSONCollection<Map<String, JSONValue>> {
         return jo;
     }
 
-    public static JSONObject convObject(Object obj) {
+    /**
+     * toJSON() に対応するかもしれない
+     * @param obj
+     * @return 
+     */
+    public static JSONValue convObject(Object obj) {
         Class<? extends Object> c = obj.getClass();
+        try {
+            Method toj = c.getMethod("toJSON");
+            String json = (String) toj.invoke(obj);
+            return JSON.parse(json);
+        } catch (NoSuchMethodException ex) {
+            // 特にないので標準の変換へ
+        } catch (SecurityException ex) {
+            Logger.getLogger(JSONObject.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            Logger.getLogger(JSONObject.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IllegalArgumentException ex) {
+            Logger.getLogger(JSONObject.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InvocationTargetException ex) {
+            Logger.getLogger(JSONObject.class.getName()).log(Level.SEVERE, null, ex);
+        }
         Field[] fs = c.getFields();
         JSONObject jo = new JSONObject();
         String name;
@@ -181,6 +202,7 @@ public class JSONObject extends JSONCollection<Map<String, JSONValue>> {
         return jo;
     }
 
+    @Override
     public boolean equals(Object o) {
         if (o instanceof JSONObject) {
             JSONObject obj = (JSONObject) o;

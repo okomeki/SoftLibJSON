@@ -1,9 +1,9 @@
 package net.siisise.json.parser;
 
 import java.util.List;
+import net.siisise.abnf.ABNF;
 import net.siisise.abnf.ABNFReg;
 import net.siisise.abnf.parser.ABNFList;
-import net.siisise.json.JSON8259Reg;
 import net.siisise.json.JSONString;
 
 /**
@@ -12,8 +12,8 @@ import net.siisise.json.JSONString;
  */
 public class JSONStringP extends ABNFList<JSONString, Integer> {
 
-    public JSONStringP(ABNFReg reg) {
-        super(JSON8259Reg.string, reg, JSONCharP.class);
+    public JSONStringP(ABNF def, ABNFReg reg, ABNFReg base) {
+        super(def, reg, base, "char");
     }
 
     @Override

@@ -6,7 +6,6 @@ import net.siisise.abnf.ABNF;
 import net.siisise.abnf.ABNFReg;
 import net.siisise.abnf.parser.ABNFBaseParser;
 import net.siisise.io.Packet;
-import net.siisise.json.JSON8259Reg;
 import net.siisise.json.JSONNumber;
 import net.siisise.json.JSONValue;
 
@@ -16,8 +15,8 @@ import net.siisise.json.JSONValue;
  */
 public class JSONNumberP extends ABNFBaseParser<JSONValue, JSONValue> {
 
-    public JSONNumberP(ABNFReg reg) {
-        super(JSON8259Reg.number, reg);
+    public JSONNumberP(ABNF def, ABNFReg reg, ABNFReg base) {
+        super(def, reg);
     }
 
     /**

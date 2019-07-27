@@ -30,7 +30,7 @@ public class JSONPatch {
      */
     public static JSONCollection run(JSONCollection obj, JSONArray patchList) {
         JSONCollection cp = (JSONCollection) JSON8259Reg.parse(obj.toString());
-
+        
         List<JSONValue> ops = patchList.value();
         for (JSONValue patch : ops) {
             Patch p = (Patch) patch.map(Patch.class);

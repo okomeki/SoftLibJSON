@@ -1,5 +1,6 @@
 package net.siisise.json.parser;
 
+import net.siisise.abnf.ABNF;
 import net.siisise.abnf.ABNFReg;
 import net.siisise.abnf.parser.ABNFSelect;
 import net.siisise.io.Packet;
@@ -14,8 +15,8 @@ import net.siisise.json.JSONValue;
  */
 public class JSONValueP extends ABNFSelect<JSONValue> {
 
-    public JSONValueP(ABNFReg reg) {
-        super(JSON8259Reg.value, reg, JSONObjectP.class, JSONArrayP.class, JSONNumberP.class, JSONStringP.class);
+    public JSONValueP(ABNF def, ABNFReg reg, ABNFReg base) {
+        super(def, reg, base, "object", "array", "number", "string");
     }
 
     @Override

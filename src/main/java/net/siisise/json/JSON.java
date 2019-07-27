@@ -40,17 +40,18 @@ public interface JSON<T> {
     @Override
     String toString();
     
-    public static JSONValue parse(String src) {
-        return JSON8259Reg.value(src);
+    public static JSONValue parse(String json) {
+        return JSON8259Reg.parse(json);
     }
     
     /**
      * 変換方法のひとつ
-     * @param src
+     * @param json
+     * @param target
      * @return 
      */
-    public static Object parseToObj(String src, Class target) {
-        return parse(src).map(target);
+    public static Object parseToObj(String json, Class target) {
+        return parse(json).map(target);
     }
     
     public static String stringify(Object o) {

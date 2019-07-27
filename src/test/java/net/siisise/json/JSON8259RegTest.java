@@ -52,7 +52,7 @@ public class JSON8259RegTest {
         System.out.println(js);
 
         System.out.println(js);
-        JSONValue r = JSON8259Reg.value(js);
+        JSONValue r = JSON8259Reg.parse(js);
         System.out.println(r);
 
         System.out.println(JSONValue.valueOf(null));

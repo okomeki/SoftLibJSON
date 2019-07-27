@@ -15,8 +15,8 @@ import net.siisise.json.JSONValue;
  */
 public class JSONMemberP extends ABNFBaseParser<JSONMember, JSONValue> {
 
-    public JSONMemberP(ABNFReg reg) {
-        super(JSON8259Reg.member, reg, JSONStringP.class, JSONValueP.class);
+    public JSONMemberP(ABNF def, ABNFReg reg, ABNFReg base) {
+        super(def, reg, base, "string", "value");
     }
 
     @Override
