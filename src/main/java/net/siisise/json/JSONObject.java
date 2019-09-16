@@ -5,6 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -12,19 +13,23 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
+ * public field のみ対応でいい?
  * @author okome
  */
 public class JSONObject extends JSONCollection<Map<String, JSONValue>> {
 
-    Map<String, JSONValue> values = new HashMap<>();
+//    Map<String, JSONValue> values;
     List<String> names = new ArrayList<>();
+    
+    public JSONObject() {
+        value = new HashMap<>();
+    }
 
     @Override
     public Map<String, JSONValue> value() {
         Map<String, JSONValue> ret = new HashMap<>();
-        for (String key : values.keySet()) {
-            ret.put(key, values.get(key));
+        for (String key : value.keySet()) {
+            ret.put(key, value.get(key));
         }
         return ret;
     }
@@ -32,8 +37,8 @@ public class JSONObject extends JSONCollection<Map<String, JSONValue>> {
     @Override
     public Map<String, Object> map() {
         Map<String, Object> ret = new HashMap<>();
-        for (String key : values.keySet()) {
-            ret.put(key, values.get(key).map());
+        for (String key : value.keySet()) {
+            ret.put(key, value.get(key).map());
         }
         return ret;
     }
@@ -65,11 +70,11 @@ public class JSONObject extends JSONCollection<Map<String, JSONValue>> {
             return (T) this;
         } else if (Map.class.isAssignableFrom(cls)) { // まだ
             Map map = new HashMap();
-            for (String key : values.keySet()) {
+            for (String key : value.keySet()) {
                 if (clss.length == 3) {
-                    map.put(key, values.get(key).map(clss[2]));
+                    map.put(key, value.get(key).map(clss[2]));
                 } else {
-                    map.put(key, values.get(key).map());
+                    map.put(key, value.get(key).map());
                 }
             }
             return (T) map;
@@ -80,7 +85,7 @@ public class JSONObject extends JSONCollection<Map<String, JSONValue>> {
             for (String name : names) {
                 Field f = cls.getField(name);
                 Class<?> typ = f.getType();
-                f.set(obj, values.get(name).map(typ));
+                f.set(obj, value.get(name).map(typ));
             }
             return obj;
         } catch (NoSuchMethodException ex) {
@@ -103,12 +108,12 @@ public class JSONObject extends JSONCollection<Map<String, JSONValue>> {
 
     @Override
     public JSONValue get(Object key) {
-        return values.get((String)key);
+        return value.get((String)key);
     }
 
     @Override
     public void set(String key, Object value) {
-        values.put(key, valueOf(value));
+        this.value.put(key, valueOf(value));
         if (!names.contains(key)) {
             names.add(key);
         }
@@ -123,7 +128,7 @@ public class JSONObject extends JSONCollection<Map<String, JSONValue>> {
     public JSONValue remove(Object key) {
         if (names.contains(key)) {
             names.remove(key);
-            return values.remove(key);
+            return value.remove(key);
         } else {
             throw new java.lang.UnsupportedOperationException();
         }
@@ -140,7 +145,7 @@ public class JSONObject extends JSONCollection<Map<String, JSONValue>> {
             sb.append("  \"");
             sb.append(name);
             sb.append("\":");
-            sb.append(tab(values.get(name).toString()));
+            sb.append(tab(value.get(name).toString()));
         }
         sb.append("\r\n}");
         return sb.toString();
@@ -225,21 +230,37 @@ public class JSONObject extends JSONCollection<Map<String, JSONValue>> {
      */
     @Override
     public int size() {
-        return values.size();
+        return value.size();
     }
     
+    /**
+     * ?
+     * @return 
+     */
     @Override
     public Set<String> keySet() {
         return value.keySet();
     }
     
+    /**
+     * ?
+     * @return 
+     */
     @Override
     public boolean isEmpty() {
         return value.isEmpty();
     }
 
+    /**
+     * ?
+     */
     @Override
     public void clear() {
         value.clear();
+    }
+
+    @Override
+    public Iterator<JSONValue> iterator() {
+        return value.values().iterator();
     }
 }

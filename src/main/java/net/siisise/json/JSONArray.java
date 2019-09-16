@@ -5,6 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -13,7 +14,7 @@ import java.util.logging.Logger;
 
 /**
  * 配列またはList
- *
+ * 数字をKeyとした疑似Mapとして操作できる
  * @see javax.json.JsonArray
  * @author okome
  */
@@ -201,7 +202,7 @@ public class JSONArray extends JSONCollection<List<JSONValue>> {
         }
         return value.remove(Integer.parseInt((String) key));
     }
-
+    
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -236,6 +237,10 @@ public class JSONArray extends JSONCollection<List<JSONValue>> {
         value.clear();
     }
 
+    /**
+     * 疑似Map
+     * @return 
+     */
     @Override
     public Set<String> keySet() {
         Set<String> s = new HashSet();
@@ -248,6 +253,11 @@ public class JSONArray extends JSONCollection<List<JSONValue>> {
     @Override
     public boolean isEmpty() {
         return value.isEmpty();
+    }
+    
+    @Override
+    public Iterator<JSONValue> iterator() {
+        return value.iterator();
     }
 
 }

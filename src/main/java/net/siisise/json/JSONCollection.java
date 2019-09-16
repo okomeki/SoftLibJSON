@@ -3,7 +3,6 @@ package net.siisise.json;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import net.siisise.json.pointer.JSONPointer;
 
@@ -13,9 +12,9 @@ import net.siisise.json.pointer.JSONPointer;
  * ListとMap、Beanっぽいclassに自動マッピング可能
  * Mapのkey と Arrayのindexを統合してみたもの
  * @author okome
- * @param <T>
+ * @param <T> 全体
  */
-abstract public class JSONCollection<T> extends JSONValue<T> {
+abstract public class JSONCollection<T> extends JSONValue<T> implements Iterable<JSONValue> {
 
     /**
      * JSON Patchで使う
@@ -28,6 +27,11 @@ abstract public class JSONCollection<T> extends JSONValue<T> {
 
     abstract public void add(String key, Object obj);
 
+    /**
+     * ToDo: Listのremove(int index) と Collectionのremove(Object o) に分ける?
+     * @param key
+     * @return nullのときは該当なし?
+     */
     abstract public JSONValue remove(Object key);
     
     // Collection系の機能
