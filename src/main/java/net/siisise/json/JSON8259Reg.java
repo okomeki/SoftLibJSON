@@ -41,10 +41,10 @@ public class JSON8259Reg {
     static final ABNF e = REG.rule("e", "%x65 / %x45");
     static final ABNF minus = REG.rule("minus", ABNF.bin(0x2d));
     static final ABNF plus = REG.rule("plus", ABNF.bin(0x2b));
-    static final ABNF exp = REG.rule("exp", "e [ minus / plus ] 1*DIGIT");
+    public static final ABNF exp = REG.rule("exp", "e [ minus / plus ] 1*DIGIT");
     static final ABNF digit1_9 = REG.rule("digit1-9", ABNF.range(0x31, 0x39));
     static final ABNF decimal_point = REG.rule("decimal-point", ABNF.bin(0x2e));
-    static final ABNF frac = REG.rule("frac", decimal_point.pl(ABNF5234.DIGIT.ix()));
+    public static final ABNF frac = REG.rule("frac", decimal_point.pl(ABNF5234.DIGIT.ix()));
     static final ABNF zero = REG.rule("zero", ABNF.bin(0x30));
     static final ABNF INT = REG.rule("int", zero.or(digit1_9.pl(ABNF5234.DIGIT.x())));
     public static final ABNF number = REG.rule("number", JSONNumberP.class, minus.c().pl(INT, frac.c(), exp.c()));

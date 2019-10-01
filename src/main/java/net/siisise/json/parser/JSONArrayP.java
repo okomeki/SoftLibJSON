@@ -9,7 +9,6 @@ import net.siisise.json.JSONValue;
 
 /**
  *
- * @author okome
  */
 public class JSONArrayP extends ABNFList<JSONArray, JSONValue> {
 

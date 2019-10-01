@@ -21,8 +21,8 @@ public class JSONObjectP extends ABNFList<JSONValue, JSONMember> {
     @Override
     public JSONObject parse(List<JSONMember> val) {
         JSONObject obj = new JSONObject();
-        for (JSONMember v : val) {
-            obj.set(v.str.value(), v.value);
+        for (JSONMember mem : val) {
+            obj.set(mem.str.value(), mem.value);
         }
         return obj;
     }
