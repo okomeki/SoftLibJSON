@@ -9,7 +9,6 @@ import java.util.Map;
 
 /**
  *
- * @author okome
  * @param <T>
  */
 public abstract class JSONValue<T> implements JSON<T> {

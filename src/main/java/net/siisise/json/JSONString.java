@@ -5,7 +5,6 @@ import net.siisise.io.Packet;
 
 /**
  *
- * @author okome
  */
 public class JSONString extends JSONValue<String> {
 

@@ -14,7 +14,6 @@ import java.util.logging.Logger;
 
 /**
  * public field のみ対応でいい?
- * @author okome
  */
 public class JSONObject extends JSONCollection<Map<String, JSONValue>> {
 
@@ -110,9 +109,9 @@ public class JSONObject extends JSONCollection<Map<String, JSONValue>> {
     public JSONValue get(Object key) {
         return value.get((String)key);
     }
-
+    
     @Override
-    public void set(String key, Object value) {
+    public void put(String key, Object value) {
         this.value.put(key, valueOf(value));
         if (!names.contains(key)) {
             names.add(key);
@@ -120,8 +119,13 @@ public class JSONObject extends JSONCollection<Map<String, JSONValue>> {
     }
 
     @Override
+    public void set(String key, Object value) {
+        put(key, value);
+    }
+
+    @Override
     public void add(String key, Object value) {
-        set(key, value);
+        put(key, value);
     }
 
     @Override

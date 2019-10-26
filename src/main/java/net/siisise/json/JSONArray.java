@@ -176,7 +176,7 @@ public class JSONArray extends JSONCollection<List<JSONValue>> {
         }
         return null;
     }
-
+    
     @Override
     public void set(String key, Object o) {
         if (key.equals("-")) {
@@ -196,13 +196,18 @@ public class JSONArray extends JSONCollection<List<JSONValue>> {
     }
 
     @Override
+    public void put(String key, Object o) {
+        set(key,o);
+    }
+
+    @Override
     public JSONValue remove(Object key) {
         if (key instanceof Number) {
             key = key.toString();
         }
         return value.remove(Integer.parseInt((String) key));
     }
-    
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();

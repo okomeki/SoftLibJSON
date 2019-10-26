@@ -4,7 +4,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.siisise.io.BASE64;
-import net.siisise.io.Packet;
 
 /**
  * JSON Web Signature (JWS)

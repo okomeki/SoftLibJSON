@@ -6,7 +6,6 @@ import java.math.BigInteger;
 /**
  * BigDecimal
  *
- * @author okome
  * @param <T>
  */
 public class JSONNumber<T> extends JSONValue<T> {

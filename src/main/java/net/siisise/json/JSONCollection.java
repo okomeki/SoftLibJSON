@@ -11,7 +11,6 @@ import net.siisise.json.pointer.JSONPointer;
  * 内部に要素を持つArrayとObjectが該当。
  * ListとMap、Beanっぽいclassに自動マッピング可能
  * Mapのkey と Arrayのindexを統合してみたもの
- * @author okome
  * @param <T> 全体
  */
 abstract public class JSONCollection<T> extends JSONValue<T> implements Iterable<JSONValue> {
@@ -23,9 +22,27 @@ abstract public class JSONCollection<T> extends JSONValue<T> implements Iterable
      */
     abstract public JSONValue get(Object key);
 
+    /**
+     * JSON Patch用Array寄りの名称
+     * put/setは同じ
+     * @param key
+     * @param obj 
+     */
     abstract public void set(String key, Object obj);
 
+    /**
+     * JSONPatch用
+     * @param key
+     * @param obj 
+     */
     abstract public void add(String key, Object obj);
+
+    /**
+     * Map寄りのメソッド(Arrayはsetと同)
+     * @param key
+     * @param obj 
+     */
+    abstract public void put(String key, Object obj);
 
     /**
      * ToDo: Listのremove(int index) と Collectionのremove(Object o) に分ける?
@@ -75,6 +92,11 @@ abstract public class JSONCollection<T> extends JSONValue<T> implements Iterable
         ((JSONCollection) vp.val).set(k, val);
     }
 
+    /**
+     * JSONPatch の追加機能 Array / Object共通
+     * @param path
+     * @param val 
+     */
     public void add(JSONPointer path, Object val) {
         VR vp = step(this, path, true);
         String k = vp.path.toDecodeString()[1];

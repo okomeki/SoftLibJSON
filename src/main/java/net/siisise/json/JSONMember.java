@@ -2,7 +2,6 @@ package net.siisise.json;
 
 /**
  *
- * @author okome
  */
 public class JSONMember {
 

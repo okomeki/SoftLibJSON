@@ -22,7 +22,7 @@ public class JSONMemberP extends ABNFBaseParser<JSONMember, JSONValue> {
     @Override
     public JSONMember parse(Packet pac) {
         inst();
-        ABNF.C<JSONValue> ret = def.findx(pac, subs);
+        ABNF.C<JSONValue> ret = def.find(pac, subs);
         if (ret == null) {
             return null;
         }
