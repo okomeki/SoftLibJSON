@@ -211,6 +211,11 @@ public class JSONObject extends JSONCollection<Map<String, JSONValue>> {
         return jo;
     }
 
+    /**
+     *
+     * @param o
+     * @return
+     */
     @Override
     public boolean equals(Object o) {
         if (o instanceof JSONObject) {

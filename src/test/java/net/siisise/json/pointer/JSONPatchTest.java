@@ -117,9 +117,13 @@ public class JSONPatchTest {
                 + "    \"corge\": \"grault\""
                 + "  }"
                 + "}");
+//        String pa = "{ \"op\": \"move\" }";
         String patch = "[\r\n"
                 + "  { \"op\": \"move\", \"from\": \"/foo/waldo\", \"path\": \"/qux/thud\" }\r\n"
                 + "]";
+        
+//        Object string = JSON8259Reg.REG.parse("string", "\"op\"");
+//        JSONValue v1 = JSON8259Reg.REG.parse("object",pa);
 
         JSONArray patchList = (JSONArray) JSON8259Reg.parse(patch);
         JSONPatch.run(obj, patchList);

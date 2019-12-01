@@ -15,23 +15,22 @@ import net.siisise.json.parser.JSONtextParser;
 /**
  * RFC 8259 JSON
  *
- * @author okome
  */
 public class JSON8259Reg {
 
-    static ABNFReg REG = new ABNFReg(ABNF5234.BASE, ABNF5234.REG);
+    public static ABNFReg REG = new ABNFReg(ABNF5234.BASE, ABNF5234.REG);
 
     public static final ABNF FALSE = REG.rule("false", "%x66.61.6c.73.65");
     public static final ABNF NULL = REG.rule("null", "%x6e.75.6c.6c");
     public static final ABNF TRUE = REG.rule("true", "%x74.72.75.65");
     static final ABNF ws = REG.rule("ws", "*( %x20 / %x09 / %x0A / %x0D )");
 
-    static final ABNF begin_array = REG.rule("begin-array", "ws %x5B ws");
-    static final ABNF begin_object = REG.rule("begin-object", "ws %x7B ws");
-    static final ABNF end_array = REG.rule("end-array", "ws %x5D ws");
-    static final ABNF end_object = REG.rule("end-object", "ws %x7D ws");
-    static final ABNF name_separator = REG.rule("name-separator", "ws %x3A ws");
-    static final ABNF value_separator = REG.rule("value-separator", "ws %x2C ws");
+    static final ABNF begin_array = REG.rule("begin-array", "ws %x5B ws"); // [
+    static final ABNF begin_object = REG.rule("begin-object", "ws %x7B ws"); // {
+    static final ABNF end_array = REG.rule("end-array", "ws %x5D ws"); // ]
+    static final ABNF end_object = REG.rule("end-object", "ws %x7D ws"); // }
+    static final ABNF name_separator = REG.rule("name-separator", "ws %x3A ws"); // :
+    static final ABNF value_separator = REG.rule("value-separator", "ws %x2C ws"); // ,
 
     public static final ABNF unescaped = REG.rule("unescaped", "%x20-21 / %x23-5B / %x5D-10FFFF");
     public static final ABNF escape = REG.rule("escape", ABNF.bin(0x5c));

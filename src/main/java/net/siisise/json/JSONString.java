@@ -2,6 +2,7 @@ package net.siisise.json;
 
 import net.siisise.abnf.AbstractABNF;
 import net.siisise.io.Packet;
+import net.siisise.lang.CodePoint;
 
 /**
  *
@@ -27,7 +28,7 @@ public class JSONString extends JSONValue<String> {
         Packet pac = AbstractABNF.pac(val);
         int ch;
         while (pac.length() > 0) {
-            ch = AbstractABNF.utf8(pac);
+            ch = CodePoint.utf8(pac);
             switch (ch) {
                 case 0x22:
                 case 0x2f:

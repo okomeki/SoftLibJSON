@@ -61,7 +61,7 @@ public class JSON8259RegTest {
         System.out.println(JSONValue.valueOf(n));
         int[][] d = new int[][]{n, n};
         System.out.println(JSONValue.valueOf(d));
-        r = JSONValue.valueOf("[\r\n"
+        r = JSON.parse("[\r\n"
                 + "  {\r\n"
                 + "    \"name\": \"Taro\",\r\n"
                 + "    \"age\": 30,\r\n"
@@ -83,7 +83,9 @@ public class JSON8259RegTest {
                 + "]");
         System.out.println(r);
         System.out.println(r.map());
-
+        System.out.println("伊豆" + JSON8259Reg.REG.href("JSON-text").is("{}"));
+//        JSON8259Reg.REG.parse("false","{}");
+        JSON8259Reg.REG.parse("value","{}");
     }
 
 }

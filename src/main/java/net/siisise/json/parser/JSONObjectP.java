@@ -10,7 +10,6 @@ import net.siisise.json.JSONValue;
 
 /**
  *
- * @author okome
  */
 public class JSONObjectP extends ABNFList<JSONValue, JSONMember> {
 
@@ -19,10 +18,12 @@ public class JSONObjectP extends ABNFList<JSONValue, JSONMember> {
     }
 
     @Override
-    public JSONObject parse(List<JSONMember> val) {
+    public JSONObject parse(List<JSONMember> mlist) {
         JSONObject obj = new JSONObject();
-        for (JSONMember mem : val) {
-            obj.set(mem.str.value(), mem.value);
+        if ( mlist != null ) {
+            for (JSONMember mem : mlist) {
+                obj.set(mem.str.value(), mem.value);
+            }
         }
         return obj;
     }

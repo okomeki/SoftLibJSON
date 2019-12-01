@@ -7,7 +7,6 @@ import net.siisise.json.JSONValue;
 
 /**
  *
- * @author okome
  */
 public class JSONtextParser extends ABNFSub<JSONValue> {
 

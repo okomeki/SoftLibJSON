@@ -11,7 +11,6 @@ import net.siisise.json.JSONValue;
 
 /**
  *
- * @author okome
  */
 public class JSONValueP extends ABNFSelect<JSONValue> {
 
