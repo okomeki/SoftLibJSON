@@ -77,6 +77,7 @@ public abstract class JSONValue<T> implements JSON<T> {
      */
     @Override
     public boolean equals(Object o) {
-        return o != null && getClass() == o.getClass() && value.equals(((JSONValue) o).value);
+        return o != null && getClass() == o.getClass()
+                && ((value == null && ((JSONValue) o).value == null) || value.equals(((JSONValue) o).value));
     }
 }
