@@ -2,12 +2,9 @@ package net.siisise.json.pointer;
 
 import net.siisise.abnf.ABNF;
 import net.siisise.abnf.ABNFReg;
-import net.siisise.json.JSONCollection;
-import net.siisise.json.JSONValue;
 
 /**
- *
- * @author okome
+ * JSON Pointer ABNF
  */
 public class JSONPointerReg {
 
@@ -19,12 +16,4 @@ public class JSONPointerReg {
     static ABNF jsonPointer = REG.rule("json-pointer", ABNF.bin('/').pl(referenceToken).x());
 
     static ABNF arrayIndex = REG.rule("array-index", "%x30 / ( %x31-39 *(%x30-39) )");
-
-    public static void main(String[] argv) {
-        int[] a = {1, 2, 3};
-        int[][] b = {a};
-        JSONCollection val = (JSONCollection) JSONValue.valueOf(b);
-        JSONValue t = val.get(new JSONPointer("/0/2"));
-        System.out.println(t);
-    }
 }
