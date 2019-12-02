@@ -10,7 +10,7 @@ Java:JSONValue.valueOf(obj).toString();
 // 文字列をオブジェクトに変換する
 JavaScript:JSON.parse(src)
 Java:JSON.parseToObj(src,class);
-Java:JSON8259Reg.parse(src)
+Java:JSON.parse(src)
 
 おぶじぇくとまっぴんぐ各種
 --- String to JSONValue to String---

@@ -20,6 +20,11 @@ public class JSONNULL extends JSONValue {
     }
 
     @Override
+    public String toString(JSONFormat format) {
+        return "null";
+    }
+
+    @Override
     public Object map() {
         return null;
     }

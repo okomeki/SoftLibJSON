@@ -10,7 +10,6 @@ import net.siisise.io.Packet;
 /**
  * RFC 6901 JSON Pointer
  *
- * @author okome twitter.okomeki
  */
 public class JSONPointer {
 

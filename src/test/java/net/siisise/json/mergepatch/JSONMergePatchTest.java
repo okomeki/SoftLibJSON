@@ -1,6 +1,5 @@
-package net.siisise.json.margepatch;
+package net.siisise.json.mergepatch;
 
-import net.siisise.json.mergepatch.JSONMergePatch;
 import net.siisise.json.JSON;
 import net.siisise.json.JSONValue;
 import org.junit.jupiter.api.Test;
@@ -8,11 +7,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
- * @author okome
  */
-public class JSONMargePatchTest {
+public class JSONMergePatchTest {
     
-    public JSONMargePatchTest() {
+    public JSONMergePatchTest() {
     }
 
     /**

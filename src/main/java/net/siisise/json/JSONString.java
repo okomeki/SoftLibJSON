@@ -19,10 +19,10 @@ public class JSONString extends JSONValue<String> {
     }
 
     @Override
-    public String toString() {
+    public String toString(JSONFormat format) {
         return "\"" + esc(value) + "\"";
     }
-
+    
     String esc(String val) {
         StringBuilder sb = new StringBuilder();
         Packet pac = AbstractABNF.pac(val);

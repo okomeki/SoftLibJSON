@@ -19,9 +19,21 @@ public abstract class JSONValue<T> implements JSON<T> {
     public T value() {
         return value;
     }
+    
+    public static final JSONFormat NOBR = new JSONFormat("","");
+    public static final JSONFormat TAB = new JSONFormat("\r\n","  ");
 
     @Override
     public String toString() {
+        return toString(TAB);
+    }
+
+    /**
+     * 改行を少しなんとかする。
+     * @param format TABかNOBR
+     * @return 
+     */
+    public String toString(JSONFormat format) {
         return value.toString();
     }
 

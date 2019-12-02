@@ -17,7 +17,6 @@ import java.util.logging.Logger;
  */
 public class JSONObject extends JSONCollection<Map<String, JSONValue>> {
 
-//    Map<String, JSONValue> values;
     List<String> names = new ArrayList<>();
     
     public JSONObject() {
@@ -139,19 +138,23 @@ public class JSONObject extends JSONCollection<Map<String, JSONValue>> {
     }
 
     @Override
-    public String toString() {
+    public String toString(JSONFormat format) {
         StringBuilder sb = new StringBuilder();
-        sb.append("{\r\n");
+        sb.append("{");
+        sb.append(format.crlf);
         for (String name : names) {
             if (sb.length() > 3) {
-                sb.append(",\r\n");
+                sb.append(",");
+                sb.append(format.crlf);
             }
-            sb.append("  \"");
+            sb.append(format.tab);
+            sb.append("\"");
             sb.append(name);
             sb.append("\":");
             sb.append(tab(value.get(name).toString()));
         }
-        sb.append("\r\n}");
+        sb.append(format.crlf);
+        sb.append("}");
         return sb.toString();
     }
 

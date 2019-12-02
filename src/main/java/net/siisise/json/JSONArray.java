@@ -13,10 +13,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * 配列またはList
+ * 配列またはList。
  * 数字をKeyとした疑似Mapとして操作できる
  * @see javax.json.JsonArray
- * @author okome
  */
 public class JSONArray extends JSONCollection<List<JSONValue>> {
 
@@ -117,7 +116,7 @@ public class JSONArray extends JSONCollection<List<JSONValue>> {
     }
 
     /**
-     * JSONValueの配列
+     * JSONValueの配列。
      *
      * @return
      */
@@ -209,17 +208,20 @@ public class JSONArray extends JSONCollection<List<JSONValue>> {
     }
 
     @Override
-    public String toString() {
+    public String toString(JSONFormat format) {
         StringBuilder sb = new StringBuilder();
-        sb.append("[\r\n");
+        sb.append("[");
+        sb.append(format.crlf);
         for (JSONValue val : value) {
             if (sb.length() > 3) {
-                sb.append(",\r\n");
+                sb.append(",");
+                sb.append(format.crlf);
             }
-            sb.append("  ");
-            sb.append(tab(val.toString()));
+            sb.append(format.tab);
+            sb.append(tab(val.toString(format)));
         }
-        sb.append("\r\n]");
+        sb.append(format.crlf);
+        sb.append("]");
         return sb.toString();
     }
 
