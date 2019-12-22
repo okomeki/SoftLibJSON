@@ -1,7 +1,7 @@
 package net.siisise.json;
 
 /**
- * null
+ * JSONデータ null
  */
 public class JSONNULL extends JSONValue {
 

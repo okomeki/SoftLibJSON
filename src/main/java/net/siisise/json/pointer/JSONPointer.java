@@ -6,6 +6,8 @@ import java.util.Arrays;
 import java.util.List;
 import net.siisise.abnf.AbstractABNF;
 import net.siisise.io.Packet;
+import net.siisise.json.JSONCollection;
+import net.siisise.json.JSONValue;
 
 /**
  * RFC 6901 JSON Pointer
@@ -137,4 +139,35 @@ public class JSONPointer {
         return sb.toString();
     }
 
+    public static class ValuePointer {
+        public final JSONValue val;
+        public final JSONPointer path;
+        
+        ValuePointer(JSONValue value, JSONPointer p) {
+            val = value;
+            path = p;
+        }
+    }
+
+    /**
+     * JSONPatch用
+     * @param src
+     * @param keep 1段前までで止める
+     * @return 
+     */
+    public ValuePointer step(JSONValue src, boolean keep) {
+        String[] ds = toDecodeString();
+        JSONValue tg = src;
+        if (ds.length == 1) {
+            return new ValuePointer(tg, null);
+        } else if (ds.length == 2 && keep) {
+            return new ValuePointer(tg, this);
+        } else if (tg instanceof JSONCollection) {
+            tg = ((JSONCollection) tg).get(ds[1]);
+            return sub().step(tg, keep);
+        } else {
+            throw new java.lang.UnsupportedOperationException();
+        }
+    }
+    
 }

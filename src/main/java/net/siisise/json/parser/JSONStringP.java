@@ -4,11 +4,11 @@ import java.util.List;
 import net.siisise.abnf.ABNF;
 import net.siisise.abnf.ABNFReg;
 import net.siisise.abnf.parser.ABNFList;
+import net.siisise.json.JSONReplacer;
 import net.siisise.json.JSONString;
 
 /**
  *
- * @author okome
  */
 public class JSONStringP extends ABNFList<JSONString, Integer> {
 
@@ -25,6 +25,19 @@ public class JSONStringP extends ABNFList<JSONString, Integer> {
             }
         }
         return new JSONString(sb.toString());
+    }
+    
+    /**
+     *
+     * @param obj
+     * @param replacer
+     * @return
+     */
+    public static JSONString valueOf(Object obj, JSONReplacer replacer) {
+        if ( obj instanceof String ) {
+            return new JSONString((String)obj);
+        }
+        return null;
     }
 
 }

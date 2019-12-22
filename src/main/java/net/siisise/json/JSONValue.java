@@ -1,14 +1,18 @@
 package net.siisise.json;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import net.siisise.abnf.parser.ABNFBaseParser;
+import net.siisise.json.parser.JSONArrayP;
+import net.siisise.json.parser.JSONNumberP;
+import net.siisise.json.parser.JSONObjectP;
+import net.siisise.json.parser.JSONStringP;
+import net.siisise.json.parser.JSONValueP;
 
 /**
- *
+ * 基本型
  * @param <T>
  */
 public abstract class JSONValue<T> implements JSON<T> {
@@ -20,9 +24,6 @@ public abstract class JSONValue<T> implements JSON<T> {
         return value;
     }
     
-    public static final JSONFormat NOBR = new JSONFormat("","");
-    public static final JSONFormat TAB = new JSONFormat("\r\n","  ");
-
     @Override
     public String toString() {
         return toString(TAB);
@@ -33,6 +34,7 @@ public abstract class JSONValue<T> implements JSON<T> {
      * @param format TABかNOBR
      * @return 
      */
+    @Override
     public String toString(JSONFormat format) {
         return value.toString();
     }
@@ -40,46 +42,53 @@ public abstract class JSONValue<T> implements JSON<T> {
     String tab(String val) {
         return val.replace("\r\n", "\r\n  ");
     }
+    
+    /**
+     * ParserにstaticでvalueOfを実装してみる
+     * Replacer としてあとでまとめる
+     */
+    static Class[] PARSERS = {
+        JSONValueP.class,
+        JSONNumberP.class,
+        JSONStringP.class,
+        JSONArrayP.class,
+        JSONObjectP.class
+    };
+    
+    public static JSONValue valueOf(Object src) {
+        return valueOf(src, null);
+    }
 
     /**
-     *
+     * なんでもJSONに変換する。
      * プリミティブ型、配列、Collection、Object boolean byte short char int long float
      * double List Map Number null String
-     *
+     * Date型など要検討
      * @param src データ型なんでも
-     * @return
+     * @param replacer
+     * @return JSONValue
      */
-    public static JSONValue valueOf(Object src) {
-        if (src == null) {
-            return new JSONNULL();
-        } else if (src instanceof JSONValue) {
-            return (JSONValue) src;
-        } else if (src instanceof Number) { // intも
-            return new JSONNumber((Number) src);
-        } else if (src instanceof Boolean) {
-            return new JSONBoolean((Boolean) src);
-        } else if (src instanceof String) {
-            return new JSONString((String) src);
-        } else if (src instanceof Collection) {
-            return JSONCollection.convList((Collection) src);
-        } else if (src.getClass().isArray()) {
-            Class ar = src.getClass().getComponentType();
-            List cnv;
-            if (ar.isPrimitive()) {
-                int len = Array.getLength(src);
-                cnv = new ArrayList();
-                for (int i = 0; i < len; i++) {
-                    cnv.add(Array.get(src, i));
+    public static JSONValue valueOf(Object src, JSONReplacer replacer) {
+        for ( Class<? extends ABNFBaseParser> parserClass : PARSERS ) {
+            try {
+                Method convert = parserClass.getMethod("valueOf", Object.class, JSONReplacer.class);
+                JSONValue val = (JSONValue)convert.invoke(null, new Object[] {src, replacer});
+                if ( val != null ) {
+                    return val;
                 }
-            } else {
-                cnv = Arrays.asList((Object[]) src);
+            } catch (NoSuchMethodException ex) {
+                Logger.getLogger(JSONValue.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (SecurityException ex) {
+                Logger.getLogger(JSONValue.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IllegalAccessException ex) {
+                Logger.getLogger(JSONValue.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IllegalArgumentException ex) {
+                Logger.getLogger(JSONValue.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (InvocationTargetException ex) {
+                Logger.getLogger(JSONValue.class.getName()).log(Level.SEVERE, null, ex);
             }
-            return JSONArray.convList(cnv);
-        } else if (src instanceof Map) {
-            return JSONObject.convMap((Map) src);
-        } else {
-            return JSONObject.convObject(src);
         }
+        return JSONObject.convObject(src);
     }
 
     /**

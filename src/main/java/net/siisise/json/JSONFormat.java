@@ -2,6 +2,7 @@ package net.siisise.json;
 
 /**
  * 改行をなんとかするだけ。
+ * JSON#toString(JSONFormat) で使う
  */
 public class JSONFormat {
     

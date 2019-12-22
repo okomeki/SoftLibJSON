@@ -50,7 +50,13 @@ public class JWS7515 {
      */
     public static void main(String[] argv) {
         try {
-            String val = new String(BASE64.decodeURL("eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGFt\r\n" +
+            String val;
+            val = new BASE64(BASE64.URL,0).encode("{\"typ\":\"JWT\",\r\n \"alg\":\"HS256\"}".getBytes("utf-8"));
+//            val = new BASE64(BASE64.URL,0).encode("{\"typ\":\"JWT\",\r\n\"alg\":\"HS256\"}".getBytes("utf-8"));
+            System.out.println(val);
+            
+            
+            val = new String(BASE64.decodeURL("eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGFt\r\n" +
 "cGxlLmNvbS9pc19yb290Ijp0cnVlfQ"),"utf-8");
             System.out.println(val);
             BASE64 burl = new BASE64(BASE64.URL,0);

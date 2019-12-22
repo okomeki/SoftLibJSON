@@ -7,19 +7,15 @@ import net.siisise.json.JSONCollection;
 import net.siisise.json.JSONValue;
 
 /**
- * RFC 6902 JSON Patch
- *
- * @author okome
+ * RFC 6902 JavaScript Object Notation (JSON) Patch.
+ * https://tools.ietf.org/html/rfc6902
  */
 public class JSONPatch {
 
-    public static class Patch {
-
-        public String op;
-        public String path;
-        public String from;
-        public String value;
-    }
+    public String op;
+    public String path;
+    public String from;
+    public String value;
 
     /**
      * エラー未実装
@@ -33,8 +29,8 @@ public class JSONPatch {
         
         List<JSONValue> ops = patchList.value();
         for (JSONValue patch : ops) {
-            Patch p = (Patch) patch.map(Patch.class);
-            cp = cmd(cp, p);
+            JSONPatch p = (JSONPatch) patch.map(JSONPatch.class);
+            cp = p.cmd(cp);
         }
         return cp;
     }
@@ -42,54 +38,53 @@ public class JSONPatch {
     /**
      *
      * @param obj
-     * @param patch
      * @return エラーはnull (エラー未実装あり)
      */
-    private static JSONCollection cmd(JSONCollection obj, Patch patch) {
-        if ("add".equals(patch.op)) {
-            return add(obj, patch);
-        } else if ("remove".equals(patch.op)) {
-            return remove(obj, patch);
-        } else if ("replace".equals(patch.op)) {
-            return replace(obj, patch);
-        } else if ("move".equals(patch.op)) {
-            return move(obj, patch);
-        } else if ("copy".equals(patch.op)) {
-            return copy(obj, patch);
-        } else if ("test".equals(patch.op)) {
-            return test(obj, patch);
+    public JSONCollection cmd(JSONCollection obj) {
+        if ("add".equals(op)) {
+            return add(obj);
+        } else if ("remove".equals(op)) {
+            return remove(obj);
+        } else if ("replace".equals(op)) {
+            return replace(obj);
+        } else if ("move".equals(op)) {
+            return move(obj);
+        } else if ("copy".equals(op)) {
+            return copy(obj);
+        } else if ("test".equals(op)) {
+            return test(obj);
         }
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    private static JSONCollection add(JSONCollection obj, Patch patch) {
-        obj.add(new JSONPointer(patch.path), patch.value);
+    private JSONCollection add(JSONCollection obj) {
+        obj.add(new JSONPointer(path), value);
         return obj;
     }
 
-    private static JSONCollection remove(JSONCollection obj, Patch patch) {
-        obj.remove(new JSONPointer(patch.path));
+    private JSONCollection remove(JSONCollection obj) {
+        obj.remove(new JSONPointer(path));
         return obj;
     }
 
-    private static JSONCollection replace(JSONCollection obj, Patch patch) {
-        obj.remove(new JSONPointer(patch.path));
-        obj.add(new JSONPointer(patch.path), patch.value);
+    private JSONCollection replace(JSONCollection obj) {
+        obj.remove(new JSONPointer(path));
+        obj.add(new JSONPointer(path), value);
         return obj;
     }
 
-    private static JSONCollection move(JSONCollection obj, Patch patch) {
-        JSONValue v = obj.get(new JSONPointer(patch.from));
+    private JSONCollection move(JSONCollection obj) {
+        JSONValue v = obj.get(new JSONPointer(from));
         v = JSON8259Reg.parse(v.toString());
-        obj.remove(new JSONPointer(patch.from));
-        obj.add(new JSONPointer(patch.path), v);
+        obj.remove(new JSONPointer(from));
+        obj.add(new JSONPointer(path), v);
         return obj;
     }
 
-    private static JSONCollection copy(JSONCollection obj, Patch patch) {
-        JSONValue v = obj.get(new JSONPointer(patch.from));
+    private JSONCollection copy(JSONCollection obj) {
+        JSONValue v = obj.get(new JSONPointer(from));
         v = JSON8259Reg.parse(v.toString());
-        obj.add(new JSONPointer(patch.path), v);
+        obj.add(new JSONPointer(path), v);
         return obj;
     }
 
@@ -97,13 +92,12 @@ public class JSONPatch {
      * まだ
      *
      * @param obj
-     * @param patch
      * @return 成功すればobj 失敗すればnull 未実装なのでExceptionも返る
      */
-    private static JSONCollection test(JSONCollection obj, Patch patch) {
-        JSONValue val1 = obj.get(new JSONPointer(patch.path));
+    private JSONCollection test(JSONCollection obj) {
+        JSONValue val1 = obj.get(new JSONPointer(path));
         //String txt1 = val1.toString(); // 正規化?
-        JSONValue val2 = JSON8259Reg.parse(patch.value);
+        JSONValue val2 = JSON8259Reg.parse(value);
         //String txt2 = val2.toString();
         if (!val1.equals(val2)) {
             return null;

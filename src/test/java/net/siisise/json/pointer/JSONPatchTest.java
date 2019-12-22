@@ -10,7 +10,6 @@ import org.junit.jupiter.api.BeforeAll;
 
 /**
  *
- * @author okome
  */
 public class JSONPatchTest {
 

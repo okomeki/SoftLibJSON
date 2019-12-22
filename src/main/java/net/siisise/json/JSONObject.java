@@ -14,13 +14,32 @@ import java.util.logging.Logger;
 
 /**
  * public field のみ対応でいい?
+ *
+ * @see javax.json.JsonObject
  */
 public class JSONObject extends JSONCollection<Map<String, JSONValue>> {
 
     List<String> names = new ArrayList<>();
-    
+
     public JSONObject() {
         value = new HashMap<>();
+    }
+
+    /**
+     * 何も考えなくていい変換。
+     * 要素の複製はしないことがあるかもしれない
+     * @param map
+     */
+    public JSONObject(Map map) {
+        this();
+        for (Object key : map.keySet()) {
+            Object o = map.get(key);
+            if (key instanceof String) {
+                put((String) key, o);
+            } else {
+                put(key.toString(), o);
+            }
+        }
     }
 
     @Override
@@ -106,9 +125,9 @@ public class JSONObject extends JSONCollection<Map<String, JSONValue>> {
 
     @Override
     public JSONValue get(Object key) {
-        return value.get((String)key);
+        return value.get((String) key);
     }
-    
+
     @Override
     public void put(String key, Object value) {
         this.value.put(key, valueOf(value));
@@ -159,27 +178,10 @@ public class JSONObject extends JSONCollection<Map<String, JSONValue>> {
     }
 
     /**
-     *
-     * @param map
-     * @return
-     */
-    public static JSONObject convMap(Map map) {
-        JSONObject jo = new JSONObject();
-        for (Object key : map.keySet()) {
-            JSONValue vo = valueOf(map.get(key));
-            if (key instanceof String) {
-                jo.set((String) key, vo);
-            } else {
-                jo.set(key.toString(), vo);
-            }
-        }
-        return jo;
-    }
-
-    /**
      * toJSON() に対応するかもしれない
+     *
      * @param obj
-     * @return 
+     * @return
      */
     public static JSONValue convObject(Object obj) {
         Class<? extends Object> c = obj.getClass();
@@ -206,9 +208,9 @@ public class JSONObject extends JSONCollection<Map<String, JSONValue>> {
             try {
                 jo.set(name, valueOf(f.get(obj)));
             } catch (IllegalArgumentException ex) {
-                Logger.getLogger(JSON8259Reg.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(JSONObject.class.getName()).log(Level.SEVERE, null, ex);
             } catch (IllegalAccessException ex) {
-                Logger.getLogger(JSON8259Reg.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(JSONObject.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         return jo;
@@ -238,25 +240,28 @@ public class JSONObject extends JSONCollection<Map<String, JSONValue>> {
 
     /**
      * Collection 機能の実装
-     * @return 
+     *
+     * @return 項目数
      */
     @Override
     public int size() {
         return value.size();
     }
-    
+
     /**
-     * ?
-     * @return 
+     * Mapとおなじ
+     *
+     * @return 名前のセット
      */
     @Override
     public Set<String> keySet() {
         return value.keySet();
     }
-    
+
     /**
      * ?
-     * @return 
+     *
+     * @return
      */
     @Override
     public boolean isEmpty() {

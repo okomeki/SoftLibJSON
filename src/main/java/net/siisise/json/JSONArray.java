@@ -15,6 +15,7 @@ import java.util.logging.Logger;
 /**
  * 配列またはList。
  * 数字をKeyとした疑似Mapとして操作できる
+ *
  * @see javax.json.JsonArray
  */
 public class JSONArray extends JSONCollection<List<JSONValue>> {
@@ -23,8 +24,11 @@ public class JSONArray extends JSONCollection<List<JSONValue>> {
         value = new ArrayList<>();
     }
 
-    public JSONArray(List<JSONValue> vals) {
-        value = new ArrayList<>(vals);
+    public JSONArray(Collection list) {
+        value = new ArrayList<>();
+        for (Object val : list) {
+            value.add(valueOf(val));
+        }
     }
 
     @Override
@@ -40,8 +44,8 @@ public class JSONArray extends JSONCollection<List<JSONValue>> {
     @Override
     public List map() {
         List list = new ArrayList();
-        for (JSONValue v : value) {
-            list.add(v.map());
+        for (JSONValue val : value) {
+            list.add(val.map());
         }
         return list;
     }
@@ -82,16 +86,16 @@ public class JSONArray extends JSONCollection<List<JSONValue>> {
         }
 
         // Collection 要素の型は?
-        for (Class<? extends Collection> s : COLL) {
-            if (cls.isAssignableFrom(s)) {
+        for (Class<? extends Collection> colCls : COLL) {
+            if (cls.isAssignableFrom(colCls)) {
                 Collection col;
 
                 try {
-                    col = s.getConstructor().newInstance();
+                    col = colCls.getConstructor().newInstance();
 
                     if (clss.length > 1) {
                         Class[] clb = new Class[clss.length - 1];
-                        System.arraycopy(clss, 1, s, 0, clb.length);
+                        System.arraycopy(clss, 1, clb, 0, clb.length);
 
                         for (JSONValue o : value) {
                             if (o instanceof JSONCollection) {
@@ -133,8 +137,6 @@ public class JSONArray extends JSONCollection<List<JSONValue>> {
      */
     public <T> T[] toArray(T[] a) {
         Class<?> contentType = a.getClass().getComponentType();
-        //Class<?> ct = a.getClass().componentType();
-        //Class<?> at = a.getClass().arrayType();
         T[] array;
         if (a.length != value.size()) {
             array = (T[]) Array.newInstance(contentType, value.size());
@@ -149,7 +151,6 @@ public class JSONArray extends JSONCollection<List<JSONValue>> {
         int i = 0;
         for (JSONValue val : value) {
             array[i++] = (T) val.map(contentType);
-//            Array.set(array, i++, v.map(ct));
         }
         return (T[]) array;
     }
@@ -175,7 +176,7 @@ public class JSONArray extends JSONCollection<List<JSONValue>> {
         }
         return null;
     }
-    
+
     @Override
     public void set(String key, Object o) {
         if (key.equals("-")) {
@@ -196,7 +197,7 @@ public class JSONArray extends JSONCollection<List<JSONValue>> {
 
     @Override
     public void put(String key, Object o) {
-        set(key,o);
+        set(key, o);
     }
 
     @Override
@@ -246,7 +247,8 @@ public class JSONArray extends JSONCollection<List<JSONValue>> {
 
     /**
      * 疑似Map
-     * @return 
+     *
+     * @return
      */
     @Override
     public Set<String> keySet() {
@@ -261,7 +263,7 @@ public class JSONArray extends JSONCollection<List<JSONValue>> {
     public boolean isEmpty() {
         return value.isEmpty();
     }
-    
+
     @Override
     public Iterator<JSONValue> iterator() {
         return value.iterator();
