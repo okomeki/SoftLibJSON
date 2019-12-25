@@ -61,7 +61,7 @@ public class JSONObject extends JSONCollection<Map<String, JSONValue>> {
     }
 
     /**
-     *
+     * 
      * @param <T>
      * @param cls
      * @return
@@ -100,9 +100,13 @@ public class JSONObject extends JSONCollection<Map<String, JSONValue>> {
         try {
             T obj = cls.getConstructor().newInstance();
             for (String name : names) {
-                Field f = cls.getField(name);
-                Class<?> typ = f.getType();
-                f.set(obj, value.get(name).map(typ));
+                try {
+                    Field f = cls.getField(name);
+                    Class<?> typ = f.getType();
+                    f.set(obj, value.get(name).map(typ));
+                } catch ( NoSuchFieldException ex ) { // fieldがないときは捨てるかサブクラスを探すか
+                    Logger.getLogger(JSONObject.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
             return obj;
         } catch (NoSuchMethodException ex) {
@@ -116,8 +120,6 @@ public class JSONObject extends JSONCollection<Map<String, JSONValue>> {
         } catch (IllegalArgumentException ex) {
             Logger.getLogger(JSONObject.class.getName()).log(Level.SEVERE, null, ex);
         } catch (InvocationTargetException ex) {
-            Logger.getLogger(JSONObject.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (NoSuchFieldException ex) {
             Logger.getLogger(JSONObject.class.getName()).log(Level.SEVERE, null, ex);
         }
         throw new java.lang.UnsupportedOperationException("えらー");

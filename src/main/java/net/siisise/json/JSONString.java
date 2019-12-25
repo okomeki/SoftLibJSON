@@ -5,7 +5,7 @@ import net.siisise.io.Packet;
 import net.siisise.lang.CodePoint;
 
 /**
- *
+ * 文字列.
  */
 public class JSONString extends JSONValue<String> {
 
@@ -23,7 +23,7 @@ public class JSONString extends JSONValue<String> {
         return "\"" + esc(value) + "\"";
     }
     
-    String esc(String val) {
+    private static String esc(String val) {
         StringBuilder sb = new StringBuilder();
         Packet pac = AbstractABNF.pac(val);
         int ch;
@@ -81,6 +81,12 @@ public class JSONString extends JSONValue<String> {
         return sb.toString();
     }
 
+    /**
+     *
+     * @param <T>
+     * @param cls
+     * @return
+     */
     @Override
     public <T> T map(Class<T> cls) {
         return (T) map();

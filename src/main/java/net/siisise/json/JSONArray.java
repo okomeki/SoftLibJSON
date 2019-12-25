@@ -53,13 +53,20 @@ public class JSONArray extends JSONCollection<List<JSONValue>> {
     static Class<? extends Collection>[] COLL = new Class[]{
         ArrayList.class, HashSet.class, LinkedList.class};
 
+    /**
+     * List または配列にマッピングする.
+     * 
+     * @param <T> 要素型
+     * @param cls 変換対象型
+     * @return Listまたは配列
+     */
     @Override
     public <T> T map(Class<T> cls) {
         return map(new Class[]{cls});
     }
 
     /**
-     * List または　配列?
+     * List または　配列
      *
      * @param <T>
      * @param clss Collection または配列、JSONArray、それ以外は要素の型として扱う
