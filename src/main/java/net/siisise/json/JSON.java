@@ -1,5 +1,7 @@
 package net.siisise.json;
 
+import java.util.Map;
+
 /**
  * STD 90
  * RFC 8259
@@ -34,6 +36,8 @@ public interface JSON<T> {
      * @return
      */
     <E> E map(Class<E> cls);
+    
+    <E> E map(Map<Class,JSONReplace> replaces, Class<E> cls);
 
     /**
      * JSON テキスト出力

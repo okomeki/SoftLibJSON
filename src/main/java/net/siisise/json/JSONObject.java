@@ -89,7 +89,7 @@ public class JSONObject extends JSONCollection<Map<String, JSONValue>> {
             Map map = new HashMap();
             for (String key : value.keySet()) {
                 if (clss.length == 3) {
-                    map.put(key, value.get(key).map(clss[2]));
+                    map.put(key, value.get(key).map(replaces,clss[2]));
                 } else {
                     map.put(key, value.get(key).map());
                 }
@@ -103,7 +103,7 @@ public class JSONObject extends JSONCollection<Map<String, JSONValue>> {
                 try {
                     Field f = cls.getField(name);
                     Class<?> typ = f.getType();
-                    f.set(obj, value.get(name).map(typ));
+                    f.set(obj, value.get(name).map(replaces,typ));
                 } catch ( NoSuchFieldException ex ) { // fieldがないときは捨てるかサブクラスを探すか
                     Logger.getLogger(JSONObject.class.getName()).log(Level.SEVERE, null, ex);
                 }

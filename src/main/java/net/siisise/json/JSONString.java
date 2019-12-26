@@ -1,5 +1,6 @@
 package net.siisise.json;
 
+import java.util.Map;
 import net.siisise.abnf.AbstractABNF;
 import net.siisise.io.Packet;
 import net.siisise.lang.CodePoint;
@@ -8,7 +9,7 @@ import net.siisise.lang.CodePoint;
  * 文字列.
  */
 public class JSONString extends JSONValue<String> {
-
+    
     public JSONString(String value) {
         this.value = value;
     }
@@ -81,6 +82,22 @@ public class JSONString extends JSONValue<String> {
         return sb.toString();
     }
 
+    /**
+     *
+     * @param <E>
+     * @param map
+     * @param cls
+     * @return
+     */
+    @Override
+    public <E> E map(Map<Class,JSONReplace> map, Class<E> cls) {
+        JSONReplace conv = map.get(cls);
+        if ( conv != null ) {
+            return (E) conv.replace(this, cls);
+        }
+        return (E) map();
+    }
+    
     /**
      *
      * @param <T>

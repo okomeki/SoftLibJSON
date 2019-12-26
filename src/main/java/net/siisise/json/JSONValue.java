@@ -2,9 +2,13 @@ package net.siisise.json;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.siisise.abnf.parser.ABNFBaseParser;
+import net.siisise.json.map.JSONDate;
+import net.siisise.json.map.JSONUUID;
 import net.siisise.json.parser.JSONArrayP;
 import net.siisise.json.parser.JSONNumberP;
 import net.siisise.json.parser.JSONObjectP;
@@ -44,6 +48,42 @@ public abstract class JSONValue<T> implements JSON<T> {
     }
     
     /**
+     * 仮置き
+     */
+    static Class[] CONVS = {
+            JSONDate.class,
+            JSONUUID.class
+        };
+    static Map<Class,JSONReplace> replaces;
+    
+    static {
+        replaces = new HashMap<>();
+        for ( Class convcls : CONVS ) {
+            try {
+                JSONReplace jr = (JSONReplace) convcls.getConstructor().newInstance();
+                replaces.put(jr.targetClass(), jr);
+            } catch (NoSuchMethodException ex) {
+                Logger.getLogger(JSONString.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (SecurityException ex) {
+                Logger.getLogger(JSONString.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (InstantiationException ex) {
+                Logger.getLogger(JSONString.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IllegalAccessException ex) {
+                Logger.getLogger(JSONString.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IllegalArgumentException ex) {
+                Logger.getLogger(JSONString.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (InvocationTargetException ex) {
+                Logger.getLogger(JSONString.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    @Override
+    public <E> E map(Map<Class,JSONReplace> mp, Class<E> src ) {
+        return map(src);
+    }
+    
+    /**
      * ParserにstaticでvalueOfを実装してみる
      * Replacer としてあとでまとめる
      */
@@ -55,6 +95,11 @@ public abstract class JSONValue<T> implements JSON<T> {
         JSONObjectP.class
     };
     
+    /**
+     * 
+     * @param src
+     * @return 
+     */
     public static JSONValue valueOf(Object src) {
         return valueOf(src, null);
     }

@@ -2,7 +2,6 @@ package net.siisise.json;
 
 /**
  *
- * @author okome
  */
 public interface JSONReplacer {
 
@@ -11,6 +10,6 @@ public interface JSONReplacer {
      * @param key
      * @param value
      * @return 
-     */ 
+     */
     Object replacer(String key, Object value);
 }
