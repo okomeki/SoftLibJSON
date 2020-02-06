@@ -8,7 +8,6 @@ import net.siisise.abnf.parser.ABNFBaseParser;
 import net.siisise.io.Packet;
 import net.siisise.json.JSON8259Reg;
 import net.siisise.json.JSONNumber;
-import net.siisise.json.JSONReplacer;
 import net.siisise.json.JSONValue;
 
 /**
@@ -42,18 +41,5 @@ public class JSONNumberP extends ABNFBaseParser<JSONValue, JSONValue> {
         } else { // 整数
             return new JSONNumber<>(new BigInteger(str(ret.ret)));
         }
-    }
-
-    /**
-     *
-     * @param obj
-     * @param replacer
-     * @return
-     */
-    public static JSONNumber valueOf(Object obj, JSONReplacer replacer) {
-        if ( obj instanceof Number ) {
-            return new JSONNumber((Number)obj);
-        }
-        return null;
     }
 }

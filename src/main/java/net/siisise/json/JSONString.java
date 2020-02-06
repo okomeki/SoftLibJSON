@@ -90,8 +90,8 @@ public class JSONString extends JSONValue<String> {
      * @return
      */
     @Override
-    public <E> E map(Map<Class,JSONReplace> map, Class<E> cls) {
-        JSONReplace conv = map.get(cls);
+    public <E> E map(Map<Class,JSONReplaceMO> map, Class<E> cls) {
+        JSONReplaceMO conv = map.get(cls);
         if ( conv != null ) {
             return (E) conv.replace(this, cls);
         }

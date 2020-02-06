@@ -3,6 +3,8 @@ package net.siisise.json;
 import java.util.Map;
 
 /**
+ * JSON中間形式なinterface.
+ * 
  * STD 90
  * RFC 8259
  * https://tools.ietf.org/html/rfc8259
@@ -10,7 +12,6 @@ import java.util.Map;
  * 書式の情報は保存しない
  *
  * https://datatracker.ietf.org/wg/json/documents/
- * @author okome
  * @param <T>
  */
 public interface JSON<T> {
@@ -37,7 +38,7 @@ public interface JSON<T> {
      */
     <E> E map(Class<E> cls);
     
-    <E> E map(Map<Class,JSONReplace> replaces, Class<E> cls);
+    <E> E map(Map<Class,JSONReplaceMO> replaces, Class<E> cls);
 
     /**
      * JSON テキスト出力

@@ -5,14 +5,14 @@ package net.siisise.json;
  * 
  * @param <T>
  */
-public interface JSONReplace<T> {
+public interface JSONReplaceMO<T> {
     
     /**
      * nullを返すと複数該当ありとする。
      * @return 
      */
-    public Class<T> targetClass();
+    Class<T> targetClass();
     
-    public T replace(JSONValue json, Class<T> target);
+    T replace(JSONValue json, Class<T> target);
     
 }

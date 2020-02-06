@@ -5,14 +5,12 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.siisise.json.JSONReplace;
+import net.siisise.json.JSONReplaceMO;
+import net.siisise.json.JSONReplaceOM;
+import net.siisise.json.JSONReplacer;
 import net.siisise.json.JSONValue;
 
-/**
- *
- * @author okome
- */
-public class JSONDate implements JSONReplace<Date> {
+public class JSONDateM implements JSONReplaceMO<Date>,JSONReplaceOM {
 
     static String ISO = "yyyy-MM-dd'T'HH:mm:ss.SSSX";
     static String ISO2 = "yyyy-MM-dd'T'HH:mm:ssX";
@@ -26,10 +24,11 @@ public class JSONDate implements JSONReplace<Date> {
         return Date.class;
     }
 
-    public static JSONValue valueOf(Object src) {
-        if (src instanceof Date) {
+    @Override
+    public JSONValue valueOf(Object obj, JSONReplacer r) {
+        if (obj instanceof Date) {
             SimpleDateFormat format = new SimpleDateFormat(ISO2);
-            String s = format.format((Date) src);
+            String s = format.format((Date) obj);
             return JSONValue.valueOf(s);
         }
         return null;
@@ -49,7 +48,7 @@ public class JSONDate implements JSONReplace<Date> {
             Date d = format.parse(val);
             return d;
         } catch (ParseException ex) {
-            Logger.getLogger(JSONDate.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(JSONDateM.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
     }

@@ -1,20 +1,23 @@
 package net.siisise.json.map;
 
 import java.util.UUID;
-import net.siisise.json.JSONReplace;
+import net.siisise.json.JSONReplaceMO;
+import net.siisise.json.JSONReplaceOM;
+import net.siisise.json.JSONReplacer;
 import net.siisise.json.JSONValue;
 
 /**
  *
  */
-public class JSONUUID implements JSONReplace<UUID> {
+public class JSONUUIDM implements JSONReplaceMO<UUID>,JSONReplaceOM {
 
     @Override
     public Class<UUID> targetClass() {
         return UUID.class;
     }
-    
-    public static JSONValue valueOf(Object uuid) {
+
+    @Override
+    public JSONValue valueOf(Object uuid, JSONReplacer r) {
         if (uuid instanceof UUID) {
             return JSONValue.valueOf(uuid.toString());
         }

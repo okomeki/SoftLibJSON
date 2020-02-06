@@ -1,19 +1,6 @@
 package net.siisise.json;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import net.siisise.abnf.parser.ABNFBaseParser;
-import net.siisise.json.map.JSONDate;
-import net.siisise.json.map.JSONUUID;
-import net.siisise.json.parser.JSONArrayP;
-import net.siisise.json.parser.JSONNumberP;
-import net.siisise.json.parser.JSONObjectP;
-import net.siisise.json.parser.JSONStringP;
-import net.siisise.json.parser.JSONValueP;
 
 /**
  * 基本型
@@ -47,39 +34,8 @@ public abstract class JSONValue<T> implements JSON<T> {
         return val.replace("\r\n", "\r\n  ");
     }
     
-    /**
-     * 仮置き
-     */
-    static Class[] CONVS = {
-            JSONDate.class,
-            JSONUUID.class
-        };
-    static Map<Class,JSONReplace> replaces;
-    
-    static {
-        replaces = new HashMap<>();
-        for ( Class convcls : CONVS ) {
-            try {
-                JSONReplace jr = (JSONReplace) convcls.getConstructor().newInstance();
-                replaces.put(jr.targetClass(), jr);
-            } catch (NoSuchMethodException ex) {
-                Logger.getLogger(JSONString.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (SecurityException ex) {
-                Logger.getLogger(JSONString.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (InstantiationException ex) {
-                Logger.getLogger(JSONString.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IllegalAccessException ex) {
-                Logger.getLogger(JSONString.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IllegalArgumentException ex) {
-                Logger.getLogger(JSONString.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (InvocationTargetException ex) {
-                Logger.getLogger(JSONString.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-    }
-
     @Override
-    public <E> E map(Map<Class,JSONReplace> mp, Class<E> src ) {
+    public <E> E map(Map<Class,JSONReplaceMO> mp, Class<E> src ) {
         return map(src);
     }
     
@@ -87,14 +43,8 @@ public abstract class JSONValue<T> implements JSON<T> {
      * ParserにstaticでvalueOfを実装してみる
      * Replacer としてあとでまとめる
      */
-    static Class[] PARSERS = {
-        JSONValueP.class,
-        JSONNumberP.class,
-        JSONStringP.class,
-        JSONArrayP.class,
-        JSONObjectP.class
-    };
-    
+    static JSONMap PARSERS = new JSONMap();
+
     /**
      * 
      * @param src
@@ -114,26 +64,7 @@ public abstract class JSONValue<T> implements JSON<T> {
      * @return JSONValue
      */
     public static JSONValue valueOf(Object src, JSONReplacer replacer) {
-        for ( Class<? extends ABNFBaseParser> parserClass : PARSERS ) {
-            try {
-                Method convert = parserClass.getMethod("valueOf", Object.class, JSONReplacer.class);
-                JSONValue val = (JSONValue)convert.invoke(null, new Object[] {src, replacer});
-                if ( val != null ) {
-                    return val;
-                }
-            } catch (NoSuchMethodException ex) {
-                Logger.getLogger(JSONValue.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (SecurityException ex) {
-                Logger.getLogger(JSONValue.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IllegalAccessException ex) {
-                Logger.getLogger(JSONValue.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IllegalArgumentException ex) {
-                Logger.getLogger(JSONValue.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (InvocationTargetException ex) {
-                Logger.getLogger(JSONValue.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-        return JSONObject.convObject(src);
+        return PARSERS.valueOf(src,replacer);
     }
 
     /**
