@@ -4,6 +4,11 @@ import java.nio.charset.MalformedInputException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import javax.json.JsonArray;
+import javax.json.JsonObject;
+import javax.json.JsonPointer;
+import javax.json.JsonStructure;
+import javax.json.JsonValue;
 import net.siisise.abnf.AbstractABNF;
 import net.siisise.io.Packet;
 import net.siisise.json.JSONCollection;
@@ -13,7 +18,7 @@ import net.siisise.json.JSONValue;
  * RFC 6901 JSON Pointer
  *
  */
-public class JSONPointer {
+public class JSONPointer implements JsonPointer {
 
     String[] path;
 
@@ -34,6 +39,42 @@ public class JSONPointer {
                 throw new java.lang.UnsupportedOperationException();
             }
         }
+    }
+
+    public void add(JSONCollection target, Object value) {
+        ColKey vp = step(target);
+        vp.coll.add(vp.key, value);
+    }
+
+    public void remove(JSONCollection target) {
+        ColKey vp = step(target);
+        vp.coll.remove(vp.key);
+    }
+
+    public JSONValue get(JSONCollection target) {
+        return step(target,false).val;
+        //return obj.get(this);
+    }
+
+    public void set(JSONCollection target, Object value) {
+        ColKey vp = step(target);
+        vp.coll.set(vp.key, value);
+    }
+
+    public void replace(JSONCollection target, Object value) {
+        ColKey vp = step(target);
+        vp.coll.remove(vp.key);
+        vp.coll.add(vp.key, value);
+    }
+
+    private static class ColKey {
+        private JSONCollection coll;
+        private String key;
+    }
+
+    private static class JsonColKey {
+        private JsonStructure coll;
+        private String key;
     }
 
     public JSONPointer sub() {
@@ -139,7 +180,54 @@ public class JSONPointer {
         return sb.toString();
     }
 
-    public static class ValuePointer {
+    @Override
+    public <T extends JsonStructure> T add(T target, JsonValue value) {
+        JsonColKey vp = step(target);
+        if ( vp.coll instanceof JsonArray ) {
+            ((JsonArray)vp.coll).add(Integer.parseInt(vp.key), value);
+        } else if ( vp.coll instanceof JsonObject ) {
+            ((JsonObject)vp.coll).put(vp.key, value);
+        }
+        return target;
+    }
+
+    @Override
+    public <T extends JsonStructure> T remove(T target) {
+        JsonColKey vp = step(target);
+        if ( vp.coll instanceof JsonArray ) {
+            ((JsonArray)vp.coll).remove(Integer.parseInt(vp.key));
+        } else if ( vp.coll instanceof JsonObject ) {
+            ((JsonObject)vp.coll).remove(vp.key);
+        }
+        return target;
+    }
+
+    @Override
+    public <T extends JsonStructure> T replace(T target, JsonValue value) {
+        JsonColKey vp = step(target);
+        if ( vp.coll instanceof JsonArray ) {
+            ((JsonArray)vp.coll).remove(Integer.parseInt(vp.key));
+            ((JsonArray)vp.coll).add(Integer.parseInt(vp.key), value);
+        } else if ( vp.coll instanceof JsonObject ) {
+            ((JsonObject)vp.coll).remove(vp.key);
+            ((JsonObject)vp.coll).put(vp.key, value);
+        }
+        return target;
+    }
+
+    @Override
+    public boolean containsValue(JsonStructure target) {
+        JsonColKey vp = step(target);
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public JsonValue getValue(JsonStructure target) {
+        JsonColKey vp = step(target);
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    static class ValuePointer {
         public final JSONValue val;
         public final JSONPointer path;
         
@@ -149,6 +237,16 @@ public class JSONPointer {
         }
     }
 
+    public static class JsonValuePointer {
+        public final JsonValue val;
+        public final JSONPointer path;
+        
+        JsonValuePointer(JsonValue value, JSONPointer p) {
+            val = value;
+            path = p;
+        }
+    }
+    
     /**
      * JSONPatch用
      * @param src
@@ -170,4 +268,46 @@ public class JSONPointer {
         }
     }
     
+    /**
+     * JSON版
+     * @param obj
+     * @return 
+     */
+    private ColKey step(JSONCollection obj) {
+        JSONPointer.ValuePointer vp = step(obj, true);
+        ColKey kv = new ColKey();
+        kv.coll = (JSONCollection) vp.val;
+        kv.key = vp.path.toDecodeString()[1];
+        return kv;
+    }
+    
+    public JsonValuePointer step(JsonValue src, boolean keep) {
+        String[] ds = toDecodeString();
+        JsonValue tg = src;
+        if (ds.length == 1) {
+            return new JsonValuePointer(tg, null);
+        } else if (ds.length == 2 && keep) {
+            return new JsonValuePointer(tg, this);
+        } else if (tg instanceof JsonArray) {
+            tg = ((JsonArray) tg).get(Integer.parseInt(ds[1]));
+            return sub().step(tg, keep);
+        } else if (tg instanceof JsonObject) {
+            tg = ((JsonObject) tg).get(ds[1]);
+            return sub().step(tg, keep);
+        } else {
+            throw new java.lang.UnsupportedOperationException();
+        }
+    }
+    
+    /**
+     * Json版
+     * @param obj Json
+     * @return 
+     */
+    private JsonColKey step(JsonStructure obj) {
+        JSONPointer.JsonValuePointer vp = step(obj, true);
+        JsonColKey kv = new JsonColKey();
+        kv.coll = (JsonStructure) vp.val;
+        return kv;
+    }
 }

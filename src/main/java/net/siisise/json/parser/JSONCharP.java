@@ -4,6 +4,7 @@ import net.siisise.abnf.ABNF;
 import net.siisise.abnf.ABNFReg;
 import net.siisise.abnf.parser.ABNFBaseParser;
 import net.siisise.abnf.parser5234.ABNF5234;
+import net.siisise.io.FrontPacket;
 import net.siisise.io.Packet;
 import net.siisise.json.JSON8259Reg;
 import net.siisise.json.JSONValue;
@@ -21,7 +22,7 @@ public class JSONCharP extends ABNFBaseParser<Integer, JSONValue> {
     static ABNF utf16 = JSON8259Reg.escape.pl(ABNF.bin(0x75), ABNF5234.HEXDIG.x(4, 4));
 
     @Override
-    public Integer parse(Packet pac) {
+    public Integer parse(FrontPacket pac) {
         Packet p = JSON8259Reg.unescaped.is(pac);
         if (p != null) {
             return CodePoint.utf8(p);

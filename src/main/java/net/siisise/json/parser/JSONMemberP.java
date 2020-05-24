@@ -3,7 +3,7 @@ package net.siisise.json.parser;
 import net.siisise.abnf.ABNF;
 import net.siisise.abnf.ABNFReg;
 import net.siisise.abnf.parser.ABNFBaseParser;
-import net.siisise.io.Packet;
+import net.siisise.io.FrontPacket;
 import net.siisise.json.JSON8259Reg;
 import net.siisise.json.JSONMember;
 import net.siisise.json.JSONString;
@@ -19,7 +19,7 @@ public class JSONMemberP extends ABNFBaseParser<JSONMember, JSONValue> {
     }
 
     @Override
-    public JSONMember parse(Packet pac) {
+    public JSONMember parse(FrontPacket pac) {
         inst();
         ABNF.C<JSONValue> ret = def.find(pac, subs);
         if (ret == null) {

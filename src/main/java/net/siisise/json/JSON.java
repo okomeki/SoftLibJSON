@@ -10,6 +10,9 @@ import java.util.Map;
  * https://tools.ietf.org/html/rfc8259
  * ECMA-404 2nd Edition
  * 書式の情報は保存しない
+ * 
+ * Java API for JSON Processing (JSR-353),
+ * JSON Processing (JSR-374),JSON-B (JSR-367)相当の機能を持っているが、API準拠はしていない。
  *
  * https://datatracker.ietf.org/wg/json/documents/
  * @param <T>
@@ -31,13 +34,20 @@ public interface JSON<T> {
     Object map();
 
     /**
-     *
+     * String, プリミティブ型、プリミティブ対応型ぐらいに変形できるといい
      * @param <E>
      * @param cls
      * @return
      */
     <E> E map(Class<E> cls);
     
+    /**
+     *
+     * @param <E>
+     * @param replaces
+     * @param cls
+     * @return
+     */
     <E> E map(Map<Class,JSONReplaceMO> replaces, Class<E> cls);
 
     /**
@@ -58,10 +68,20 @@ public interface JSON<T> {
      */
     String toString(JSONFormat format);
     
+    /**
+     * JSON から中間形式に変換する.
+     * @param json テキスト型JSON
+     * @return JSONオブジェクト
+     */
     public static JSONValue parse(String json) {
         return JSON8259Reg.parse(json);
     }
     
+    /**
+     * JSON式を中間形式に変換する.
+     * @param json utf-8のデータ
+     * @return JSONオブジェクト
+     */
     public static JSONValue parse(byte[] json) {
         return JSON8259Reg.parse(json);
     }

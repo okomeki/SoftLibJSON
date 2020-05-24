@@ -1,6 +1,10 @@
 package net.siisise.json;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
+import javax.json.JsonString;
+import javax.json.JsonValue;
 import net.siisise.abnf.AbstractABNF;
 import net.siisise.io.Packet;
 import net.siisise.lang.CodePoint;
@@ -8,7 +12,7 @@ import net.siisise.lang.CodePoint;
 /**
  * 文字列.
  */
-public class JSONString extends JSONValue<String> {
+public class JSONString extends JSONValue<String> implements JsonString {
     
     public JSONString(String value) {
         this.value = value;
@@ -95,7 +99,7 @@ public class JSONString extends JSONValue<String> {
         if ( conv != null ) {
             return (E) conv.replace(this, cls);
         }
-        return (E) map();
+        return (E) map(cls);
     }
     
     /**
@@ -106,6 +110,45 @@ public class JSONString extends JSONValue<String> {
      */
     @Override
     public <T> T map(Class<T> cls) {
+        if ( cls == String.class) {
+            return (T)value;
+        }
+        try {
+            Constructor<T> c = cls.getConstructor(value.getClass());
+            return c.newInstance(value);
+        } catch (NoSuchMethodException ex) {
+//            Logger.getLogger(JSONString.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SecurityException ex) {
+//            Logger.getLogger(JSONString.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+//            Logger.getLogger(JSONString.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+//            Logger.getLogger(JSONString.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IllegalArgumentException ex) {
+//            Logger.getLogger(JSONString.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InvocationTargetException ex) {
+//            Logger.getLogger(JSONString.class.getName()).log(Level.SEVERE, null, ex);
+        }
         return (T) map();
+    }
+
+    @Override
+    public String getString() {
+        return value;
+    }
+
+    @Override
+    public CharSequence getChars() {
+        return value;
+    }
+
+    @Override
+    public ValueType getValueType() {
+        return ValueType.STRING;
+    }
+
+    @Override
+    public JsonValue toJson() {
+        return this;
     }
 }

@@ -1,9 +1,11 @@
 package net.siisise.json;
 
+import javax.json.JsonValue;
+
 /**
  * JSONデータ null
  */
-public class JSONNULL extends JSONValue {
+public class JSONNULL extends JSONValue implements JsonValue {
 
     public JSONNULL() {
 
@@ -34,4 +36,13 @@ public class JSONNULL extends JSONValue {
         return null;
     }
 
+    @Override
+    public ValueType getValueType() {
+        return JsonValue.ValueType.NULL;
+    }
+
+    @Override
+    public JsonValue toJson() {
+        return JsonValue.NULL;
+    }
 }

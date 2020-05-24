@@ -1,6 +1,5 @@
 package net.siisise.json;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import net.siisise.json.map.JSONArrayM;
@@ -12,31 +11,29 @@ import net.siisise.json.map.JSONUUIDM;
 import net.siisise.json.map.JSONValueM;
 
 /**
- * JSON 中間 Java の3形式を捌く.
- * J JSON String
- * M 中間形式
- * O Java Object
- * 
- * JM Parser
- * MJ toString
- * MO JSONReplaceMO
- * OM JSONReplcaeOM, toJSON
- * 
+ * JSON 中間 Java の3形式を捌く. J JSON String M 中間形式 O Java Object
+ *
+ * JM Parser MJ toString MO JSONReplaceMO OM JSONReplcaeOM, toJSON
+ *
  */
 public class JSONMap {
-    
+
     /**
      * 仮置き
      */
     static JSONReplaceMO[] CONVS = {
-            new JSONDateM(),
-            new JSONUUIDM()
-        };
-    static Map<Class,JSONReplaceMO> replaces;
+        new JSONDateM(),
+        new JSONUUIDM()
+    };
     
+    /**
+     * JSON中間形式からJavaオブジェクトに変換する
+     */
+    static Map<Class, JSONReplaceMO> replaces;
+
     static {
         replaces = new HashMap<>();
-        for ( JSONReplaceMO jr : CONVS ) {
+        for (JSONReplaceMO jr : CONVS) {
             replaces.put(jr.targetClass(), jr);
         }
     }
@@ -48,11 +45,10 @@ public class JSONMap {
         new JSONArrayM(),
         new JSONObjectM()
     };
-    
-    Map<Class,JSONReplaceOM> replaceOM;
-    
+
+//    Map<Class,JSONReplaceOM> replaceOM;
     public JSONMap() {
-        replaceOM = new HashMap<>();
+        /*        replaceOM = new HashMap<>();
         JSONReplaceOM m;
         replaceOM.put(Boolean.class, m = new JSONValueM());
         replaceOM.put(JSONValue.class, m);
@@ -61,30 +57,30 @@ public class JSONMap {
         replaceOM.put(ArrayList.class, new JSONArrayM());
         replaceOM.put(Integer.class, m = new JSONNumberM());
         replaceOM.put(Long.class, m);
+         */
     }
 
     /**
-     * 
+     *
      * @param src
-     * @return 
+     * @return
      */
     public JSONValue valueOf(Object src) {
         return valueOf(src, null);
     }
 
     /**
-     * なんでもJSONに変換する。
-     * プリミティブ型、配列、Collection、Object boolean byte short char int long float
-     * double List Map Number null String
-     * Date型など要検討
+     * なんでもJSONに変換する。 プリミティブ型、配列、Collection、Object boolean byte short char int
+     * long float double List Map Number null String Date型など要検討
+     *
      * @param src データ型なんでも
      * @param replacer
      * @return JSONValue
      */
     public JSONValue valueOf(Object src, JSONReplacer replacer) {
-        for ( JSONReplaceOM ps : parsers ) {
-            JSONValue val = (JSONValue)ps.valueOf(src, replacer);
-            if ( val != null ) {
+        for (JSONReplaceOM ps : parsers) {
+            JSONValue val = (JSONValue) ps.valueOf(src, replacer);
+            if (val != null) {
                 return val;
             }
         }

@@ -1,12 +1,17 @@
 package net.siisise.json;
 
 import java.util.Map;
+import javax.json.JsonValue;
 
 /**
  * 基本型
  * @param <T>
  */
-public abstract class JSONValue<T> implements JSON<T> {
+public abstract class JSONValue<T> implements JSON<T>,JsonValue {
+    
+    public static final JSONNULL NULL = new JSONNULL();
+    public static final JSONBoolean TRUE = new JSONBoolean(true);
+    public static final JSONBoolean FALSE = new JSONBoolean(false);
 
     T value;
 
@@ -77,4 +82,10 @@ public abstract class JSONValue<T> implements JSON<T> {
         return o != null && getClass() == o.getClass()
                 && ((value == null && ((JSONValue) o).value == null) || value.equals(((JSONValue) o).value));
     }
+
+    /**
+     * Java API for JSON Processing 系オブジェクトに変換するつもり.
+     * @return 
+     */
+    abstract public JsonValue toJson();
 }

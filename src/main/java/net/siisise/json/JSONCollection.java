@@ -1,7 +1,7 @@
 package net.siisise.json;
 
 import java.util.Set;
-import net.siisise.json.pointer.JSONPointer;
+import javax.json.JsonStructure;
 
 /**
  * JavaのCollection系classと互換性のありそうなJSON要素。
@@ -9,6 +9,7 @@ import net.siisise.json.pointer.JSONPointer;
  * ListとMap、Beanっぽいclassに自動マッピング可能
  * Mapのkey と Arrayのindexを統合してみたもの
  *
+ * Java API for JSON ProcessingのJsonStructure ぐらいのもの、か?
  * @param <T> 全体
  */
 abstract public class JSONCollection<T> extends JSONValue<T> implements Iterable<JSONValue> {
@@ -43,8 +44,9 @@ abstract public class JSONCollection<T> extends JSONValue<T> implements Iterable
      *
      * @param key
      * @param obj
+     * @return 
      */
-    abstract public void put(String key, Object obj);
+    abstract public Object put(String key, Object obj);
 
     /**
      * 要素の削除。
@@ -76,49 +78,6 @@ abstract public class JSONCollection<T> extends JSONValue<T> implements Iterable
      */
     abstract <T> T map(Class... clss);
 
-    public JSONValue get(JSONPointer path) {
-        JSONPointer.ValuePointer vp = path.step(this, false);
-        return vp.val;
-    }
-
-    public void set(JSONPointer path, Object val) {
-        ColKey vp = step(path);
-        vp.coll.set(vp.key, val);
-    }
-
-    /**
-     * JSONPatch の追加機能 Array / Object共通
-     *
-     * @param path
-     * @param val
-     */
-    public void add(JSONPointer path, Object val) {
-        ColKey vp = step(path);
-        vp.coll.add(vp.key, val);
-    }
-
-    public void remove(JSONPointer path) {
-        ColKey vp = step(path);
-        vp.coll.remove(vp.key);
-    }
-
-    public void replace(JSONPointer path, Object val) {
-        ColKey vp = step(path);
-        vp.coll.remove(vp.key);
-        vp.coll.add(vp.key, val);
-    }
-    
-    private static class ColKey {
-        private JSONCollection coll;
-        private String key;
-        
-    }
-    
-    private ColKey step(JSONPointer path) {
-        JSONPointer.ValuePointer vp = path.step(this, true);
-        ColKey kv = new ColKey();
-        kv.coll = (JSONCollection) vp.val;
-        kv.key = vp.path.toDecodeString()[1];
-        return kv;
-    }
+    @Override
+    public abstract JsonStructure toJson();
 }

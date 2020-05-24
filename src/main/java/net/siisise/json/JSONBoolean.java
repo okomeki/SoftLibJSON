@@ -1,9 +1,11 @@
 package net.siisise.json;
 
+import javax.json.JsonValue;
+
 /**
  *
  */
-public class JSONBoolean extends JSONValue<Boolean> {
+public class JSONBoolean extends JSONValue<Boolean> implements JsonValue {
 
     public JSONBoolean(Boolean b) {
         value = b;
@@ -27,6 +29,15 @@ public class JSONBoolean extends JSONValue<Boolean> {
 //            return (T)value;
 //        }
         return (T) value;
+    }
+
+    @Override
+    public ValueType getValueType() {
+        return value ? JsonValue.ValueType.TRUE : JsonValue.ValueType.FALSE;
+    }
+    
+    public JsonValue toJson() {
+        return value ? JsonValue.TRUE : JsonValue.FALSE;
     }
 
 }

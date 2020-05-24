@@ -1,7 +1,7 @@
 package net.siisise.json.pointer;
 
 import java.util.List;
-import net.siisise.json.JSON8259Reg;
+import net.siisise.json.JSON;
 import net.siisise.json.JSONArray;
 import net.siisise.json.JSONCollection;
 import net.siisise.json.JSONValue;
@@ -13,8 +13,9 @@ import net.siisise.json.JSONValue;
 public class JSONPatch {
 
     public String op;
-    public String path;
-    public String from;
+    public JSONPointer path;
+    public JSONPointer from;
+    // StringではなくJSONValueがいい
     public String value;
 
     /**
@@ -25,8 +26,8 @@ public class JSONPatch {
      * @return エラーっぽいときはnull
      */
     public static JSONCollection run(JSONCollection obj, JSONArray patchList) {
-        JSONCollection cp = (JSONCollection) JSON8259Reg.parse(obj.toString());
-        
+        JSONCollection cp = (JSONCollection) JSON.parse(obj.toString());
+
         List<JSONValue> ops = patchList.value();
         for (JSONValue patch : ops) {
             JSONPatch p = (JSONPatch) patch.map(JSONPatch.class);
@@ -58,33 +59,33 @@ public class JSONPatch {
     }
 
     private JSONCollection add(JSONCollection obj) {
-        obj.add(new JSONPointer(path), value);
+        path.add(obj, JSON.parse(value));
         return obj;
     }
 
     private JSONCollection remove(JSONCollection obj) {
-        obj.remove(new JSONPointer(path));
+        path.remove(obj);
         return obj;
     }
 
     private JSONCollection replace(JSONCollection obj) {
-        obj.remove(new JSONPointer(path));
-        obj.add(new JSONPointer(path), value);
+        path.remove(obj);
+        path.add(obj, JSON.parse(value));
         return obj;
     }
 
     private JSONCollection move(JSONCollection obj) {
-        JSONValue v = obj.get(new JSONPointer(from));
-        v = JSON8259Reg.parse(v.toString());
-        obj.remove(new JSONPointer(from));
-        obj.add(new JSONPointer(path), v);
+        JSONValue v = from.get(obj);
+        v = JSON.parse(v.toString());
+        from.remove(obj);
+        path.add(obj, v);
         return obj;
     }
 
     private JSONCollection copy(JSONCollection obj) {
-        JSONValue v = obj.get(new JSONPointer(from));
-        v = JSON8259Reg.parse(v.toString());
-        obj.add(new JSONPointer(path), v);
+        JSONValue v = from.get(obj);
+        v = JSON.parse(v.toString());
+        path.add(obj, v);
         return obj;
     }
 
@@ -95,9 +96,9 @@ public class JSONPatch {
      * @return 成功すればobj 失敗すればnull 未実装なのでExceptionも返る
      */
     private JSONCollection test(JSONCollection obj) {
-        JSONValue val1 = obj.get(new JSONPointer(path));
+        JSONValue val1 = path.get(obj);
         //String txt1 = val1.toString(); // 正規化?
-        JSONValue val2 = JSON8259Reg.parse(value);
+        JSONValue val2 = JSON.parse(value);
         //String txt2 = val2.toString();
         if (!val1.equals(val2)) {
             return null;

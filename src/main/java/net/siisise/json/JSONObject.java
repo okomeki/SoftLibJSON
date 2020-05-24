@@ -11,6 +11,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.json.JsonObject;
+import javax.json.JsonValue;
+import net.siisise.json.jsonp.JSONPObject;
+import net.siisise.json.pointer.JSONPointer;
 
 /**
  * public field のみ対応でいい?
@@ -85,6 +89,8 @@ public class JSONObject extends JSONCollection<Map<String, JSONValue>> {
             return (T) toString();
         } else if (cls.isAssignableFrom(this.getClass())) {
             return (T) this;
+        } else if (cls.isAssignableFrom(JsonObject.class)) {
+            return (T) toJson();
         } else if (Map.class.isAssignableFrom(cls)) { // まだ
             Map map = new HashMap();
             for (String key : value.keySet()) {
@@ -111,31 +117,68 @@ public class JSONObject extends JSONCollection<Map<String, JSONValue>> {
             return obj;
         } catch (NoSuchMethodException ex) {
             Logger.getLogger(JSONObject.class.getName()).log(Level.SEVERE, null, ex);
+            throw new java.lang.UnsupportedOperationException(ex);
         } catch (SecurityException ex) {
             Logger.getLogger(JSONObject.class.getName()).log(Level.SEVERE, null, ex);
+            throw new java.lang.UnsupportedOperationException(ex);
         } catch (InstantiationException ex) {
             Logger.getLogger(JSONObject.class.getName()).log(Level.SEVERE, null, ex);
+            throw new java.lang.UnsupportedOperationException(ex);
         } catch (IllegalAccessException ex) {
             Logger.getLogger(JSONObject.class.getName()).log(Level.SEVERE, null, ex);
+            throw new java.lang.UnsupportedOperationException(ex);
         } catch (IllegalArgumentException ex) {
             Logger.getLogger(JSONObject.class.getName()).log(Level.SEVERE, null, ex);
+            throw new java.lang.UnsupportedOperationException(ex);
         } catch (InvocationTargetException ex) {
             Logger.getLogger(JSONObject.class.getName()).log(Level.SEVERE, null, ex);
+            throw new java.lang.UnsupportedOperationException(ex);
         }
-        throw new java.lang.UnsupportedOperationException("えらー");
+//        throw new java.lang.UnsupportedOperationException("えらー");
+    }
+    
+    @Override
+    public JsonObject toJson() {
+        if ( value.isEmpty() ) {
+            return JsonValue.EMPTY_JSON_OBJECT;
+        } else {
+            JSONPObject obj = new JSONPObject();
+            for ( String name : names ) {
+                obj.put(name, get(name).toJson());
+            }
+            return obj;
+        }
     }
 
     @Override
     public JSONValue get(Object key) {
+        if (key instanceof JSONPointer) {
+            return ((JSONPointer)key).get(this);
+        }
         return value.get((String) key);
     }
 
     @Override
-    public void put(String key, Object value) {
-        this.value.put(key, valueOf(value));
+    public JSONValue put(String key, Object value) {
+        JSONValue v = this.value.put(key, valueOf(value));
         if (!names.contains(key)) {
             names.add(key);
         }
+        return v;
+    }
+    
+    /**
+     * Map系
+     * @param key
+     * @param value
+     * @return 
+     */
+    public JSONValue put(String key, JSONValue value) {
+        JSONValue v = this.value.put(key, value);
+        if (!names.contains(key)) {
+            names.add(key);
+        }
+        return v;
     }
 
     @Override
@@ -281,5 +324,71 @@ public class JSONObject extends JSONCollection<Map<String, JSONValue>> {
     @Override
     public Iterator<JSONValue> iterator() {
         return value.values().iterator();
+    }
+
+    @Override
+    public ValueType getValueType() {
+        return ValueType.OBJECT;
+    }
+
+
+    public JSONArray getJsonArray(String name) {
+        return (JSONArray) get(name);
+    }
+
+
+    public JSONObject getJsonObject(String name) {
+        return (JSONObject)get(name);
+    }
+
+
+    public JSONNumber getJsonNumber(String name) {
+        return (JSONNumber)get(name);
+    }
+
+
+    public JSONString getJsonString(String name) {
+        return (JSONString)get(name);
+    }
+
+
+    public String getString(String name) {
+        JSONValue val = get(name);
+        return (String)val.value();
+    }
+
+
+    public String getString(String name, String def) {
+        JSONValue val = get(name);
+        return ( val == null ) ? def : (String)val.value();
+    }
+
+
+    public int getInt(String name) {
+        return (int) get(name).value();
+    }
+
+
+    public int getInt(String name, int def) {
+        JSONNumber val = (JSONNumber) get(name);
+        return ( val == null ) ? def : (int)val.value();
+    }
+
+
+    public boolean getBoolean(String name) {
+        JSONBoolean bool = (JSONBoolean) get(name);
+        return bool.map();
+    }
+
+
+    public boolean getBoolean(String name, boolean bin) {
+        JSONBoolean bool = (JSONBoolean) get(name);
+        return ( bool == null ) ? bin : bool.map();
+    }
+
+
+    public boolean isNull(String name) {
+        JSONNULL nul = (JSONNULL) get(name);
+        return ( nul != null );
     }
 }
