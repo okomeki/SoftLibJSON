@@ -10,6 +10,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.json.JsonValue;
 import javax.json.stream.JsonGenerator;
+import net.siisise.json.JSON;
 import net.siisise.json.JSONBoolean;
 import net.siisise.json.JSONNumber;
 import net.siisise.json.JSONString;
@@ -117,7 +118,7 @@ public class JSONPGenerator implements JsonGenerator {
 
     @Override
     public JsonGenerator write(String name, JsonValue value) {
-        write(name, JSONValue.valueOf(value));
+        write(name, JSON.valueOf(value));
         return this;
     }
     
@@ -133,49 +134,49 @@ public class JSONPGenerator implements JsonGenerator {
 
     @Override
     public JsonGenerator write(String name, String value) {
-        write(name, new JSONString(value));
+        write(name, (JSONValue)new JSONString(value));
         return this;
     }
 
     @Override
     public JsonGenerator write(String name, BigInteger value) {
-        write(name, new JSONNumber(value));
+        write(name, (JSONValue)new JSONNumber(value));
         return this;
     }
 
     @Override
     public JsonGenerator write(String name, BigDecimal value) {
-        write(name, new JSONNumber(value));
+        write(name, (JSONValue)new JSONNumber(value));
         return this;
     }
 
     @Override
     public JsonGenerator write(String name, int value) {
-        write(name, new JSONNumber(value));
+        write(name, (JSONValue)new JSONNumber(value));
         return this;
     }
 
     @Override
     public JsonGenerator write(String name, long value) {
-        write(name, new JSONNumber(value));
+        write(name, (JSONValue)new JSONNumber(value));
         return this;
     }
 
     @Override
     public JsonGenerator write(String name, double value) {
-        write(name, new JSONNumber(value));
+        write(name, (JSONValue)new JSONNumber(value));
         return this;
     }
 
     @Override
     public JsonGenerator write(String name, boolean value) {
-        write(name, new JSONBoolean(value));
+        write(name, (JSONValue)new JSONBoolean(value));
         return this;
     }
 
     @Override
     public JsonGenerator writeNull(String name) {
-        write(name, JSONValue.NULL);
+        write(name, (JSONValue)JSONValue.NULL);
         return this;
     }
 
@@ -193,7 +194,7 @@ public class JSONPGenerator implements JsonGenerator {
 
     @Override
     public JsonGenerator write(JsonValue value) {
-        write(JSONValue.valueOf(value));
+        write(JSON.valueOf(value));
         return this;
     }
     
@@ -208,49 +209,49 @@ public class JSONPGenerator implements JsonGenerator {
 
     @Override
     public JsonGenerator write(String value) {
-        write(new JSONString(value));
+        write((JSONValue)new JSONString(value));
         return this;
     }
 
     @Override
     public JsonGenerator write(BigDecimal value) {
-        write(new JSONNumber(value));
+        write((JSONValue)new JSONNumber(value));
         return this;
     }
 
     @Override
     public JsonGenerator write(BigInteger value) {
-        write(new JSONNumber(value));
+        write((JSONValue)new JSONNumber(value));
         return this;
     }
 
     @Override
     public JsonGenerator write(int value) {
-        write(new JSONNumber(value));
+        write((JSONValue)new JSONNumber(value));
         return this;
     }
 
     @Override
     public JsonGenerator write(long value) {
-        write(new JSONNumber(value));
+        write((JSONValue)new JSONNumber(value));
         return this;
     }
 
     @Override
     public JsonGenerator write(double value) {
-        write(new JSONNumber(value));
+        write((JSONValue)new JSONNumber(value));
         return this;
     }
 
     @Override
     public JsonGenerator write(boolean value) {
-        write(new JSONBoolean(value));
+        write((JSONValue)new JSONBoolean(value));
         return this;
     }
 
     @Override
     public JsonGenerator writeNull() {
-        write(JSONValue.NULL);
+        write((JSONValue)JSONValue.NULL);
         return this;
     }
 

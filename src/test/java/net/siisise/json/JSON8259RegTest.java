@@ -43,24 +43,24 @@ public class JSON8259RegTest {
         Map<String, List> k = new HashMap<>();
         a.add("ふ\"");
         k.put("ni", a);
-        String js = JSONValue.valueOf(k).toString();
+        String js = JSON.valueOf(k).toString();
         System.out.println(js);
 
         System.out.println(js);
         JSONValue r = JSON8259Reg.parse(js);
         System.out.println(r);
 
-        System.out.println(JSONValue.valueOf(null));
-        System.out.println(JSONValue.valueOf(true));
-        System.out.println(JSONValue.valueOf(false));
-        System.out.println(JSONValue.valueOf(10));
-        System.out.println(JSONValue.valueOf("abc"));
+        System.out.println(JSON.valueOf(null));
+        System.out.println(JSON.valueOf(true));
+        System.out.println(JSON.valueOf(false));
+        System.out.println(JSON.valueOf(10));
+        System.out.println(JSON.valueOf("abc"));
         String[] s = new String[]{"a", "b", "c"};
-        System.out.println(JSONValue.valueOf(s));
+        System.out.println(JSON.valueOf(s));
         int[] n = new int[]{1, 2, 3};
-        System.out.println(JSONValue.valueOf(n));
+        System.out.println(JSON.valueOf(n));
         int[][] d = new int[][]{n, n};
-        System.out.println(JSONValue.valueOf(d));
+        System.out.println(JSON.valueOf(d));
         r = JSON.parse("[\r\n"
                 + "  {\r\n"
                 + "    \"name\": \"Taro\",\r\n"

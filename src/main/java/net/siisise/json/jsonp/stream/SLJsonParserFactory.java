@@ -1,18 +1,14 @@
 package net.siisise.json.jsonp.stream;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.Charset;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.stream.JsonParser;
 import javax.json.stream.JsonParserFactory;
-import net.siisise.io.FileIO;
 import net.siisise.json.JSON;
 import net.siisise.json.JSONValue;
 
@@ -38,13 +34,13 @@ public class SLJsonParserFactory implements JsonParserFactory {
 
     @Override
     public JsonParser createParser(JsonObject jobj) {
-        JSONValue json = JSONValue.valueOf(jobj);
+        JSONValue json = JSON.valueOf(jobj);
         return new SLJsonParser(json);
     }
 
     @Override
     public JsonParser createParser(JsonArray jsonarray) {
-        JSONValue json = JSONValue.valueOf(jsonarray);
+        JSONValue json = JSON.valueOf(jsonarray);
         return new SLJsonParser(json);
     }
 

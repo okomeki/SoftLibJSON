@@ -1,17 +1,13 @@
 package net.siisise.json;
 
 import java.util.Map;
-import javax.json.JsonValue;
 
 /**
  * 基本型
+ * 実装のみImpl相当で使わないようにするかもしれない
  * @param <T>
  */
-public abstract class JSONValue<T> implements JSON<T>,JsonValue {
-    
-    public static final JSONNULL NULL = new JSONNULL();
-    public static final JSONBoolean TRUE = new JSONBoolean(true);
-    public static final JSONBoolean FALSE = new JSONBoolean(false);
+public abstract class JSONValue<T> implements JSON<T> {
 
     T value;
 
@@ -19,7 +15,7 @@ public abstract class JSONValue<T> implements JSON<T>,JsonValue {
     public T value() {
         return value;
     }
-    
+
     @Override
     public String toString() {
         return toString(TAB);
@@ -38,38 +34,10 @@ public abstract class JSONValue<T> implements JSON<T>,JsonValue {
     String tab(String val) {
         return val.replace("\r\n", "\r\n  ");
     }
-    
+
     @Override
     public <E> E map(Map<Class,JSONReplaceMO> mp, Class<E> src ) {
         return map(src);
-    }
-    
-    /**
-     * ParserにstaticでvalueOfを実装してみる
-     * Replacer としてあとでまとめる
-     */
-    static JSONMap PARSERS = new JSONMap();
-
-    /**
-     * 
-     * @param src
-     * @return 
-     */
-    public static JSONValue valueOf(Object src) {
-        return valueOf(src, null);
-    }
-
-    /**
-     * なんでもJSONに変換する。
-     * プリミティブ型、配列、Collection、Object boolean byte short char int long float
-     * double List Map Number null String
-     * Date型など要検討
-     * @param src データ型なんでも
-     * @param replacer
-     * @return JSONValue
-     */
-    public static JSONValue valueOf(Object src, JSONReplacer replacer) {
-        return PARSERS.valueOf(src,replacer);
     }
 
     /**
@@ -80,12 +48,7 @@ public abstract class JSONValue<T> implements JSON<T>,JsonValue {
     @Override
     public boolean equals(Object o) {
         return o != null && getClass() == o.getClass()
-                && ((value == null && ((JSONValue) o).value == null) || value.equals(((JSONValue) o).value));
+                && ((value == null && ((JSONValue) o).value() == null) || value.equals(((JSONValue) o).value()));
     }
 
-    /**
-     * Java API for JSON Processing 系オブジェクトに変換するつもり.
-     * @return 
-     */
-    abstract public JsonValue toJson();
 }

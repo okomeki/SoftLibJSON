@@ -1,6 +1,7 @@
 package net.siisise.json.map;
 
 import java.util.UUID;
+import net.siisise.json.JSON;
 import net.siisise.json.JSONReplaceMO;
 import net.siisise.json.JSONReplaceOM;
 import net.siisise.json.JSONReplacer;
@@ -19,7 +20,7 @@ public class JSONUUIDM implements JSONReplaceMO<UUID>,JSONReplaceOM {
     @Override
     public JSONValue valueOf(Object uuid, JSONReplacer r) {
         if (uuid instanceof UUID) {
-            return JSONValue.valueOf(uuid.toString());
+            return JSON.valueOf(uuid.toString());
         }
         return null;
     }

@@ -7,6 +7,7 @@ import javax.json.JsonNumber;
 import javax.json.JsonObject;
 import javax.json.JsonString;
 import javax.json.JsonValue;
+import net.siisise.json.JSONValue;
 
 /**
  *
@@ -24,7 +25,7 @@ public class JSONPArray extends ArrayList<JsonValue> implements JsonArray {
 
     @Override
     public boolean isNull(int i) {
-        return get(i) == JsonValue.NULL;
+        return get(i) == JsonValue.NULL || get(i) == JSONValue.NULL;
     }
 
     @Override

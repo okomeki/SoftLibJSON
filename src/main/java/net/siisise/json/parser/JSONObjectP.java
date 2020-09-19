@@ -22,7 +22,7 @@ public class JSONObjectP extends ABNFList<JSONValue, JSONMember> {
         JSONObject obj = new JSONObject();
         if ( mlist != null ) {
             for (JSONMember mem : mlist) {
-                obj.set(mem.str.value(), mem.value);
+                obj.setJSON(mem.str.value(), mem.value);
             }
         }
         return obj;

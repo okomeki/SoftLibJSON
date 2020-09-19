@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.siisise.json.JSON;
 import net.siisise.json.JSONReplaceMO;
 import net.siisise.json.JSONReplaceOM;
 import net.siisise.json.JSONReplacer;
@@ -29,7 +30,7 @@ public class JSONDateM implements JSONReplaceMO<Date>,JSONReplaceOM {
         if (obj instanceof Date) {
             SimpleDateFormat format = new SimpleDateFormat(ISO2);
             String s = format.format((Date) obj);
-            return JSONValue.valueOf(s);
+            return JSON.valueOf(s);
         }
         return null;
     }

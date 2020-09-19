@@ -11,9 +11,15 @@ import net.siisise.json.map.JSONUUIDM;
 import net.siisise.json.map.JSONValueM;
 
 /**
- * JSON 中間 Java の3形式を捌く. J JSON String M 中間形式 O Java Object
+ * JSON 中間 Java の3形式を捌く.
+ * J JSON String
+ * M 中間形式
+ * O Java Object
  *
- * JM Parser MJ toString MO JSONReplaceMO OM JSONReplcaeOM, toJSON
+ * JM Parser
+ * MJ toString
+ * MO JSONReplaceMO
+ * OM JSONReplcaeOM, toJSON
  *
  */
 public class JSONMap {
@@ -25,7 +31,7 @@ public class JSONMap {
         new JSONDateM(),
         new JSONUUIDM()
     };
-    
+
     /**
      * JSON中間形式からJavaオブジェクトに変換する
      */

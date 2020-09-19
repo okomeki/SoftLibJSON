@@ -8,7 +8,6 @@ import net.siisise.abnf.ABNF;
 import net.siisise.abnf.AbstractABNF;
 import net.siisise.abnf.parser.ABNFPacketParser;
 import net.siisise.io.FrontPacket;
-import net.siisise.io.Packet;
 
 /**
  * BigDecimal
@@ -52,15 +51,20 @@ public class JSONNumber<T> extends JSONValue<T> implements JsonNumber {
 //        }
         if (cls.isInstance(value)) {
             return (T) value;
-        } else if (cls == Integer.TYPE) {
+        } else if (cls == Integer.TYPE) { // Integerへの変換テストしてないかも
+//        } else if (cls == Integer.TYPE || cls == Integer.class) {
             return (T) Integer.valueOf(map().toString());
         } else if (cls == Long.TYPE) {
+//        } else if (cls == Long.TYPE || cls == Long.class) {
             return (T) Long.valueOf(map().toString());
         } else if (cls == Short.TYPE) {
+//        } else if (cls == Short.TYPE || cls == Short.class) {
             return (T) Short.valueOf(map().toString());
         } else if (cls == Float.TYPE) {
+//        } else if (cls == Float.TYPE || cls == Float.class) {
             return (T) Float.valueOf(map().toString());
         } else if (cls == Double.TYPE) {
+//        } else if (cls == Double.TYPE || cls == Double.class) {
             return (T) Double.valueOf(map().toString());
         } else if (cls == BigInteger.class) {
             return (T) new BigInteger(map().toString());

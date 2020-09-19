@@ -1,6 +1,7 @@
 package net.siisise.json;
 
 import java.util.Map;
+import javax.json.JsonValue;
 
 /**
  * JSON中間形式なinterface.
@@ -27,6 +28,7 @@ public interface JSON<T> {
     T value();
 
     /**
+     * JSONB
      * List,Map,String,Integer,Booleanなど各要素に変換したもの
      *
      * @return
@@ -34,6 +36,7 @@ public interface JSON<T> {
     Object map();
 
     /**
+     * JSONBっぽいもの
      * String, プリミティブ型、プリミティブ対応型ぐらいに変形できるといい
      * @param <E>
      * @param cls
@@ -42,7 +45,7 @@ public interface JSON<T> {
     <E> E map(Class<E> cls);
     
     /**
-     *
+     * JSONB
      * @param <E>
      * @param replaces
      * @param cls
@@ -102,11 +105,17 @@ public interface JSON<T> {
      * @return JSON文字列 
      */
     public static String stringify(Object obj) {
-        return JSONValue.valueOf(obj).toString();
+        return valueOf(obj).toString();
     }
 
+    /**
+     * @deprecated まだかもしれない
+     * @param obj
+     * @param r
+     * @return 
+     */
     public static String stringify(Object obj, JSONReplacer r) {
-        return JSONValue.valueOf(obj).toString();
+        return valueOf(obj).toString();
     }
     /*
     public static String stringify(Object o, String[] replacer) {
@@ -116,4 +125,42 @@ public interface JSON<T> {
     public static String stringify(Object o, Object nu, int tab) {
         throw new java.lang.UnsupportedOperationException();
     }*/
+    
+    public static final JSONNULL NULL = new JSONNULL();
+    public static final JSONBoolean TRUE = new JSONBoolean(true);
+    public static final JSONBoolean FALSE = new JSONBoolean(false);
+
+    /**
+     * ParserにstaticでvalueOfを実装してみる
+     * Replacer としてあとでまとめる
+     */
+    static JSONMap PARSERS = new JSONMap();
+
+    /**
+     * 
+     * @param src
+     * @return 
+     */
+    public static JSONValue valueOf(Object src) {
+        return valueOf(src, null);
+    }
+
+    /**
+     * なんでもJSONに変換する。
+     * プリミティブ型、配列、Collection、Object boolean byte short char int long float
+     * double List Map Number null String
+     * Date型など要検討
+     * @param src データ型なんでも
+     * @param replacer
+     * @return JSONValue
+     */
+    public static JSONValue valueOf(Object src, JSONReplacer replacer) {
+        return PARSERS.valueOf(src, replacer);
+    }
+
+    /**
+     * Java API for JSON Processing 系オブジェクトに変換するつもり.
+     * @return 
+     */
+    public JsonValue toJson();
 }

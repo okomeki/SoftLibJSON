@@ -8,7 +8,7 @@ import javax.json.JsonBuilderFactory;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonValue;
-import net.siisise.json.JSONValue;
+import net.siisise.json.JSON;
 
 /**
  *
@@ -33,7 +33,7 @@ public class JSONPBuilderFactory implements JsonBuilderFactory {
     public JsonObjectBuilder createObjectBuilder(Map<String, Object> object) {
         JsonObjectBuilder ob = createObjectBuilder();
         for (String name : object.keySet()) {
-            ob.add(name, JSONValue.valueOf(object.get(name)).toJson());
+            ob.add(name, JSON.valueOf(object.get(name)).toJson());
         }
         return ob;
     }
@@ -56,7 +56,7 @@ public class JSONPBuilderFactory implements JsonBuilderFactory {
     public JsonArrayBuilder createArrayBuilder(Collection<?> collection) {
         JsonArrayBuilder ab = createArrayBuilder();
         for (Object o : collection) {
-            ab.add(JSONValue.valueOf(o).toJson());
+            ab.add(JSON.valueOf(o).toJson());
         }
         return ab;
     }

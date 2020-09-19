@@ -36,6 +36,7 @@ public class JSONBoolean extends JSONValue<Boolean> implements JsonValue {
         return value ? JsonValue.ValueType.TRUE : JsonValue.ValueType.FALSE;
     }
     
+    @Override
     public JsonValue toJson() {
         return value ? JsonValue.TRUE : JsonValue.FALSE;
     }

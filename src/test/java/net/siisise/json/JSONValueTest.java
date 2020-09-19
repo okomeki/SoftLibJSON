@@ -61,10 +61,10 @@ public class JSONValueTest {
         aa.b = bb;
         aa.lb = new ArrayList();
         aa.lb.add(bb2);
-        JSONValue aajson = JSONValue.valueOf(aa);
+        JSONValue aajson = JSON.valueOf(aa);
         System.out.println(aajson);
         TestA cc = (TestA)aajson.map(TestA.class);
-        aajson = JSONValue.valueOf(cc);
+        aajson = JSON.valueOf(cc);
         System.out.println(aajson);
 //        assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.

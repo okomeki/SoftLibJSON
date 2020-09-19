@@ -11,6 +11,7 @@ import javax.json.JsonStructure;
 import javax.json.JsonValue;
 import net.siisise.abnf.AbstractABNF;
 import net.siisise.io.Packet;
+import net.siisise.json.JSON;
 import net.siisise.json.JSONCollection;
 import net.siisise.json.JSONValue;
 
@@ -41,30 +42,30 @@ public class JSONPointer implements JsonPointer {
         }
     }
 
-    public void add(JSONCollection target, Object value) {
+    public void add(JSONCollection target, JSONValue value) {
         ColKey vp = step(target);
-        vp.coll.add(vp.key, value);
+        vp.coll.addJSON(vp.key, value);
     }
 
-    public void remove(JSONCollection target) {
+    public JSONValue remove(JSONCollection target) {
         ColKey vp = step(target);
-        vp.coll.remove(vp.key);
+        return vp.coll.removeJSON(vp.key);
     }
 
     public JSONValue get(JSONCollection target) {
-        return step(target,false).val;
+        return step((JSONValue)target,false).val;
         //return obj.get(this);
     }
 
     public void set(JSONCollection target, Object value) {
         ColKey vp = step(target);
-        vp.coll.set(vp.key, value);
+        vp.coll.setJSON(vp.key, JSON.valueOf(value));
     }
 
     public void replace(JSONCollection target, Object value) {
         ColKey vp = step(target);
-        vp.coll.remove(vp.key);
-        vp.coll.add(vp.key, value);
+        vp.coll.removeJSON(vp.key);
+        vp.coll.addJSON(vp.key, JSON.valueOf(value));
     }
 
     private static class ColKey {
@@ -228,8 +229,8 @@ public class JSONPointer implements JsonPointer {
     }
 
     static class ValuePointer {
-        public final JSONValue val;
-        public final JSONPointer path;
+        final JSONValue val;
+        final JSONPointer path;
         
         ValuePointer(JSONValue value, JSONPointer p) {
             val = value;
@@ -261,7 +262,7 @@ public class JSONPointer implements JsonPointer {
         } else if (ds.length == 2 && keep) {
             return new ValuePointer(tg, this);
         } else if (tg instanceof JSONCollection) {
-            tg = ((JSONCollection) tg).get(ds[1]);
+            tg = ((JSONCollection) tg).getJSON(ds[1]);
             return sub().step(tg, keep);
         } else {
             throw new java.lang.UnsupportedOperationException();
@@ -274,7 +275,7 @@ public class JSONPointer implements JsonPointer {
      * @return 
      */
     private ColKey step(JSONCollection obj) {
-        JSONPointer.ValuePointer vp = step(obj, true);
+        JSONPointer.ValuePointer vp = step((JSONValue)obj, true);
         ColKey kv = new ColKey();
         kv.coll = (JSONCollection) vp.val;
         kv.key = vp.path.toDecodeString()[1];

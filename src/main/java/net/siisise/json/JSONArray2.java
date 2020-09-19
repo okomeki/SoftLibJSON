@@ -7,30 +7,26 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.json.JsonArray;
-import javax.json.JsonNumber;
 import javax.json.JsonValue;
+import static net.siisise.json.JSONArray.COLL;
 import net.siisise.json.jsonp.JSONPArray;
 import net.siisise.json.pointer.JSONPointer;
 
 /**
- * 配列またはList。
- * 数字をKeyとした疑似Mapとして操作できる
  *
- * @see javax.json.JsonArray
  */
-public class JSONArray extends JSONValue<List<JSONValue>> implements JSONCollection<String,List<JSONValue>> {
+public class JSONArray2 extends JSONValue<List<JSONValue>> implements JSONCollection<String,List<JSONValue>> {
 
-    public JSONArray() {
-        value = new ArrayList<>();
+    public JSONArray2() {
+        value = new ArrayList();
     }
 
-    public JSONArray(Collection list) {
+    public JSONArray2(Collection list) {
         value = new ArrayList<>();
         for (Object val : list) {
             value.add(JSON.valueOf(val));
@@ -41,26 +37,23 @@ public class JSONArray extends JSONValue<List<JSONValue>> implements JSONCollect
     public List<JSONValue> value() {
         return new ArrayList(value);
     }
-
+    
     /**
-     * 要素に変換したもの
-     *
-     * @return
+     * JSON
+     * @return 
      */
     @Override
     public List map() {
         List list = new ArrayList();
-        for (JSONValue val : value) {
-            list.add(val.map());
+        for (JSONValue json : value) {
+            list.add(json.map());
         }
         return list;
     }
 
-    static Class<? extends Collection>[] COLL = new Class[]{
-        ArrayList.class, HashSet.class, LinkedList.class};
-
     /**
      * List または配列にマッピングする.
+     * JSON
      *
      * @param <T> 要素型
      * @param cls 変換対象型
@@ -85,9 +78,7 @@ public class JSONArray extends JSONValue<List<JSONValue>> implements JSONCollect
             return (T) toString();
         } else if (cls.isAssignableFrom(this.getClass())) {
             return (T) this;
-        } else if (cls.isAssignableFrom(List.class)) {
-            
-        } else if (cls.isAssignableFrom(JsonArray.class)) { // List を除く
+        } else if (cls.isAssignableFrom(JsonArray.class)) {
             return (T) toJson();
         }
 
@@ -149,18 +140,6 @@ public class JSONArray extends JSONValue<List<JSONValue>> implements JSONCollect
         throw new UnsupportedOperationException();
     }
 
-    @Override
-    public JsonArray toJson() {
-        JSONPArray ar = new JSONPArray();
-        if (value.isEmpty()) {
-            return JsonValue.EMPTY_JSON_ARRAY;
-        }
-        for (JSONValue val : value) {
-            ar.add(val.toJson());
-        }
-        return ar;
-    }
-
     private <T> T collectionMap(Class<? extends Collection> colCls, Class... clss) {
         Collection col;
 
@@ -191,59 +170,98 @@ public class JSONArray extends JSONValue<List<JSONValue>> implements JSONCollect
         throw new UnsupportedOperationException();
     }
 
+
     /**
-     * JSONValueの配列。
-     *
-     * @return
+     * JSON to Json
+     * @return 
      */
+    @Override
+    public JsonArray toJson() {
+        JSONPArray ar = new JSONPArray();
+        if (value.isEmpty()) {
+            return JsonValue.EMPTY_JSON_ARRAY;
+        }
+        for (JSONValue val : value) {
+            ar.add(val.toJson());
+        }
+        return ar;
+    }
+
+    @Override
+    public int size() {
+        return value.size();
+    }
+
+    @Override
+    public void clear() {
+        value.clear();
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return value.isEmpty();
+    }
+
+//    @Override
     public Object[] toArray() {
         return value.toArray();
     }
 
-    /**
-     * 特定の型に変換された配列
-     *
-     * @param <T>
-     * @param a
-     * @return
-     */
+//    @Override
     public <T> T[] toArray(T[] a) {
-        Class<?> contentType = a.getClass().getComponentType();
-        T[] array;
-        if (a.length != value.size()) {
-            array = (T[]) Array.newInstance(contentType, value.size());
-        } else {
-            array = a;
-        }
-
-        if (contentType == JSONValue.class) {
-            return value.toArray(array);
-        }
-
-        int i = 0;
-        for (JSONValue val : value) {
-            array[i++] = (T) val.map(contentType);
-        }
-        return (T[]) array;
+        return value.toArray(a);
     }
 
-    public void add(Object o) {
-        value.add(JSON.valueOf(o));
+//    @Override
+    public boolean contains(Object o) {
+        return value.contains(JSON.valueOf(o));
     }
-    
-    public void add(JSONValue o) {
-        value.add(JSON.valueOf(o));
+
+    @Override
+    public Iterator<JSONValue> iterator() {
+        return value.iterator();
     }
-    
-    public JSONValue get(int index) {
-        return value.get(index);
+
+//    @Override
+    public boolean add(JSONValue e) {
+        return value.add(JSON.valueOf(e));
+    }
+
+    /**
+     * @param key index または Pointer
+     * @return 
+     */
+    @Override
+    public JSONValue remove(Object key) {
+        if (key instanceof Number) {
+            key = key.toString();
+        } else if (key instanceof JSONPointer) {
+            return ((JSONPointer) key).remove(this);
+        }
+        return value.remove(Integer.parseInt((String) key));
+    }
+
+    /** 万能型 */
+    @Override
+    public JSONValue get(Object key) {
+        if (key instanceof Integer) {
+            return value.get(((Integer) key));
+        } else if (key instanceof Number) {
+            return value.get((Integer) ((Number) key).intValue());
+        } else if (key instanceof String) {
+            return value.get(Integer.parseInt((String) key));
+        } else if (key instanceof JSONPointer) {
+            return ((JSONPointer) key).get(this);
+        }
+        return null;
     }
 
     @Override
     public JSONValue get(String key) {
-        return value.get(Integer.parseInt((String) key));
+        return value.get(Integer.parseInt(key));
     }
 
+    // Collection の変換読み
     @Override
     public JSONValue getJSON(String key) {
         return value.get(Integer.parseInt((String) key));
@@ -255,32 +273,8 @@ public class JSONArray extends JSONValue<List<JSONValue>> implements JSONCollect
     }
 
     @Override
-    public JSONValue get(Object key) {
-        if (key instanceof Integer) {
-            return value.get(((Integer) key));
-        } else if (key instanceof Number) {
-            return value.get((Integer) ((Number) key).intValue());
-        }
-        if (key instanceof String) {
-            return value.get(Integer.parseInt((String) key));
-        }
-        if (key instanceof JSONPointer) {
-            return ((JSONPointer) key).get(this);
-        }
-        return null;
-    }
-
-    /**
-     * Collection要員だったもの
-     * @param key
-     * @param o 
-     */
-    public void set(String key, Object o) {
-        if (key.equals("-")) {
-            value.add(JSON.valueOf(o));
-        } else {
-            value.set(Integer.parseInt(key), JSON.valueOf(o));
-        }
+    public void set(String key, Object obj) {
+        setJSON(key, JSON.valueOf(obj));
     }
 
     @Override
@@ -292,17 +286,10 @@ public class JSONArray extends JSONValue<List<JSONValue>> implements JSONCollect
         }
     }
 
-    /**
-     * Collection要員だったもの
-     * @param key
-     * @param o 
-     */
-    public void add(String key, Object o) {
-        if (key.equals("-")) {
-            value.add(JSON.valueOf(o));
-        } else {
-            value.add(Integer.parseInt(key), JSON.valueOf(o));
-        }
+    @Override
+    public void add(String key, Object obj) {
+        JSONValue v = JSON.valueOf(obj);
+        addJSON(key, v);
     }
 
     @Override
@@ -314,17 +301,9 @@ public class JSONArray extends JSONValue<List<JSONValue>> implements JSONCollect
         }
     }
 
-    /**
-     * Map系
-     * Collection要員だったもの
-     * @param key
-     * @param o
-     * @return 
-     */
-    public JSONValue put(String key, Object o) {
-        JSONValue v = get(key);
-        set(key, o);
-        return v;
+    @Override
+    public Object put(String key, Object obj) {
+        return putJSON(key, JSON.valueOf(obj));
     }
 
     /**
@@ -342,22 +321,7 @@ public class JSONArray extends JSONValue<List<JSONValue>> implements JSONCollect
 
     @Override
     public JSONValue remove(String key) {
-        return value.remove(Integer.parseInt(key));
-    }
-
-    /**
-     * 
-     * Collection要員だったもの
-     * @param key
-     * @return 
-     */
-    public JSONValue remove(Object key) {
-        if (key instanceof Number) {
-            key = key.toString();
-        } else if (key instanceof JSONPointer) {
-            return ((JSONPointer) key).remove(this);
-        }
-        return value.remove(Integer.parseInt((String) key));
+        return removeJSON(key);
     }
 
     @Override
@@ -366,55 +330,8 @@ public class JSONArray extends JSONValue<List<JSONValue>> implements JSONCollect
     }
 
     @Override
-    public String toString(JSONFormat format) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("[");
-        sb.append(format.crlf);
-        for (JSONValue val : value) {
-            if (sb.length() > 3) {
-                sb.append(",");
-                sb.append(format.crlf);
-            }
-            sb.append(format.tab);
-            sb.append(tab(val.toString(format)));
-        }
-        sb.append(format.crlf);
-        sb.append("]");
-        return sb.toString();
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (o instanceof JSONArray) {
-            return value.equals(((JSONArray) o).value);
-        } else {
-            return false;
-        }
-    }
-
-    @Override
-    public int size() {
-        return value.size();
-    }
-
-    @Override
-    public void clear() {
-        value.clear();
-    }
-
-    /**
-     * 疑似Map
-     * Collection要員だったもの
-     *
-     * @return
-     */
-    @Override
     public Set<String> keySet() {
-        Set<String> s = new HashSet();
-        for (int i = 0; i < value.size(); i++) {
-            s.add(Integer.toString(i));
-        }
-        return s;
+        return keySetJSON();
     }
 
     @Override
@@ -426,76 +343,4 @@ public class JSONArray extends JSONValue<List<JSONValue>> implements JSONCollect
         }
         return set;
     }
-
-    @Override
-    public boolean isEmpty() {
-        return value.isEmpty();
-    }
-
-    @Override
-    public Iterator<JSONValue> iterator() {
-        return value.iterator();
-    }
-/*
-    @Override
-    public ValueType getValueType() {
-        return ValueType.ARRAY;
-    }
-
-    public JsonArray asJsonArray() {
-        return super.asJsonArray(); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    public JsonObject getJsonObject(int i) {
-        return (JsonObject) ((JSONCollection) get(i)).toJson();
-    }
-
-    public JsonArray getJsonArray(int i) {
-        return (JsonArray) ((JSONCollection) get(i)).toJson();
-    }
-
-    public JsonNumber getJsonNumber(int i) {
-        return (JsonNumber) get(i);
-    }
-
-    public JsonString getJsonString(int i) {
-        return (JsonString) get(i);
-    }
-
-    public <T extends JsonValue> List<T> getValuesAs(Class<T> type) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-*/
-    public String getString(int i) {
-        return (String) get(i).value();
-    }
-
-    public String getString(int i, String def) {
-        JSONValue val = get(i);
-        return (val == null) ? def : (String) val.value();
-    }
-
-    public int getInt(int index) {
-        return ((JsonNumber) get(index)).intValue();
-    }
-
-    public int getInt(int index, int def) {
-        JSONValue val = get(index);
-        return ( val == null ) ? def : (int)val.map(Integer.class);
-    }
-
-    public boolean getBoolean(int i) {
-        return ((JSONBoolean) get(i)).map();
-    }
-
-    public boolean getBoolean(int i, boolean bln) {
-        JSONValue val = get(i);
-        return val == null ? bln : ((JSONBoolean) val).map();
-    }
-
-    public boolean isNull(int i) {
-        JSONValue val = get(i);
-        return val instanceof JSONNULL;
-    }
-
 }
