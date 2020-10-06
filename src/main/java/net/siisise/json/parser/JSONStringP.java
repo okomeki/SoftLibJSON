@@ -19,9 +19,9 @@ public class JSONStringP extends ABNFList<JSONString, Integer> {
     public JSONString parse(List<Integer> val) {
         StringBuilder sb = new StringBuilder();
         if (val != null) {
-            for (Integer ch : val) {
+            val.forEach(ch -> {
                 sb.appendCodePoint(ch);
-            }
+            });
         }
         return new JSONString(sb.toString());
     }

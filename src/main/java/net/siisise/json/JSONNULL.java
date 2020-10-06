@@ -7,6 +7,13 @@ import javax.json.JsonValue;
  */
 public class JSONNULL extends JSONValue implements JsonValue {
 
+    /**
+     * NULLの実体はひとつがいい。
+     * しんぐるなんとか。
+     * Javaのprimitive classの定義は各クラスにあるのでJSONで定義ではなくここ。
+     */
+    public static final JSONNULL NULL = new JSONNULL();
+
     public JSONNULL() {
 
     }

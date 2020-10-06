@@ -2,12 +2,13 @@ package net.siisise.json.jsonp;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.json.JsonArray;
 import javax.json.JsonNumber;
 import javax.json.JsonObject;
 import javax.json.JsonString;
 import javax.json.JsonValue;
-import net.siisise.json.JSONValue;
+import net.siisise.json.JSONNULL;
 
 /**
  *
@@ -25,7 +26,7 @@ public class JSONPArray extends ArrayList<JsonValue> implements JsonArray {
 
     @Override
     public boolean isNull(int i) {
-        return get(i) == JsonValue.NULL || get(i) == JSONValue.NULL;
+        return get(i) == JsonValue.NULL || get(i) == JSONNULL.NULL;
     }
 
     @Override
@@ -82,13 +83,20 @@ public class JSONPArray extends ArrayList<JsonValue> implements JsonArray {
         return (val == null) ? bln : val == JsonValue.TRUE; 
     }
 
+    /**
+     *
+     * @param <T>
+     * @param type
+     * @return
+     */
     @Override
     public <T extends JsonValue> List<T> getValuesAs(Class<T> type) {
-        List<T> list = new ArrayList<>();
-        for ( JsonValue val : this ) {
-            list.add((T)val);
-        }
-        return list;
+       // List<T> list = new ArrayList<>();
+        return (List<T>)stream().collect(Collectors.toList());
+        //this.forEach(val -> {
+        //    list.add((T)val);
+        //});
+        //return list;
     }
 
 }

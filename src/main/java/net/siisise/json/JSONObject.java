@@ -17,55 +17,59 @@ import net.siisise.json.jsonp.JSONPObject;
 import net.siisise.json.pointer.JSONPointer;
 
 /**
+ * JSONのObject
+ * JavaのMapに名前順ソートを足したもの。
  * public field のみ対応でいい?
  *
  * @see javax.json.JsonObject
  */
-public class JSONObject extends JSONValue<Map<String,JSONValue>> implements JSONCollection<String,Map<String,JSONValue>> {
+public class JSONObject extends JSONValue<Map<String, JSONValue>> implements JSONCollection<String, Map<String, JSONValue>> {
 
-    private List<String> names = new ArrayList<>();
+    private final List<String> names;
 
     public JSONObject() {
+        this.names = new ArrayList<>();
         value = new HashMap<>();
     }
 
     /**
      * 何も考えなくていい変換。
      * 要素の複製はしないことがあるかもしれない
+     *
      * @param map
      */
     public JSONObject(Map map) {
         this();
-        for (Object key : map.keySet()) {
+        map.keySet().forEach(key -> {
             Object o = map.get(key);
             if (key instanceof String) {
                 put((String) key, o);
             } else {
                 put(key.toString(), o);
             }
-        }
+        });
     }
 
     @Override
     public Map<String, JSONValue> value() {
         Map<String, JSONValue> ret = new HashMap<>();
-        for (String key : value.keySet()) {
+        value.keySet().forEach(key -> {
             ret.put(key, value.get(key));
-        }
+        });
         return ret;
     }
 
     @Override
     public Map<String, Object> map() {
         Map<String, Object> ret = new HashMap<>();
-        for (String key : value.keySet()) {
+        value.keySet().forEach(key -> {
             ret.put(key, value.get(key).map());
-        }
+        });
         return ret;
     }
 
     /**
-     * 
+     *
      * @param <T>
      * @param cls
      * @return
@@ -91,13 +95,14 @@ public class JSONObject extends JSONValue<Map<String,JSONValue>> implements JSON
             return (T) this;
         } else if (Map.class.isAssignableFrom(cls)) { // まだ
             Map map = new HashMap();
-            for (String key : value.keySet()) {
+            value.keySet().forEach(key -> {
+                JSONValue val = value.get(key);
                 if (clss.length == 3) {
-                    map.put(key, value.get(key).map(JSONMap.replaces,clss[2]));
+                    map.put(key, val.map(JSONMap.replaces, clss[2]));
                 } else {
-                    map.put(key, value.get(key).map());
+                    map.put(key, val.map());
                 }
-            }
+            });
             return (T) map;
         } else if (cls.isAssignableFrom(JsonObject.class)) { // なし
             return (T) toJson();
@@ -109,43 +114,28 @@ public class JSONObject extends JSONValue<Map<String,JSONValue>> implements JSON
                 try {
                     Field f = cls.getField(name);
                     Class<?> typ = f.getType();
-                    f.set(obj, value.get(name).map(JSONMap.replaces,typ));
-                } catch ( NoSuchFieldException ex ) { // fieldがないときは捨てるかサブクラスを探すか
+                    f.set(obj, value.get(name).map(JSONMap.replaces, typ));
+                } catch (NoSuchFieldException ex) { // fieldがないときは捨てるかサブクラスを探すか
                     Logger.getLogger(JSONObject.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
             return obj;
-        } catch (NoSuchMethodException ex) {
-            Logger.getLogger(JSONObject.class.getName()).log(Level.SEVERE, null, ex);
-            throw new java.lang.UnsupportedOperationException(ex);
-        } catch (SecurityException ex) {
-            Logger.getLogger(JSONObject.class.getName()).log(Level.SEVERE, null, ex);
-            throw new java.lang.UnsupportedOperationException(ex);
-        } catch (InstantiationException ex) {
-            Logger.getLogger(JSONObject.class.getName()).log(Level.SEVERE, null, ex);
-            throw new java.lang.UnsupportedOperationException(ex);
-        } catch (IllegalAccessException ex) {
-            Logger.getLogger(JSONObject.class.getName()).log(Level.SEVERE, null, ex);
-            throw new java.lang.UnsupportedOperationException(ex);
-        } catch (IllegalArgumentException ex) {
-            Logger.getLogger(JSONObject.class.getName()).log(Level.SEVERE, null, ex);
-            throw new java.lang.UnsupportedOperationException(ex);
-        } catch (InvocationTargetException ex) {
+        } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
             Logger.getLogger(JSONObject.class.getName()).log(Level.SEVERE, null, ex);
             throw new java.lang.UnsupportedOperationException(ex);
         }
 //        throw new java.lang.UnsupportedOperationException("えらー");
     }
-    
+
     @Override
     public JsonObject toJson() {
-        if ( value.isEmpty() ) {
+        if (value.isEmpty()) {
             return JsonValue.EMPTY_JSON_OBJECT;
         } else {
             JSONPObject obj = new JSONPObject();
-            for ( String name : names ) {
+            names.forEach(name -> {
                 obj.put(name, get(name).toJson());
-            }
+            });
             return obj;
         }
     }
@@ -153,16 +143,16 @@ public class JSONObject extends JSONValue<Map<String,JSONValue>> implements JSON
     @Override
     public JSONValue get(Object key) {
         if (key instanceof JSONPointer) {
-            return ((JSONPointer)key).get(this);
+            return ((JSONPointer) key).get(this);
         }
         return value.get((String) key);
     }
-    
+
     @Override
     public JSONValue get(String key) {
         return value.get(key);
     }
-    
+
     @Override
     public JSONValue getJSON(JSONPointer point) {
         return point.get(this);
@@ -181,12 +171,13 @@ public class JSONObject extends JSONValue<Map<String,JSONValue>> implements JSON
         }
         return v;
     }
-    
+
     /**
      * Map系
+     *
      * @param key
      * @param obj
-     * @return 
+     * @return
      */
     @Override
     public JSONValue putJSON(String key, JSONValue obj) {
@@ -217,6 +208,7 @@ public class JSONObject extends JSONValue<Map<String,JSONValue>> implements JSON
         putJSON(key, obj);
     }
 
+    @Override
     public JSONValue remove(Object key) {
         if (names.contains(key)) {
             names.remove(key);
@@ -236,6 +228,11 @@ public class JSONObject extends JSONValue<Map<String,JSONValue>> implements JSON
         }
     }
 
+    /**
+     *
+     * @param key
+     * @return
+     */
     @Override
     public JSONValue removeJSON(String key) {
         if (names.contains(key)) {
@@ -368,6 +365,7 @@ public class JSONObject extends JSONValue<Map<String,JSONValue>> implements JSON
      */
     @Override
     public void clear() {
+        names.clear();
         value.clear();
     }
 
@@ -384,9 +382,9 @@ public class JSONObject extends JSONValue<Map<String,JSONValue>> implements JSON
     public ValueType getValueType() {
         return ValueType.OBJECT;
     }
-    */
+     */
 
-    /*
+ /*
      * JSONP互換.
      * @param name
      * @return 
@@ -394,9 +392,9 @@ public class JSONObject extends JSONValue<Map<String,JSONValue>> implements JSON
     public JSONArray getJsonArray(String name) {
         return (JSONArray) get(name);
     }
-    */
+     */
 
-    /*
+ /*
      * JSONP互換.
      * @param name
      * @return 
@@ -404,9 +402,9 @@ public class JSONObject extends JSONValue<Map<String,JSONValue>> implements JSON
     public JSONObject getJsonObject(String name) {
         return (JSONObject)get(name);
     }
-    */
+     */
 
-    /*
+ /*
      * JSONP互換.
      * @param name
      * @return 
@@ -414,9 +412,9 @@ public class JSONObject extends JSONValue<Map<String,JSONValue>> implements JSON
     public JSONNumber getJsonNumber(String name) {
         return (JSONNumber)get(name);
     }
-    */
+     */
 
-    /*
+ /*
      * JSONP互換.
      * @param name
      * @return 
@@ -424,16 +422,16 @@ public class JSONObject extends JSONValue<Map<String,JSONValue>> implements JSON
     public JSONString getJsonString(String name) {
         return (JSONString)get(name);
     }
-    */
+     */
 
-    /*
+ /*
     public String getString(String name) {
         JSONValue val = get(name);
         return (String)val.value();
     }
-    */
+     */
 
-    /*
+ /*
      * JSONP互換.
      * @param name
      * @param def
@@ -443,9 +441,9 @@ public class JSONObject extends JSONValue<Map<String,JSONValue>> implements JSON
         JSONValue val = get(name);
         return ( val == null ) ? def : (String)val.value();
     }
-    */
+     */
 
-    /*
+ /*
      * JSONP互換.
      * @param name
      * @return 
@@ -453,9 +451,9 @@ public class JSONObject extends JSONValue<Map<String,JSONValue>> implements JSON
     public int getInt(String name) {
         return (int) get(name).value();
     }
-    */
+     */
 
-    /*
+ /*
      * JSONP互換.
      * @param name
      * @param def
@@ -465,9 +463,9 @@ public class JSONObject extends JSONValue<Map<String,JSONValue>> implements JSON
         JSONNumber val = (JSONNumber) get(name);
         return ( val == null ) ? def : (int)val.value();
     }
-    */
+     */
 
-    /*
+ /*
      * JSONP互換.
      * @param name
      * @return 
@@ -476,9 +474,9 @@ public class JSONObject extends JSONValue<Map<String,JSONValue>> implements JSON
         JSONBoolean bool = (JSONBoolean) get(name);
         return bool.map();
     }
-    */
+     */
 
-    /*
+ /*
      * JSONP互換.
      * @param name
      * @param bin
@@ -488,9 +486,9 @@ public class JSONObject extends JSONValue<Map<String,JSONValue>> implements JSON
         JSONBoolean bool = (JSONBoolean) get(name);
         return ( bool == null ) ? bin : bool.map();
     }
-    */
+     */
 
-    /*
+ /*
      * JSONP互換.
      * @param name
      * @return 
@@ -499,6 +497,5 @@ public class JSONObject extends JSONValue<Map<String,JSONValue>> implements JSON
         JSONNULL nul = (JSONNULL) get(name);
         return ( nul != null );
     }
-    */
-    
+     */
 }

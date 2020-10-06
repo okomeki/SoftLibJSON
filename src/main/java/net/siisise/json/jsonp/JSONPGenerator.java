@@ -12,6 +12,7 @@ import javax.json.JsonValue;
 import javax.json.stream.JsonGenerator;
 import net.siisise.json.JSON;
 import net.siisise.json.JSONBoolean;
+import net.siisise.json.JSONNULL;
 import net.siisise.json.JSONNumber;
 import net.siisise.json.JSONString;
 import net.siisise.json.JSONValue;
@@ -20,20 +21,20 @@ import net.siisise.json.JSONValue;
  * タブ未対応
  */
 public class JSONPGenerator implements JsonGenerator {
-    
+
     private final Writer out;
-    
+
     JSONPGenerator up;
     boolean first = true;
-    
+
     String CRLF = "\r\n";
-    
+
     List<String> closeCode = new ArrayList();
 
     JSONPGenerator(Writer writer) {
         out = writer;
     }
-    
+
     JSONPGenerator(JSONPGenerator g, Writer w) {
         up = g;
         out = w;
@@ -46,7 +47,7 @@ public class JSONPGenerator implements JsonGenerator {
             out.write("{");
             closeCode.add("}");
             out.write(CRLF);
-            return new JSONPGenerator(this,out);
+            return new JSONPGenerator(this, out);
         } catch (IOException ex) {
             Logger.getLogger(JSONPGenerator.class.getName()).log(Level.SEVERE, null, ex);
             throw new UnsupportedOperationException();
@@ -60,15 +61,15 @@ public class JSONPGenerator implements JsonGenerator {
             writeKey(name);
             out.write("{");
             out.write(CRLF);
-            return new JSONPGenerator(this,out);
+            return new JSONPGenerator(this, out);
         } catch (IOException ex) {
             Logger.getLogger(JSONPGenerator.class.getName()).log(Level.SEVERE, null, ex);
             throw new UnsupportedOperationException();
         }
     }
-    
+
     void writeSeparator() throws IOException {
-        if ( first ) {
+        if (first) {
             first = false;
         } else {
             out.write(",");
@@ -95,7 +96,7 @@ public class JSONPGenerator implements JsonGenerator {
             writeSeparator();
             out.write("[");
             closeCode.add("]");
-            return new JSONPGenerator(this,out);
+            return new JSONPGenerator(this, out);
         } catch (IOException ex) {
             Logger.getLogger(JSONPGenerator.class.getName()).log(Level.SEVERE, null, ex);
             throw new UnsupportedOperationException();
@@ -109,7 +110,7 @@ public class JSONPGenerator implements JsonGenerator {
             writeKey(name);
             out.write("[");
             closeCode.add("]");
-            return new JSONPGenerator(this,out);
+            return new JSONPGenerator(this, out);
         } catch (IOException ex) {
             Logger.getLogger(JSONPGenerator.class.getName()).log(Level.SEVERE, null, ex);
             throw new UnsupportedOperationException();
@@ -121,7 +122,7 @@ public class JSONPGenerator implements JsonGenerator {
         write(name, JSON.valueOf(value));
         return this;
     }
-    
+
     void write(String name, JSONValue value) {
         try {
             writeSeparator();
@@ -134,49 +135,49 @@ public class JSONPGenerator implements JsonGenerator {
 
     @Override
     public JsonGenerator write(String name, String value) {
-        write(name, (JSONValue)new JSONString(value));
+        write(name, (JSONValue) new JSONString(value));
         return this;
     }
 
     @Override
     public JsonGenerator write(String name, BigInteger value) {
-        write(name, (JSONValue)new JSONNumber(value));
+        write(name, (JSONValue) new JSONNumber(value));
         return this;
     }
 
     @Override
     public JsonGenerator write(String name, BigDecimal value) {
-        write(name, (JSONValue)new JSONNumber(value));
+        write(name, (JSONValue) new JSONNumber(value));
         return this;
     }
 
     @Override
     public JsonGenerator write(String name, int value) {
-        write(name, (JSONValue)new JSONNumber(value));
+        write(name, (JSONValue) new JSONNumber(value));
         return this;
     }
 
     @Override
     public JsonGenerator write(String name, long value) {
-        write(name, (JSONValue)new JSONNumber(value));
+        write(name, (JSONValue) new JSONNumber(value));
         return this;
     }
 
     @Override
     public JsonGenerator write(String name, double value) {
-        write(name, (JSONValue)new JSONNumber(value));
+        write(name, (JSONValue) new JSONNumber(value));
         return this;
     }
 
     @Override
     public JsonGenerator write(String name, boolean value) {
-        write(name, (JSONValue)new JSONBoolean(value));
+        write(name, (JSONValue) (value ? JSONBoolean.TRUE : JSONBoolean.FALSE));
         return this;
     }
 
     @Override
     public JsonGenerator writeNull(String name) {
-        write(name, (JSONValue)JSONValue.NULL);
+        write(name, (JSONValue) JSONNULL.NULL);
         return this;
     }
 
@@ -197,8 +198,8 @@ public class JSONPGenerator implements JsonGenerator {
         write(JSON.valueOf(value));
         return this;
     }
-    
-    void write(JSONValue value ) {
+
+    void write(JSONValue value) {
         try {
             out.write(value.toString());
         } catch (IOException ex) {
@@ -209,49 +210,49 @@ public class JSONPGenerator implements JsonGenerator {
 
     @Override
     public JsonGenerator write(String value) {
-        write((JSONValue)new JSONString(value));
+        write((JSONValue) new JSONString(value));
         return this;
     }
 
     @Override
     public JsonGenerator write(BigDecimal value) {
-        write((JSONValue)new JSONNumber(value));
+        write((JSONValue) new JSONNumber(value));
         return this;
     }
 
     @Override
     public JsonGenerator write(BigInteger value) {
-        write((JSONValue)new JSONNumber(value));
+        write((JSONValue) new JSONNumber(value));
         return this;
     }
 
     @Override
     public JsonGenerator write(int value) {
-        write((JSONValue)new JSONNumber(value));
+        write((JSONValue) new JSONNumber(value));
         return this;
     }
 
     @Override
     public JsonGenerator write(long value) {
-        write((JSONValue)new JSONNumber(value));
+        write((JSONValue) new JSONNumber(value));
         return this;
     }
 
     @Override
     public JsonGenerator write(double value) {
-        write((JSONValue)new JSONNumber(value));
+        write((JSONValue) new JSONNumber(value));
         return this;
     }
 
     @Override
     public JsonGenerator write(boolean value) {
-        write((JSONValue)new JSONBoolean(value));
+        write((JSONValue) new JSONBoolean(value));
         return this;
     }
 
     @Override
     public JsonGenerator writeNull() {
-        write((JSONValue)JSONValue.NULL);
+        write((JSONValue) JSONNULL.NULL);
         return this;
     }
 
@@ -272,5 +273,5 @@ public class JSONPGenerator implements JsonGenerator {
             Logger.getLogger(JSONPGenerator.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
 }

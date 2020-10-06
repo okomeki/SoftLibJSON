@@ -12,7 +12,7 @@ import net.siisise.io.FrontPacket;
 /**
  * BigDecimal
  *
- * @param <T>
+ * @param <T> Number と String も可能かもしれない(未定)
  */
 public class JSONNumber<T> extends JSONValue<T> implements JsonNumber {
 
@@ -44,6 +44,13 @@ public class JSONNumber<T> extends JSONValue<T> implements JsonNumber {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * Number系数値に変換
+     * 文字の場合はutf-16か
+     * @param <T>
+     * @param cls
+     * @return 
+     */
     @Override
     public <T> T map(Class<T> cls) {
 //        if (cls == value.getClass()) {
@@ -51,27 +58,34 @@ public class JSONNumber<T> extends JSONValue<T> implements JsonNumber {
 //        }
         if (cls.isInstance(value)) {
             return (T) value;
-        } else if (cls == Integer.TYPE) { // Integerへの変換テストしてないかも
-//        } else if (cls == Integer.TYPE || cls == Integer.class) {
-            return (T) Integer.valueOf(map().toString());
-        } else if (cls == Long.TYPE) {
-//        } else if (cls == Long.TYPE || cls == Long.class) {
-            return (T) Long.valueOf(map().toString());
-        } else if (cls == Short.TYPE) {
-//        } else if (cls == Short.TYPE || cls == Short.class) {
-            return (T) Short.valueOf(map().toString());
-        } else if (cls == Float.TYPE) {
-//        } else if (cls == Float.TYPE || cls == Float.class) {
-            return (T) Float.valueOf(map().toString());
-        } else if (cls == Double.TYPE) {
-//        } else if (cls == Double.TYPE || cls == Double.class) {
-            return (T) Double.valueOf(map().toString());
+        }
+        Number val;
+        if ( value instanceof String ) {
+            val = map();
+        } else {
+            val = (Number)value;
+        }
+
+        if (cls == Integer.TYPE || cls == Integer.class) {
+            return (T) Integer.valueOf(val.intValue());
+        } else if (cls == Long.TYPE || cls == Long.class) {
+            return (T) Long.valueOf(val.longValue());
+        } else if (cls == Short.TYPE || cls == Short.class) {
+            return (T) Short.valueOf(val.shortValue());
+        } else if (cls == Character.TYPE || cls == Character.class) {
+            return (T) Character.valueOf((char)val.intValue());
+        } else if (cls == Byte.TYPE || cls == Byte.class) {
+            return (T) Byte.valueOf(val.byteValue());
+        } else if (cls == Float.TYPE || cls == Float.class) {
+            return (T) Float.valueOf(val.floatValue());
+        } else if (cls == Double.TYPE || cls == Double.class) {
+            return (T) Double.valueOf(val.doubleValue());
         } else if (cls == BigInteger.class) {
-            return (T) new BigInteger(map().toString());
-        } else if (cls == BigDecimal.class ) {
-            return (T) new BigDecimal(map().toString());
-//        } else if ( cls == String.class ) {
-//            return (T)map().toString();
+            return (T) new BigInteger(val.toString());
+        } else if (cls == BigDecimal.class) {
+            return (T) new BigDecimal(val.toString());
+        } else if ( cls == String.class ) {
+            return (T)value.toString();
         }
 
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -81,7 +95,7 @@ public class JSONNumber<T> extends JSONValue<T> implements JsonNumber {
     public ValueType getValueType() {
         return ValueType.NUMBER;
     }
-    
+
     @Override
     public JsonNumber toJson() {
         return this;
@@ -89,20 +103,20 @@ public class JSONNumber<T> extends JSONValue<T> implements JsonNumber {
     }
 
     ABNFPacketParser x(ABNF bnf) {
-        return new ABNFPacketParser(bnf,JSON8259Reg.REG);
+        return new ABNFPacketParser(bnf, JSON8259Reg.REG);
     }
-    
+
     @Override
     public boolean isIntegral() {
-        if ( value instanceof Integer || value instanceof Long || value instanceof Short || value instanceof BigInteger ) {
+        if (value instanceof Integer || value instanceof Long || value instanceof Short || value instanceof Character || value instanceof Byte || value instanceof BigInteger) {
             return true;
         }
-        if ( value instanceof Float || value instanceof Double || value instanceof BigDecimal ) {
+        if (value instanceof Float || value instanceof Double || value instanceof BigDecimal) {
             return false;
         }
-        if ( value instanceof String ) {
+        if (value instanceof String) {
             ABNF.C<FrontPacket> r = JSON8259Reg.number.find(AbstractABNF.pac((String) value), x(JSON8259Reg.exp), x(JSON8259Reg.frac));
-            if ( r != null ) {
+            if (r != null) {
                 List<FrontPacket> exp = r.get(JSON8259Reg.exp);
                 List<FrontPacket> frag = r.get(JSON8259Reg.frac);
                 return exp == null && frag == null;
@@ -113,7 +127,7 @@ public class JSONNumber<T> extends JSONValue<T> implements JsonNumber {
 
     @Override
     public int intValue() {
-        return map().intValue();
+        return map(Integer.TYPE);
     }
 
     @Override
@@ -123,11 +137,12 @@ public class JSONNumber<T> extends JSONValue<T> implements JsonNumber {
 
     /**
      * 精度落ちがあるかもしれない。
-     * @return 
+     *
+     * @return
      */
     @Override
     public long longValue() {
-        return map().longValue();
+        return map(Long.TYPE);
     }
 
     @Override
@@ -147,7 +162,7 @@ public class JSONNumber<T> extends JSONValue<T> implements JsonNumber {
 
     @Override
     public double doubleValue() {
-        return map().doubleValue();
+        return map(Double.TYPE);
     }
 
     @Override

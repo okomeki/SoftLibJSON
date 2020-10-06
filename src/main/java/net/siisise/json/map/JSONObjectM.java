@@ -21,11 +21,11 @@ public class JSONObjectM implements JSONReplaceOM {
         if (src instanceof Map) {
             if ( replacer != null ) {
                 Map m = (Map)src;
-                for ( Object key : m.keySet()) {
+                m.keySet().forEach(key -> {
                     Object val = m.get(key);
                     val = replacer.replacer((String)key, val);
                     m.put(key, val);
-                }
+                });
                 src = m;
             }
             return new JSONObject((Map) src);

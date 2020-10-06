@@ -121,14 +121,7 @@ public interface JSON<T> {
     public static String stringify(Object o, String[] replacer) {
         return JSONValue.valueOf(o).toString();
     }
-    
-    public static String stringify(Object o, Object nu, int tab) {
-        throw new java.lang.UnsupportedOperationException();
-    }*/
-    
-    public static final JSONNULL NULL = new JSONNULL();
-    public static final JSONBoolean TRUE = new JSONBoolean(true);
-    public static final JSONBoolean FALSE = new JSONBoolean(false);
+    */
 
     /**
      * ParserにstaticでvalueOfを実装してみる
@@ -137,9 +130,10 @@ public interface JSON<T> {
     static JSONMap PARSERS = new JSONMap();
 
     /**
-     * 
-     * @param src
-     * @return 
+     * なんでもJSONに変換する。
+     * プリミティブ型、配列、Collection、Object boolean byte short char int long float double List Map Number null String、
+     * @param src なんでも
+     * @return JSONValue
      */
     public static JSONValue valueOf(Object src) {
         return valueOf(src, null);
@@ -160,7 +154,7 @@ public interface JSON<T> {
 
     /**
      * Java API for JSON Processing 系オブジェクトに変換するつもり.
-     * @return 
+     * @return Java API系 JsonValue
      */
     public JsonValue toJson();
 }

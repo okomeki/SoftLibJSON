@@ -25,12 +25,12 @@ public class JSON8259Reg {
     public static final ABNF TRUE = REG.rule("true", "%x74.72.75.65");
     static final ABNF ws = REG.rule("ws", "*( %x20 / %x09 / %x0A / %x0D )");
 
-    static final ABNF begin_array = REG.rule("begin-array", ws.pl(ABNF.bin(0x5b),ws)); // [
-    static final ABNF begin_object = REG.rule("begin-object", ws.pl(ABNF.bin(0x7b),ws)); // {
-    static final ABNF end_array = REG.rule("end-array", ws.pl(ABNF.bin(0x5D),ws)); // ]
-    static final ABNF end_object = REG.rule("end-object", ws.pl(ABNF.bin(0x7D),ws)); // }
-    static final ABNF name_separator = REG.rule("name-separator", ws.pl(ABNF.bin(0x3A),ws)); // :
-    static final ABNF value_separator = REG.rule("value-separator", ws.pl(ABNF.bin(0x2C),ws)); // ,
+    static final ABNF begin_array = REG.rule("begin-array", ws.pl(ABNF.bin(0x5b), ws)); // [
+    static final ABNF begin_object = REG.rule("begin-object", ws.pl(ABNF.bin(0x7b), ws)); // {
+    static final ABNF end_array = REG.rule("end-array", ws.pl(ABNF.bin(0x5D), ws)); // ]
+    static final ABNF end_object = REG.rule("end-object", ws.pl(ABNF.bin(0x7D), ws)); // }
+    static final ABNF name_separator = REG.rule("name-separator", ws.pl(ABNF.bin(0x3A), ws)); // :
+    static final ABNF value_separator = REG.rule("value-separator", ws.pl(ABNF.bin(0x2C), ws)); // ,
 
     public static final ABNF unescaped = REG.rule("unescaped", "%x20-21 / %x23-5B / %x5D-10FFFF");
     public static final ABNF escape = REG.rule("escape", ABNF.bin(0x5c));
@@ -49,16 +49,16 @@ public class JSON8259Reg {
     public static final ABNF number = REG.rule("number", JSONNumberP.class, minus.c().pl(INT, frac.c(), exp.c()));
     public static final ABNF array = REG.rule("array", JSONArrayP.class, begin_array.pl(REG.ref("value").pl(value_separator.pl(REG.ref("value")).x()).c(), end_array));
     public static final ABNF member = REG.rule("member", JSONMemberP.class, string.pl(name_separator, REG.ref("value")));
-    public static final ABNF object = REG.rule("object", JSONObjectP.class, begin_object.pl(member.pl(value_separator.pl(member).x()).c(),end_object));
+    public static final ABNF object = REG.rule("object", JSONObjectP.class, begin_object.pl(member.pl(value_separator.pl(member).x()).c(), end_object));
     public static final ABNF value = REG.rule("value", JSONValueP.class, FALSE.or(NULL, TRUE, object, array, number, string));
 
-    public static final ABNF JSONtext = REG.rule("JSON-text", JSONtextParser.class, ws.pl(value,ws));
+    public static final ABNF JSONtext = REG.rule("JSON-text", JSONtextParser.class, ws.pl(value, ws));
 
     public static JSONValue parse(String json) {
-        return REG.parse("JSON-text",json);
+        return REG.parse("JSON-text", json);
     }
 
     public static JSONValue parse(byte[] json) {
-        return REG.parse("JSON-text",json);
+        return REG.parse("JSON-text", json);
     }
 }

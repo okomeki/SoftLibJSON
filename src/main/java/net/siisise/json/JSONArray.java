@@ -32,9 +32,9 @@ public class JSONArray extends JSONValue<List<JSONValue>> implements JSONCollect
 
     public JSONArray(Collection list) {
         value = new ArrayList<>();
-        for (Object val : list) {
+        list.forEach(val -> {
             value.add(JSON.valueOf(val));
-        }
+        });
     }
 
     @Override
@@ -50,9 +50,9 @@ public class JSONArray extends JSONValue<List<JSONValue>> implements JSONCollect
     @Override
     public List map() {
         List list = new ArrayList();
-        for (JSONValue val : value) {
+        value.forEach(val -> {
             list.add(val.map());
-        }
+        });
         return list;
     }
 
@@ -171,17 +171,17 @@ public class JSONArray extends JSONValue<List<JSONValue>> implements JSONCollect
                 Class[] clb = new Class[clss.length - 1];
                 System.arraycopy(clss, 1, clb, 0, clb.length);
 
-                for (JSONValue o : value) {
+                value.forEach(o -> {
                     if (o instanceof JSONCollection) {
                         col.add(((JSONCollection) o).map(clb));
                     } else {
                         col.add(o.map(clss[1]));
                     }
-                }
+                });
             } else {
-                for (JSONValue o : value) {
+                value.forEach(o -> {
                     col.add(o);
-                }
+                });
             }
             return (T) col;
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException
@@ -351,6 +351,7 @@ public class JSONArray extends JSONValue<List<JSONValue>> implements JSONCollect
      * @param key
      * @return 
      */
+    @Override
     public JSONValue remove(Object key) {
         if (key instanceof Number) {
             key = key.toString();
@@ -362,7 +363,7 @@ public class JSONArray extends JSONValue<List<JSONValue>> implements JSONCollect
 
     @Override
     public JSONValue removeJSON(String key) {
-        return value.remove(Integer.parseInt((String) key));
+        return value.remove(Integer.parseInt(key));
     }
 
     @Override
@@ -410,11 +411,7 @@ public class JSONArray extends JSONValue<List<JSONValue>> implements JSONCollect
      */
     @Override
     public Set<String> keySet() {
-        Set<String> s = new HashSet();
-        for (int i = 0; i < value.size(); i++) {
-            s.add(Integer.toString(i));
-        }
-        return s;
+        return keySetJSON();
     }
 
     @Override

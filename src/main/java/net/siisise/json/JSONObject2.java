@@ -31,9 +31,9 @@ public class JSONObject2<K extends String> extends JSONValue<Map<K,JSONValue>> i
     @Override
     public Map<String, Object> map() {
         Map<String, Object> ret = new HashMap<>();
-        for (String key : value.keySet()) {
+        value.keySet().forEach(key -> {
             ret.put(key, value.get(key).map());
-        }
+        });
         return ret;
     }
 
@@ -60,13 +60,13 @@ public class JSONObject2<K extends String> extends JSONValue<Map<K,JSONValue>> i
             return (T) toJson();
         } else if (Map.class.isAssignableFrom(cls)) { // まだ
             Map map = new HashMap();
-            for (String key : value.keySet()) {
+            value.keySet().forEach(key -> {
                 if (clss.length == 3) {
                     map.put(key, value.get(key).map(JSONMap.replaces,clss[2]));
                 } else {
                     map.put(key, value.get(key).map());
                 }
-            }
+            });
             return (T) map;
         }
 
@@ -115,6 +115,7 @@ public class JSONObject2<K extends String> extends JSONValue<Map<K,JSONValue>> i
 
     @Override
     public void clear() {
+        names.clear();
         value.clear();
     }
 
@@ -174,7 +175,7 @@ public class JSONObject2<K extends String> extends JSONValue<Map<K,JSONValue>> i
 
     @Override
     public Set<K> keySet() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return value.keySet();
     }
 
     @Override
@@ -209,7 +210,7 @@ public class JSONObject2<K extends String> extends JSONValue<Map<K,JSONValue>> i
 
     @Override
     public Set keySetJSON() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return value.keySet();
     }
 
     @Override

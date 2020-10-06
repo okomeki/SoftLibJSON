@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  *
- * @author okome
  */
 public class JSON8259RegTest {
 

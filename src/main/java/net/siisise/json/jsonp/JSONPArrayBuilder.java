@@ -14,7 +14,7 @@ import net.siisise.json.JSONString;
  */
 public class JSONPArrayBuilder implements JsonArrayBuilder {
 
-    JSONPArray array = new JSONPArray();
+    private JSONPArray array = new JSONPArray();
 
     @Override
     public JsonArrayBuilder add(JsonValue val) {

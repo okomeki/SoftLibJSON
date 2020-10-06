@@ -4,8 +4,9 @@ import net.siisise.abnf.ABNF;
 import net.siisise.abnf.ABNFReg;
 import net.siisise.abnf.parser.ABNFSelect;
 import net.siisise.io.FrontPacket;
-import net.siisise.io.Packet;
 import net.siisise.json.JSON8259Reg;
+import net.siisise.json.JSONBoolean;
+import net.siisise.json.JSONNULL;
 import net.siisise.json.JSONValue;
 
 /**
@@ -19,17 +20,17 @@ public class JSONValueP extends ABNFSelect<JSONValue> {
 
     @Override
     protected JSONValue other(FrontPacket pac) {
-        Packet p = JSON8259Reg.FALSE.is(pac);
+        FrontPacket p = JSON8259Reg.FALSE.is(pac);
         if (p != null) {
-            return JSONValue.FALSE; //new JSONBoolean(false);
+            return JSONBoolean.FALSE;
         }
         p = JSON8259Reg.NULL.is(pac);
         if (p != null) {
-            return JSONValue.NULL; //new JSONNULL();
+            return JSONNULL.NULL;
         }
         p = JSON8259Reg.TRUE.is(pac);
         if (p != null) {
-            return JSONValue.TRUE; //new JSONBoolean(true);
+            return JSONBoolean.TRUE;
         }
         return null;
     }

@@ -21,9 +21,9 @@ public class JSONObjectP extends ABNFList<JSONValue, JSONMember> {
     public JSONObject parse(List<JSONMember> mlist) {
         JSONObject obj = new JSONObject();
         if ( mlist != null ) {
-            for (JSONMember mem : mlist) {
+            mlist.forEach(mem -> {
                 obj.setJSON(mem.str.value(), mem.value);
-            }
+            });
         }
         return obj;
     }

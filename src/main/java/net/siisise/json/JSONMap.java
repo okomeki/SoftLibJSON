@@ -52,18 +52,7 @@ public class JSONMap {
         new JSONObjectM()
     };
 
-//    Map<Class,JSONReplaceOM> replaceOM;
     public JSONMap() {
-        /*        replaceOM = new HashMap<>();
-        JSONReplaceOM m;
-        replaceOM.put(Boolean.class, m = new JSONValueM());
-        replaceOM.put(JSONValue.class, m);
-        replaceOM.put(String.class, new JSONStringM());
-        replaceOM.put(HashMap.class, new JSONObjectM());
-        replaceOM.put(ArrayList.class, new JSONArrayM());
-        replaceOM.put(Integer.class, m = new JSONNumberM());
-        replaceOM.put(Long.class, m);
-         */
     }
 
     /**

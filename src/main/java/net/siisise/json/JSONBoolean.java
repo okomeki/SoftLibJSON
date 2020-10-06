@@ -6,6 +6,9 @@ import javax.json.JsonValue;
  *
  */
 public class JSONBoolean extends JSONValue<Boolean> implements JsonValue {
+    
+    public static final JSONBoolean TRUE = new JSONBoolean(true);
+    public static final JSONBoolean FALSE = new JSONBoolean(false);
 
     public JSONBoolean(Boolean b) {
         value = b;
@@ -25,9 +28,6 @@ public class JSONBoolean extends JSONValue<Boolean> implements JsonValue {
      */
     @Override
     public <T> T map(Class<T> cls) {
-//        if ( Boolean.TYPE == cls ) {
-//            return (T)value;
-//        }
         return (T) value;
     }
 

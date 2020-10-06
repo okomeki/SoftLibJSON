@@ -8,7 +8,8 @@ import net.siisise.json.JSONArray;
 import net.siisise.json.JSONValue;
 
 /**
- *
+ * JSON配列をJavaの方へ変換する.
+ * 
  */
 public class JSONArrayP extends ABNFList<JSONArray, JSONValue> {
 

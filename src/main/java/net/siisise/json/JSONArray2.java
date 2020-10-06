@@ -28,9 +28,9 @@ public class JSONArray2 extends JSONValue<List<JSONValue>> implements JSONCollec
 
     public JSONArray2(Collection list) {
         value = new ArrayList<>();
-        for (Object val : list) {
+        list.forEach(val -> {
             value.add(JSON.valueOf(val));
-        }
+        });
     }
 
     @Override
@@ -45,9 +45,9 @@ public class JSONArray2 extends JSONValue<List<JSONValue>> implements JSONCollec
     @Override
     public List map() {
         List list = new ArrayList();
-        for (JSONValue json : value) {
+        value.forEach(json -> {
             list.add(json.map());
-        }
+        });
         return list;
     }
 
@@ -150,13 +150,13 @@ public class JSONArray2 extends JSONValue<List<JSONValue>> implements JSONCollec
                 Class[] clb = new Class[clss.length - 1];
                 System.arraycopy(clss, 1, clb, 0, clb.length);
 
-                for (JSONValue o : value) {
+                value.forEach(o -> {
                     if (o instanceof JSONCollection) {
                         col.add(((JSONCollection) o).map(clb));
                     } else {
                         col.add(o.map(clss[1]));
                     }
-                }
+                });
             } else {
                 for (JSONValue o : value) {
                     col.add(o);
@@ -326,7 +326,7 @@ public class JSONArray2 extends JSONValue<List<JSONValue>> implements JSONCollec
 
     @Override
     public JSONValue removeJSON(String key) {
-        return value.remove(Integer.parseInt((String) key));
+        return value.remove(Integer.parseInt(key));
     }
 
     @Override

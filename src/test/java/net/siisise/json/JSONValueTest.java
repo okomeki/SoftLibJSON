@@ -70,6 +70,19 @@ public class JSONValueTest {
         // TODO review the generated test code and remove the default call to fail.
 //        fail("The test case is a prototype.");
     }
+    
+    @Test
+    public void testMap() {
+        JSONValue intNumber = JSON.valueOf(1);
+        JSONValue longNumber = JSON.valueOf(1l);
+        JSONValue doubleNumber = JSON.valueOf(1.1d);
+        intNumber.map(Long.class);
+        intNumber.map(Long.TYPE);
+        longNumber.map(Long.class);
+        longNumber.map(Long.TYPE);
+        doubleNumber.map(Long.class);
+        doubleNumber.map(Long.TYPE);
+    }
 
     
 }

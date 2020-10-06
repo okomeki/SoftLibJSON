@@ -30,9 +30,9 @@ public interface JSONCollection<K extends String,T> extends Iterable<JSONValue> 
     
     /**
      * JSON Patch用Array寄りの名称。
-     * put/setは同じ
+     * put/setは戻り値以外同じ
      *
-     * @param key
+     * @param key arrayのindexまたはobjectのname
      * @param obj
      */
     void set(String key, Object obj);
@@ -41,7 +41,7 @@ public interface JSONCollection<K extends String,T> extends Iterable<JSONValue> 
     /**
      * JSONPatch用追加。
      * 
-     * @param key
+     * @param key arrayのindexまたはobjectのname
      * @param obj
      */
     void add(String key, Object obj);
@@ -50,7 +50,7 @@ public interface JSONCollection<K extends String,T> extends Iterable<JSONValue> 
     /**
      * Map寄りのメソッド(Arrayはsetと同)
      *
-     * @param key
+     * @param key arrayのindexまたはobjectのname
      * @param obj
      * @return 
      */
