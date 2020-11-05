@@ -41,13 +41,13 @@ public abstract class JSONValue<T> implements JSON<T> {
      * 
      * @param <E>
      * @param mp
-     * @param t
+     * @param type
      * @return 
      */
     @Override
-    public <E> E typeMap(Map<Class,JSONReplaceMO> mp, Type t ) {
-        if ( t instanceof ParameterizedType ) {
-            ParameterizedType pt = (ParameterizedType) t;
+    public <E> E typeMap(Map<Class,JSONReplaceMO> mp, Type type ) {
+        if ( type instanceof ParameterizedType ) {
+            ParameterizedType pt = (ParameterizedType) type;
             Type[] atas = pt.getActualTypeArguments();
 /*
             for ( Type ata : atas ) {
@@ -65,13 +65,13 @@ public abstract class JSONValue<T> implements JSON<T> {
             if ( conv != null ) {
                 return (E)conv.replace(this, (Class) raw);
             }
-            return typeMap(t);
+            return typeMap(type);
         }
-        JSONReplaceMO conv = mp.get(t);
+        JSONReplaceMO conv = mp.get(type);
         if ( conv != null ) {
-            return (E)conv.replace(this, (Class) t);
+            return (E)conv.replace(this, (Class) type);
         }
-        return typeMap(t);
+        return typeMap(type);
     }
 
     /**

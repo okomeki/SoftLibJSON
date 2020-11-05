@@ -11,6 +11,7 @@ import net.siisise.json.JSONReplaceOM;
 import net.siisise.json.JSONReplacer;
 import net.siisise.json.JSONValue;
 import net.siisise.json2.JSON2ReplaceOM;
+import net.siisise.json2.JSON2Value;
 
 public class JSONDateM implements JSONReplaceMO<Date>,JSONReplaceOM,JSON2ReplaceOM {
 
@@ -37,6 +38,16 @@ public class JSONDateM implements JSONReplaceMO<Date>,JSONReplaceOM,JSON2Replace
     }
 
     @Override
+    public Object value2Of(Object obj, JSONReplacer replacer) {
+        if (obj instanceof Date) {
+            SimpleDateFormat format = new SimpleDateFormat(ISO2);
+            String s = format.format((Date) obj);
+            return s;
+        }
+        return null;
+    }
+
+    @Override
     public Date replace(JSONValue json, Class target) {
         try {
             SimpleDateFormat format;
@@ -56,8 +67,22 @@ public class JSONDateM implements JSONReplaceMO<Date>,JSONReplaceOM,JSON2Replace
     }
 
     @Override
-    public Object value2Of(Object obj, JSONReplacer replacer) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public Date replace(JSON2Value json, Class<Date> target) {
+        try {
+            SimpleDateFormat format;
+            String val = (String) json.map();
+            if (val.length() <= 20) {
+                format = new SimpleDateFormat(ISO2);
+            } else {
+                format = new SimpleDateFormat(ISO);
+            }
+
+            Date d = format.parse(val);
+            return d;
+        } catch (ParseException ex) {
+            Logger.getLogger(JSONDateM.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
 
 }

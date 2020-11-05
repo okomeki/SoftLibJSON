@@ -15,6 +15,7 @@ import javax.json.JsonObject;
 import javax.json.JsonValue;
 import net.siisise.json.JSON;
 import net.siisise.json.JSONFormat;
+import net.siisise.json.JSONMap;
 import net.siisise.json.jsonp.JSONPObject;
 
 /**
@@ -139,7 +140,7 @@ public class JSON2Object<V> extends HashMap<String, V> implements JSON2Collectio
             keySet().forEach(key -> {
                 V val = get(key);
                 if (clss.length == 3) {
-                    map.put(key, JSON2.valueWrap(val).typeMap(clss[2]));
+                    map.put(key, JSON2.valueWrap(val).typeMap(clss[2], JSONMap.replaces));
                 } else {
                     map.put(key, val);
                 }
@@ -175,7 +176,7 @@ public class JSON2Object<V> extends HashMap<String, V> implements JSON2Collectio
                     Type gtype = field.getGenericType();
 //                    System.out.println("obj.generictype.class:" + gt.getClass().getName());
 //                    System.out.println("obj.generictype.typename:" + gt.getTypeName());
-                    field.set(obj, JSON2.valueWrap(get(name)).typeMap(gtype));
+                    field.set(obj, JSON2.valueWrap(get(name)).typeMap(gtype, JSONMap.replaces));
 //                } catch (NoSuchFieldException ex) { // fieldがないときは捨てるかサブクラスを探すか
 //                    Logger.getLogger(JSONObject.class.getName()).log(Level.SEVERE, null, ex);
 //                }

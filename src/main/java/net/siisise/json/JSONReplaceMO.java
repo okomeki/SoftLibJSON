@@ -1,5 +1,7 @@
 package net.siisise.json;
 
+import net.siisise.json2.JSON2Value;
+
 /**
  * JSONから特定の型に変換する.
  * 
@@ -21,4 +23,5 @@ public interface JSONReplaceMO<T> {
      */
     T replace(JSONValue json, Class<T> target);
     
+    T replace(JSON2Value json, Class<T> target);
 }

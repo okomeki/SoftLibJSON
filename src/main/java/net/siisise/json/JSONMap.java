@@ -40,9 +40,9 @@ public class JSONMap {
     /**
      * JSON中間形式からJavaオブジェクトに変換する
      */
-    static Map<Class, JSONReplaceMO> replaces;
+    public static final Map<Class, JSONReplaceMO> replaces;
 
-    static {
+    static { // final用固定にする?
         replaces = new HashMap<>();
         for (JSONReplaceMO jr : CONVS) {
             replaces.put(jr.targetClass(), jr);

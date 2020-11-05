@@ -297,7 +297,7 @@ public class JSON2Array<E> extends ArrayList<E> implements JSON2Collection<E> {
         Class<T> cls = clss[0];
         if (cls == String.class) {
             return typeMap(cls);
-        } else if (cls.isAssignableFrom(this.getClass())) {
+        } else if (cls.isAssignableFrom(this.getClass()) && clss.length == 1) {
             return typeMap(cls);
         } else if (cls.isAssignableFrom(List.class)) {
             return lcMap(clss);

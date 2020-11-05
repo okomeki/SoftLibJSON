@@ -1,6 +1,5 @@
 package net.siisise.json2;
 
-import net.siisise.json.*;
 import net.siisise.abnf.ABNF;
 import net.siisise.abnf.ABNFReg;
 import net.siisise.abnf.parser5234.ABNF5234;
@@ -59,7 +58,7 @@ public class JSON28259Reg {
         return REG.parse("JSON-text", json);
     }
 
-    public static JSONValue parse(byte[] json) {
+    public static JSON2Value parse(byte[] json) {
         return REG.parse("JSON-text", json);
     }
 }
