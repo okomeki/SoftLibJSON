@@ -15,6 +15,11 @@ import net.siisise.json.map.JSONValueM;
  * J JSON String
  * M 中間形式
  * O Java Object
+ * 
+ * JSON2 中間を省略したい形式
+ * J JSON String
+ * M 中間形式 (表面のみ) List/Map/JSON2Number/JSON2String/JSON2Boolean/JSON2NULL 内部 List/Map/Number/Boolean/String/null
+ * O List/Map/Number/Boolean/String/null / JavaObject,配列,Generic
  *
  * JM Parser
  * MJ toString

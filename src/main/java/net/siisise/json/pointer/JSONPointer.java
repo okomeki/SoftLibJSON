@@ -14,6 +14,9 @@ import net.siisise.io.Packet;
 import net.siisise.json.JSON;
 import net.siisise.json.JSONCollection;
 import net.siisise.json.JSONValue;
+import net.siisise.json2.JSON2;
+import net.siisise.json2.JSON2Collection;
+import net.siisise.json2.JSON2Value;
 
 /**
  * RFC 6901 JSON Pointer
@@ -47,8 +50,19 @@ public class JSONPointer implements JsonPointer {
         vp.coll.addJSON(vp.key, value);
     }
 
+    /** wrap いらないかも */
+    public void add(JSON2Collection target, JSON2Value value) {
+        Col2Key vp = step(target);
+        vp.coll.addJSON(vp.key, value);
+    }
+
     public JSONValue remove(JSONCollection target) {
         ColKey vp = step(target);
+        return vp.coll.removeJSON(vp.key);
+    }
+
+    public JSON2Value remove(JSON2Collection target) {
+        Col2Key vp = step(target);
         return vp.coll.removeJSON(vp.key);
     }
 
@@ -57,9 +71,19 @@ public class JSONPointer implements JsonPointer {
         //return obj.get(this);
     }
 
+    public JSON2Value get(JSON2Collection target) {
+        return step((JSON2Value)target,false).val;
+        //return obj.get(this);
+    }
+
     public void set(JSONCollection target, Object value) {
         ColKey vp = step(target);
         vp.coll.setJSON(vp.key, JSON.valueOf(value));
+    }
+
+    public void set(JSON2Collection target, Object value) {
+        Col2Key vp = step(target);
+        vp.coll.setJSON(vp.key, JSON2.valueOf(value));
     }
 
     public void replace(JSONCollection target, Object value) {
@@ -68,8 +92,19 @@ public class JSONPointer implements JsonPointer {
         vp.coll.addJSON(vp.key, JSON.valueOf(value));
     }
 
+    public void replace(JSON2Collection target, Object value) {
+        Col2Key vp = step(target);
+        vp.coll.removeJSON(vp.key);
+        vp.coll.addJSON(vp.key, JSON2.valueOf(value));
+    }
+
     private static class ColKey {
         private JSONCollection coll;
+        private String key;
+    }
+
+    private static class Col2Key {
+        private JSON2Collection coll;
         private String key;
     }
 
@@ -238,6 +273,16 @@ public class JSONPointer implements JsonPointer {
         }
     }
 
+    static class Value2Pointer {
+        final JSON2Value val;
+        final JSONPointer path;
+        
+        Value2Pointer(JSON2Value value, JSONPointer p) {
+            val = value;
+            path = p;
+        }
+    }
+
     public static class JsonValuePointer {
         public final JsonValue val;
         public final JSONPointer path;
@@ -270,6 +315,27 @@ public class JSONPointer implements JsonPointer {
     }
     
     /**
+     * JSONPatch用
+     * @param src
+     * @param keep 1段前までで止める
+     * @return 
+     */
+    public Value2Pointer step(JSON2Value src, boolean keep) {
+        String[] ds = toDecodeString();
+        JSON2Value tg = src;
+        if (ds.length == 1) {
+            return new Value2Pointer(tg, null);
+        } else if (ds.length == 2 && keep) {
+            return new Value2Pointer(tg, this);
+        } else if (tg instanceof JSON2Collection) {
+            tg = ((JSON2Collection) tg).getJSON(ds[1]);
+            return sub().step(tg, keep);
+        } else {
+            throw new java.lang.UnsupportedOperationException();
+        }
+    }
+
+    /**
      * JSON版
      * @param obj
      * @return 
@@ -282,6 +348,19 @@ public class JSONPointer implements JsonPointer {
         return kv;
     }
     
+    /**
+     * JSON版
+     * @param obj
+     * @return 
+     */
+    private Col2Key step(JSON2Collection obj) {
+        JSONPointer.Value2Pointer vp = step((JSON2Value)obj, true);
+        Col2Key kv = new Col2Key();
+        kv.coll = (JSON2Collection) vp.val;
+        kv.key = vp.path.toDecodeString()[1];
+        return kv;
+    }
+
     public JsonValuePointer step(JsonValue src, boolean keep) {
         String[] ds = toDecodeString();
         JsonValue tg = src;

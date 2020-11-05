@@ -3,6 +3,8 @@ package net.siisise.json;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -15,6 +17,7 @@ import javax.json.JsonObject;
 import javax.json.JsonValue;
 import net.siisise.json.jsonp.JSONPObject;
 import net.siisise.json.pointer.JSONPointer;
+import net.siisise.json2.JSON2Object;
 
 /**
  * JSONのObject
@@ -61,7 +64,7 @@ public class JSONObject extends JSONValue<Map<String, JSONValue>> implements JSO
 
     @Override
     public Map<String, Object> map() {
-        Map<String, Object> ret = new HashMap<>();
+        Map<String, Object> ret = new JSON2Object<>();
         value.keySet().forEach(key -> {
             ret.put(key, value.get(key).map());
         });
@@ -69,19 +72,100 @@ public class JSONObject extends JSONValue<Map<String, JSONValue>> implements JSO
     }
 
     /**
+     * Map または Java Objectに変換する。
+     * MapのkeyはString またはStringからマッピング可能な何かの予定.
      *
      * @param <T>
-     * @param cls
+     * @param type
      * @return
      */
     @Override
-    public <T> T map(Class<T> cls) {
-        return map(new Class[]{cls});
+    public <T> T typeMap(Type type) {
+        if (!(type instanceof Class)) {
+            if (type instanceof ParameterizedType) { // まだ Map<A,B> だけ
+                ParameterizedType pt = (ParameterizedType) type;
+                Type raw = pt.getRawType();
+                if ((raw instanceof Class) && (Map.class.isAssignableFrom(((Class) raw)))) {
+                    Type[] args = pt.getActualTypeArguments();
+                    Map map = new HashMap();
+                    value.keySet().forEach(key -> {
+                        JSONString jsonKey = new JSONString(key);
+                        map.put(jsonKey.typeMap(args[0]), value.get(key).typeMap(args[1]));
+                    });
+                    return (T) map;
+                }
+            }
+            throw new UnsupportedOperationException("未実装...:" + type.getClass());
+        } else { // map() からこっちへ持ってくればいい?
+            Class<T> cls = (Class) type;
+            if (cls == String.class) {
+                return (T) toString();
+            } else if (cls.isAssignableFrom(this.getClass())) {
+                return (T) this;
+            } else if (Map.class.isAssignableFrom(cls)) { // GenericのないMapの場合単純なJava型に変換する
+                Map map = new JSON2Object();
+                value.keySet().forEach(key -> {
+                    JSONValue val = value.get(key);
+                    map.put(key, val.map());
+                });
+                return (T) map;
+            } else if (cls.isAssignableFrom(JsonObject.class)) {
+                return (T)toJson();
+            }
+        }
+
+        return (T) map((Class) type);
     }
 
     /**
-     * Collection
+     * JSONObjectではなくMapから変換可能にしておく
      *
+     * @param <R>
+     * @param value
+     * @param type
+     * @return
+     */
+    /*
+    public static <T> T typeValueMap(Map<String,Object> value, Type type) {
+        if (!(type instanceof Class)) {
+            if ( type instanceof ParameterizedType ) { // まだ Map<A,B> だけ
+                ParameterizedType pt = (ParameterizedType)type;
+                Type raw = pt.getRawType();
+                if ( (raw instanceof Class) && (Map.class.isAssignableFrom(((Class)raw)))) {
+                    Type[] args = pt.getActualTypeArguments();
+                    Map map = new HashMap();
+                    value.keySet().forEach(key -> {
+                        JSONString jsonKey = new JSONString(key);
+                        map.put(jsonKey.typeMap(args[0]), value.get(key).typeMap(args[1]));
+                    });
+                    
+                    return map((Class)raw, (Class)args[0],(Class)args[1]);
+                }
+            }
+            throw new UnsupportedOperationException("未実装...:" + type.getClass());
+        } else { // map() からこっちへ持ってくればいい?
+            Class cls = (Class)type;
+            if (cls == String.class) {
+                return (T) toString();
+            } else if (cls.isAssignableFrom(this.getClass())) {
+                return (T) this;
+            } else if ( Map.class.isAssignableFrom(cls)) { // GenericのないMapの場合単純なJava型に変換する
+                Map map = new HashMap();
+                value.keySet().forEach(key -> {
+                    JSONValue val = value.get(key);
+                    map.put(key, val.map());
+                });
+                return (T)map;
+            }
+        }
+
+        return (T) valueMap(value, (Class) type);
+    }
+     */
+    /**
+     * Collection 文字列、JSONObject, JsonObject, Map, Java Object にマップする
+     *
+     * @deprecated #typeMap(Type) へ移行する
      * @param <T>
      * @param clss
      * @return
@@ -90,7 +174,68 @@ public class JSONObject extends JSONValue<Map<String, JSONValue>> implements JSO
     public <T> T map(Class... clss) {
         Class<T> cls = clss[0];
         if (cls == String.class) {
-            return (T) toString();
+            return typeMap(cls);
+        } else if (cls.isAssignableFrom(this.getClass())) {
+            return (T) this;
+        } else if (Map.class.isAssignableFrom(cls)) { // まだ
+            Map map = new HashMap();
+            value.keySet().forEach(key -> {
+                JSONValue val = value.get(key);
+                if (clss.length == 3) {
+                    map.put(key, val.typeMap(JSONMap.replaces, clss[2]));
+                } else {
+                    map.put(key, val.map());
+                }
+            });
+            return (T) map;
+        } else if (cls.isAssignableFrom(JsonObject.class)) { // なし
+            return (T) toJson();
+        }
+
+        try {
+            T obj = cls.getConstructor().newInstance();
+            for (String name : names) {
+//                try {
+                Field field = null; // = cls.getField(name);
+
+                Class c = cls;
+                while (c != null && field == null) {
+                    try {
+                        field = c.getDeclaredField(name);
+                    } catch (NoSuchFieldException e) {
+                        c = c.getSuperclass();
+                    }
+                }
+
+//                    Field field = cls.getDeclaredField(name);
+                Type gtype = field.getGenericType();
+//                    System.out.println("obj.generictype.class:" + gt.getClass().getName());
+//                    System.out.println("obj.generictype.typename:" + gt.getTypeName());
+                field.set(obj, value.get(name).typeMap(JSONMap.replaces, gtype));
+//                } catch (NoSuchFieldException ex) { // fieldがないときは捨てるかサブクラスを探すか
+//                    Logger.getLogger(JSONObject.class.getName()).log(Level.SEVERE, null, ex);
+//                }
+            }
+            return obj;
+        } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+            Logger.getLogger(JSONObject.class.getName()).log(Level.SEVERE, null, ex);
+            throw new java.lang.UnsupportedOperationException(ex);
+        }
+//        throw new java.lang.UnsupportedOperationException("えらー");
+    }
+
+    /**
+     *
+     * @param <T>
+     * @param value
+     * @param clss
+     * @return
+     */
+    /*
+    static <T> T valueMap(Map<String,Object> value, Class... clss) {
+        Class<T> cls = clss[0];
+        if (cls == String.class) {
+            return (T) JSON.valueOf(value).toString();
         } else if (cls.isAssignableFrom(this.getClass())) {
             return (T) this;
         } else if (Map.class.isAssignableFrom(cls)) { // まだ
@@ -111,13 +256,27 @@ public class JSONObject extends JSONValue<Map<String, JSONValue>> implements JSO
         try {
             T obj = cls.getConstructor().newInstance();
             for (String name : names) {
-                try {
-                    Field f = cls.getField(name);
-                    Class<?> typ = f.getType();
-                    f.set(obj, value.get(name).map(JSONMap.replaces, typ));
-                } catch (NoSuchFieldException ex) { // fieldがないときは捨てるかサブクラスを探すか
-                    Logger.getLogger(JSONObject.class.getName()).log(Level.SEVERE, null, ex);
-                }
+//                try {
+                    Field field = null; // = cls.getField(name);
+
+                    Class c = cls;
+                    while ( c != null && field == null ) {
+                        try {
+                            field = c.getDeclaredField(name);
+                        } catch (NoSuchFieldException e) {
+                            c = c.getSuperclass();
+                        }
+                    }
+                    
+                    
+//                    Field field = cls.getDeclaredField(name);
+                    Type gtype = field.getGenericType();
+//                    System.out.println("obj.generictype.class:" + gt.getClass().getName());
+//                    System.out.println("obj.generictype.typename:" + gt.getTypeName());
+                    field.set(obj, value.get(name).typeMap(JSONMap.replaces, gtype));
+//                } catch (NoSuchFieldException ex) { // fieldがないときは捨てるかサブクラスを探すか
+//                    Logger.getLogger(JSONObject.class.getName()).log(Level.SEVERE, null, ex);
+//                }
             }
             return obj;
         } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
@@ -126,7 +285,7 @@ public class JSONObject extends JSONValue<Map<String, JSONValue>> implements JSO
         }
 //        throw new java.lang.UnsupportedOperationException("えらー");
     }
-
+     */
     @Override
     public JsonObject toJson() {
         if (value.isEmpty()) {
@@ -165,11 +324,11 @@ public class JSONObject extends JSONValue<Map<String, JSONValue>> implements JSO
 
     @Override
     public JSONValue put(String key, Object value) {
-        JSONValue v = this.value.put(key, JSON.valueOf(value));
+        JSONValue val = this.value.put(key, JSON.valueOf(value));
         if (!names.contains(key)) {
             names.add(key);
         }
-        return v;
+        return val;
     }
 
     /**
@@ -181,11 +340,11 @@ public class JSONObject extends JSONValue<Map<String, JSONValue>> implements JSO
      */
     @Override
     public JSONValue putJSON(String key, JSONValue obj) {
-        JSONValue v = value.put(key, obj);
+        JSONValue val = value.put(key, obj);
         if (!names.contains(key)) {
             names.add(key);
         }
-        return v;
+        return val;
     }
 
     @Override
@@ -265,42 +424,33 @@ public class JSONObject extends JSONValue<Map<String, JSONValue>> implements JSO
     }
 
     /**
-     * toJSON() に対応するかもしれない
+     * Java Objectの公開フィールドを取得してJSONObjectに変換する toJSON() がある場合には対応する
      *
      * @param obj
      * @return
      */
     public static JSONValue convObject(Object obj) {
-        Class<? extends Object> c = obj.getClass();
+        Class<? extends Object> cls = obj.getClass();
         try {
-            Method toj = c.getMethod("toJSON");
+            Method toj = cls.getMethod("toJSON");
             String json = (String) toj.invoke(obj);
             return JSON.parse(json);
         } catch (NoSuchMethodException ex) {
             // 特にないので標準の変換へ
-        } catch (SecurityException ex) {
-            Logger.getLogger(JSONObject.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            Logger.getLogger(JSONObject.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IllegalArgumentException ex) {
-            Logger.getLogger(JSONObject.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InvocationTargetException ex) {
+        } catch (SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
             Logger.getLogger(JSONObject.class.getName()).log(Level.SEVERE, null, ex);
         }
-        Field[] fs = c.getFields();
-        JSONObject jo = new JSONObject();
-        String name;
-        for (Field f : fs) {
-            name = f.getName();
+        Field[] fields = cls.getFields();
+        JSONObject jsonobj = new JSONObject();
+
+        for (Field field : fields) {
             try {
-                jo.setJSON(name, JSON.valueOf(f.get(obj)));
-            } catch (IllegalArgumentException ex) {
-                Logger.getLogger(JSONObject.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IllegalAccessException ex) {
+                jsonobj.setJSON(field.getName(), JSON.valueOf(field.get(obj)));
+            } catch (IllegalArgumentException | IllegalAccessException ex) {
                 Logger.getLogger(JSONObject.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        return jo;
+        return jsonobj;
     }
 
     /**

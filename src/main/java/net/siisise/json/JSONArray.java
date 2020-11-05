@@ -3,6 +3,8 @@ package net.siisise.json;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -17,6 +19,7 @@ import javax.json.JsonNumber;
 import javax.json.JsonValue;
 import net.siisise.json.jsonp.JSONPArray;
 import net.siisise.json.pointer.JSONPointer;
+import net.siisise.json2.JSON2Array;
 
 /**
  * 配列またはList。
@@ -24,7 +27,7 @@ import net.siisise.json.pointer.JSONPointer;
  *
  * @see javax.json.JsonArray
  */
-public class JSONArray extends JSONValue<List<JSONValue>> implements JSONCollection<String,List<JSONValue>> {
+public class JSONArray extends JSONValue<List<JSONValue>> implements JSONCollection<String, List<JSONValue>> {
 
     public JSONArray() {
         value = new ArrayList<>();
@@ -49,7 +52,7 @@ public class JSONArray extends JSONValue<List<JSONValue>> implements JSONCollect
      */
     @Override
     public List map() {
-        List list = new ArrayList();
+        List list = new JSON2Array();
         value.forEach(val -> {
             list.add(val.map());
         });
@@ -57,50 +60,78 @@ public class JSONArray extends JSONValue<List<JSONValue>> implements JSONCollect
     }
 
     static Class<? extends Collection>[] COLL = new Class[]{
-        ArrayList.class, HashSet.class, LinkedList.class};
+        JSON2Array.class, ArrayList.class, HashSet.class, LinkedList.class};
 
     /**
-     * List または配列にマッピングする.
+     * 型情報からObject型を推測しながらList または配列にマッピングする.
      *
      * @param <T> 要素型
-     * @param cls 変換対象型
+     * @param type class,型情報
      * @return Listまたは配列
      */
     @Override
-    public <T> T map(Class<T> cls) {
-        return map(new Class[]{cls});
-    }
+    public <T> T typeMap(Type type) {
+        if (type instanceof Class) {
+            Class cls = (Class) type;
+            if (cls == String.class) {
+                return (T) toString();
+            } else if (cls.isAssignableFrom(this.getClass())) {
+                return (T) this;
+            } else if (cls.isAssignableFrom(List.class)) {
+                // JsonArrayからList除外
+            } else if (cls.isAssignableFrom(JsonArray.class)) { // List を除く
+                return (T) toJson();
+            } else if (cls.isArray()) { // 配列 要素の型も指定可能, Memberの型ではParameterizedTypeに振り分けられそう?
+                Class componentType = cls.getComponentType();
+                Object array = (Object) Array.newInstance(componentType, value.size());
 
+                int i = 0;
+                for (JSONValue val : value) {
+                    Array.set(array, i++, val.typeMap(componentType));
+                }
+                return (T) array;
+            }
+            return (T) lcMap(cls);
+        } else if (type instanceof ParameterizedType) { // List<A>
+            ParameterizedType pt = (ParameterizedType) type;
+            Type raw = pt.getRawType();
+            Class rawClass = (Class) raw;
+            for (Class<? extends Collection> colCls : COLL) {
+                if (rawClass.isAssignableFrom(colCls)) {
+                    return collectionTypeMap(pt, colCls);
+                }
+            }
+        }
+
+        throw new UnsupportedOperationException("未サポートな型:" + type.getTypeName());
+    }
+    
     /**
-     * List または　配列
+     * List または　配列に変換する.
      *
+     * @deprecated #typeMap(Type)
      * @param <T>
      * @param clss Collection または配列、JSONArray、それ以外は要素の型として扱う
      * @return 配列をObject に入れる罠
      */
-    @Override
     public <T> T map(Class... clss) {
         Class<T> cls = clss[0];
         if (cls == String.class) {
-            return (T) toString();
+            return typeMap(cls);
         } else if (cls.isAssignableFrom(this.getClass())) {
-            return (T) this;
+            return typeMap(cls);
         } else if (cls.isAssignableFrom(List.class)) {
-            
+            return lcMap(clss);
         } else if (cls.isAssignableFrom(JsonArray.class)) { // List を除く
-            return (T) toJson();
+            return typeMap(cls);
+        } else if (cls.isArray()) { // 配列 要素の型も指定可能
+            return typeMap(cls);
         }
-
-        if (cls.isArray()) { // 配列 要素の型も指定可能
-            Class componentType = cls.getComponentType();
-            Object array = (Object) Array.newInstance(componentType, value.size());
-
-            int i = 0;
-            for (JSONValue val : value) {
-                Array.set(array, i++, val.map(componentType));
-            }
-            return (T) array;
-        }
+        return lcMap(clss);
+    }
+   
+    private <T> T lcMap(Class... clss) {
+        Class<T> cls = clss[0];
 
         // Collection 要素の型は?
         for (Class<? extends Collection> colCls : COLL) {
@@ -112,16 +143,17 @@ public class JSONArray extends JSONValue<List<JSONValue>> implements JSONCollect
         int len = value.size();
         Constructor[] cnss = cls.getConstructors();
 //        List<Constructor> cons = new ArrayList<>();
-        
-        for ( Constructor c : cnss ) {
-            if ( c.getParameterCount() != len ) continue;
-            
+
+        for (Constructor c : cnss) {
+            if (c.getParameterCount() != len) {
+                continue;
+            }
+
 //            Class[] pt = c.getParameterTypes();
 //            Object[] params =  new Object[pt.length];
 //            for ( int i = 0; i < pt.length; i++ ) {
 //                params[i] = get(i).map(pt[i]);
 //            }
-            
 //            cons.add(c);
 //        }
 //        if ( cons.size() == 1 ) { // 対象っぽいのがあれば
@@ -129,38 +161,67 @@ public class JSONArray extends JSONValue<List<JSONValue>> implements JSONCollect
             Class[] pt = c.getParameterTypes();
             Object[] params = new Object[pt.length];
             try {
-                for ( int i = 0; i < pt.length; i++ ) {
-                    params[i] = get(i).map(pt[i]);
+                for (int i = 0; i < pt.length; i++) {
+                    params[i] = get(i).typeMap(pt[i]);
                 }
-                return (T)c.newInstance(params);
-            } catch (UnsupportedOperationException ex) {
-                Logger.getLogger(JSONArray.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (InstantiationException ex) {
-                Logger.getLogger(JSONArray.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IllegalAccessException ex) {
-                Logger.getLogger(JSONArray.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IllegalArgumentException ex) {
-                Logger.getLogger(JSONArray.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (InvocationTargetException ex) {
+                return (T) c.newInstance(params);
+            } catch (UnsupportedOperationException | InstantiationException
+                    | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
                 Logger.getLogger(JSONArray.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        
+
         throw new UnsupportedOperationException();
     }
 
     @Override
     public JsonArray toJson() {
-        JSONPArray ar = new JSONPArray();
         if (value.isEmpty()) {
             return JsonValue.EMPTY_JSON_ARRAY;
         }
-        for (JSONValue val : value) {
+        JSONPArray ar = new JSONPArray();
+        value.forEach(val -> {
             ar.add(val.toJson());
-        }
+        });
         return ar;
     }
 
+    /**
+     * 
+     * @param <T>
+     * @param type Generic List&lt;A&gt; のA が取れる
+     * @param colCls List,Setの実装class
+     * @return 
+     */
+    private <T> T collectionTypeMap(ParameterizedType type, Class<? extends Collection> colCls) {
+        Collection col;
+
+        try {
+            col = colCls.getConstructor().newInstance();
+
+            // 要素(単体)の型
+            Type[] argTypes = type.getActualTypeArguments();
+//            Class[] clb = new Class[argTypes.length];
+
+            value.forEach(o -> {
+                col.add(o.typeMap(argTypes[0]));
+            });
+            return (T) col;
+        } catch (NoSuchMethodException | SecurityException | InstantiationException
+                | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+            Logger.getLogger(JSONArray.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     *
+     * @deprecated #collectionTypeMap(ParameterizedMap,Class<? extends Collection>)
+     * @param <T>
+     * @param colCls
+     * @param clss
+     * @return
+     */
     private <T> T collectionMap(Class<? extends Collection> colCls, Class... clss) {
         Collection col;
 
@@ -175,7 +236,7 @@ public class JSONArray extends JSONValue<List<JSONValue>> implements JSONCollect
                     if (o instanceof JSONCollection) {
                         col.add(((JSONCollection) o).map(clb));
                     } else {
-                        col.add(o.map(clss[1]));
+                        col.add(o.typeMap(clss[1]));
                     }
                 });
             } else {
@@ -222,7 +283,7 @@ public class JSONArray extends JSONValue<List<JSONValue>> implements JSONCollect
 
         int i = 0;
         for (JSONValue val : value) {
-            array[i++] = (T) val.map(contentType);
+            array[i++] = (T) val.typeMap(contentType);
         }
         return (T[]) array;
     }
@@ -230,25 +291,25 @@ public class JSONArray extends JSONValue<List<JSONValue>> implements JSONCollect
     public void add(Object o) {
         value.add(JSON.valueOf(o));
     }
-    
+
     public void add(JSONValue o) {
         value.add(JSON.valueOf(o));
     }
-    
+
     public JSONValue get(int index) {
         return value.get(index);
     }
 
     @Override
     public JSONValue get(String key) {
-        return value.get(Integer.parseInt((String) key));
+        return value.get(Integer.parseInt(key));
     }
 
     @Override
     public JSONValue getJSON(String key) {
-        return value.get(Integer.parseInt((String) key));
+        return value.get(Integer.parseInt(key));
     }
-    
+
     @Override
     public JSONValue getJSON(JSONPointer point) {
         return point.get(this);
@@ -272,9 +333,11 @@ public class JSONArray extends JSONValue<List<JSONValue>> implements JSONCollect
 
     /**
      * Collection要員だったもの
+     *
      * @param key
-     * @param o 
+     * @param o
      */
+    @Override
     public void set(String key, Object o) {
         if (key.equals("-")) {
             value.add(JSON.valueOf(o));
@@ -294,8 +357,9 @@ public class JSONArray extends JSONValue<List<JSONValue>> implements JSONCollect
 
     /**
      * Collection要員だったもの
+     *
      * @param key
-     * @param o 
+     * @param o
      */
     public void add(String key, Object o) {
         if (key.equals("-")) {
@@ -317,9 +381,10 @@ public class JSONArray extends JSONValue<List<JSONValue>> implements JSONCollect
     /**
      * Map系
      * Collection要員だったもの
+     *
      * @param key
      * @param o
-     * @return 
+     * @return
      */
     public JSONValue put(String key, Object o) {
         JSONValue v = get(key);
@@ -329,9 +394,10 @@ public class JSONArray extends JSONValue<List<JSONValue>> implements JSONCollect
 
     /**
      * Map系
+     *
      * @param key
      * @param o
-     * @return 
+     * @return
      */
     @Override
     public JSONValue putJSON(String key, JSONValue o) {
@@ -346,10 +412,11 @@ public class JSONArray extends JSONValue<List<JSONValue>> implements JSONCollect
     }
 
     /**
-     * 
+     *
      * Collection要員だったもの
+     *
      * @param key
-     * @return 
+     * @return
      */
     @Override
     public JSONValue remove(Object key) {
@@ -372,14 +439,14 @@ public class JSONArray extends JSONValue<List<JSONValue>> implements JSONCollect
         sb.append("[");
         sb.append(format.crlf);
         for (JSONValue val : value) {
-            if (sb.length() > 3) {
-                sb.append(",");
-                sb.append(format.crlf);
-            }
             sb.append(format.tab);
             sb.append(tab(val.toString(format)));
+            sb.append(",");
+            sb.append(format.crlf);
         }
-        sb.append(format.crlf);
+        if ( !value.isEmpty() ) {
+            sb.replace(sb.length() - format.crlf.length() - 1, sb.length() - format.crlf.length(), "");
+        }
         sb.append("]");
         return sb.toString();
     }
@@ -433,7 +500,8 @@ public class JSONArray extends JSONValue<List<JSONValue>> implements JSONCollect
     public Iterator<JSONValue> iterator() {
         return value.iterator();
     }
-/*
+
+    /*
     @Override
     public ValueType getValueType() {
         return ValueType.ARRAY;
@@ -462,7 +530,7 @@ public class JSONArray extends JSONValue<List<JSONValue>> implements JSONCollect
     public <T extends JsonValue> List<T> getValuesAs(Class<T> type) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-*/
+     */
     public String getString(int i) {
         return (String) get(i).value();
     }
@@ -478,7 +546,7 @@ public class JSONArray extends JSONValue<List<JSONValue>> implements JSONCollect
 
     public int getInt(int index, int def) {
         JSONValue val = get(index);
-        return ( val == null ) ? def : (int)val.map(Integer.class);
+        return (val == null) ? def : (int) val.typeMap(Integer.TYPE);
     }
 
     public boolean getBoolean(int i) {

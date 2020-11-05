@@ -1,5 +1,6 @@
 package net.siisise.json;
 
+import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.List;
@@ -47,18 +48,22 @@ public class JSONNumber<T> extends JSONValue<T> implements JsonNumber {
     /**
      * Number系数値に変換
      * 文字の場合はutf-16か
+     * 
      * @param <T>
-     * @param cls
+     * @param type
      * @return 
      */
     @Override
-    public <T> T map(Class<T> cls) {
-//        if (cls == value.getClass()) {
-//            return (T)value;
-//        }
-        if (cls.isInstance(value)) {
-            return (T) value;
+    public <T> T typeMap(Type type) {
+        if ( !(type instanceof Class) ) {
+            throw new UnsupportedOperationException("まだ");
         }
+        Class<T> cls = (Class)type;
+        
+        if ( cls.isInstance(value)) {
+            return (T)value;
+        }
+    
         Number val;
         if ( value instanceof String ) {
             val = map();
@@ -99,7 +104,6 @@ public class JSONNumber<T> extends JSONValue<T> implements JsonNumber {
     @Override
     public JsonNumber toJson() {
         return this;
-//        return new JsonNumber(map());
     }
 
     ABNFPacketParser x(ABNF bnf) {
@@ -127,12 +131,12 @@ public class JSONNumber<T> extends JSONValue<T> implements JsonNumber {
 
     @Override
     public int intValue() {
-        return map(Integer.TYPE);
+        return typeMap(Integer.TYPE);
     }
 
     @Override
     public int intValueExact() {
-        return map(Integer.class);
+        return typeMap(Integer.class);
     }
 
     /**
@@ -142,31 +146,31 @@ public class JSONNumber<T> extends JSONValue<T> implements JsonNumber {
      */
     @Override
     public long longValue() {
-        return map(Long.TYPE);
+        return typeMap(Long.TYPE);
     }
 
     @Override
     public long longValueExact() {
-        return map(Long.class);
+        return typeMap(Long.class);
     }
 
     @Override
     public BigInteger bigIntegerValue() {
-        return map(BigInteger.class);
+        return typeMap(BigInteger.class);
     }
 
     @Override
     public BigInteger bigIntegerValueExact() {
-        return map(BigInteger.class);
+        return typeMap(BigInteger.class);
     }
 
     @Override
     public double doubleValue() {
-        return map(Double.TYPE);
+        return typeMap(Double.TYPE);
     }
 
     @Override
     public BigDecimal bigDecimalValue() {
-        return map(BigDecimal.class);
+        return typeMap(BigDecimal.class);
     }
 }

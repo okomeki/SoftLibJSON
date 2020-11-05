@@ -1,27 +1,67 @@
-package net.siisise.json;
+package net.siisise.json2;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
-import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.json.JsonString;
 import javax.json.JsonValue;
 import net.siisise.abnf.AbstractABNF;
 import net.siisise.io.Packet;
+import net.siisise.json.JSONFormat;
+import net.siisise.json.JSONString;
 import net.siisise.lang.CodePoint;
 
 /**
- * 文字列.
+ *
  */
-public class JSONString extends JSONValue<String> implements JsonString {
+public class JSON2String implements JSON2Value {
     
-    public JSONString(String value) {
-        this.value = value;
+    private final String value;
+
+    JSON2String(String val) {
+        value = val;
     }
 
     @Override
-    public String map() {
-        return value;
+    public <T> T map() {
+        return (T)value;
+    }
+
+    @Override
+    public <T> T typeMap(Type type) {
+        if ( type == String.class ) {
+            return (T)value;
+        } else if ( type == StringBuilder.class ) {
+            return (T)new StringBuilder(value);
+        } else if ( type == StringBuffer.class ) {
+            return (T)new StringBuffer(value);
+        } else if ( type == JsonString.class || type == JsonValue.class ) {
+            return (T) toJson();
+        }
+        try {
+            Constructor<T> c = ((Class)type).getConstructor(value.getClass());
+            return c.newInstance(value);
+        } catch (NoSuchMethodException ex) {
+            Logger.getLogger(JSON2String.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SecurityException ex) {
+            Logger.getLogger(JSON2String.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            Logger.getLogger(JSON2String.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            Logger.getLogger(JSON2String.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IllegalArgumentException ex) {
+            Logger.getLogger(JSON2String.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InvocationTargetException ex) {
+            Logger.getLogger(JSON2String.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return (T)value;
+    }
+
+    @Override
+    public JsonValue toJson() {
+        return new JSONString(value);
     }
 
     @Override
@@ -29,6 +69,7 @@ public class JSONString extends JSONValue<String> implements JsonString {
         return "\"" + esc(value) + "\"";
     }
     
+    /** JSONString と同じ */
     private static String esc(String val) {
         StringBuilder sb = new StringBuilder();
         Packet pac = AbstractABNF.pac(val);
@@ -85,70 +126,5 @@ public class JSONString extends JSONValue<String> implements JsonString {
             }
         }
         return sb.toString();
-    }
-
-    @Override
-    public <E> E typeMap(Map<Class,JSONReplaceMO> map, Type cls) {
-        JSONReplaceMO conv = map.get(cls);
-        if ( conv != null ) {
-            return (E) conv.replace(this, (Class)cls);
-        }
-        return (E) typeMap(cls);
-    }
-    
-    /**
-     *
-     * @param <T>
-     * @return
-     */
-    @Override
-    public <T> T typeMap(Type type) {
-        if ( type == String.class) {
-            return (T)value;
-        } else if ( type == StringBuilder.class ) {
-            return (T)new StringBuilder(value);
-        } else if ( type == JsonString.class || type == JsonValue.class ) {
-            return (T) toJson();
-        }
-        if ( !(type instanceof Class)) {
-            throw new UnsupportedOperationException("まだない");
-        }
-        try {
-            Constructor<T> c = ((Class)type).getConstructor(value.getClass());
-            return c.newInstance(value);
-        } catch (NoSuchMethodException ex) {
-//            Logger.getLogger(JSONString.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SecurityException ex) {
-//            Logger.getLogger(JSONString.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-//            Logger.getLogger(JSONString.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-//            Logger.getLogger(JSONString.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IllegalArgumentException ex) {
-//            Logger.getLogger(JSONString.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InvocationTargetException ex) {
-//            Logger.getLogger(JSONString.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return (T) map();
-    }
-
-    @Override
-    public String getString() {
-        return value;
-    }
-
-    @Override
-    public CharSequence getChars() {
-        return value;
-    }
-
-    @Override
-    public ValueType getValueType() {
-        return ValueType.STRING;
-    }
-
-    @Override
-    public JsonValue toJson() {
-        return this;
     }
 }

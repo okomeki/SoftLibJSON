@@ -1,5 +1,7 @@
 package net.siisise.json;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.Map;
 
 /**
@@ -35,9 +37,41 @@ public abstract class JSONValue<T> implements JSON<T> {
         return val.replace("\r\n", "\r\n  ");
     }
 
+    /**
+     * 
+     * @param <E>
+     * @param mp
+     * @param t
+     * @return 
+     */
     @Override
-    public <E> E map(Map<Class,JSONReplaceMO> mp, Class<E> src ) {
-        return map(src);
+    public <E> E typeMap(Map<Class,JSONReplaceMO> mp, Type t ) {
+        if ( t instanceof ParameterizedType ) {
+            ParameterizedType pt = (ParameterizedType) t;
+            Type[] atas = pt.getActualTypeArguments();
+/*
+            for ( Type ata : atas ) {
+                System.out.println( " ata.class : "  + ata.getClass().getName() );
+                System.out.println( " ata.typeName : " + ata.getTypeName() );
+                if ( ata instanceof Class ) {
+                    System.out.println( " ata.name : " + ((Class) ata).getName() );
+                }
+            }
+*/
+            Type raw = pt.getRawType();
+            System.out.println("pt.rawtype:" + raw.getTypeName());
+//            System.out.println("pt.ownertype:" + pt.getOwnerType().getTypeName());
+            JSONReplaceMO conv = mp.get(raw);
+            if ( conv != null ) {
+                return (E)conv.replace(this, (Class) raw);
+            }
+            return typeMap(t);
+        }
+        JSONReplaceMO conv = mp.get(t);
+        if ( conv != null ) {
+            return (E)conv.replace(this, (Class) t);
+        }
+        return typeMap(t);
     }
 
     /**

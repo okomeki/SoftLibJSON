@@ -1,5 +1,6 @@
 package net.siisise.json.map;
 
+import java.util.HashMap;
 import java.util.Map;
 import net.siisise.json.JSONObject;
 import net.siisise.json.JSONReplaceOM;
@@ -20,9 +21,10 @@ public class JSONObjectM implements JSONReplaceOM {
     public JSONObject valueOf(Object src, JSONReplacer replacer) {
         if (src instanceof Map) {
             if ( replacer != null ) {
-                Map m = (Map)src;
-                m.keySet().forEach(key -> {
-                    Object val = m.get(key);
+                Map m = new HashMap();
+                Map s = (Map)src;
+                s.keySet().forEach(key -> {
+                    Object val = s.get(key);
                     val = replacer.replacer((String)key, val);
                     m.put(key, val);
                 });

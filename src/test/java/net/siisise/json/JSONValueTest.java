@@ -63,7 +63,8 @@ public class JSONValueTest {
         aa.lb.add(bb2);
         JSONValue aajson = JSON.valueOf(aa);
         System.out.println(aajson);
-        TestA cc = (TestA)aajson.map(TestA.class);
+        TestA cc = (TestA)aajson.typeMap(TestA.class);
+        TestB nb = cc.lb.get(0);
         aajson = JSON.valueOf(cc);
         System.out.println(aajson);
 //        assertEquals(expResult, result);
@@ -76,12 +77,13 @@ public class JSONValueTest {
         JSONValue intNumber = JSON.valueOf(1);
         JSONValue longNumber = JSON.valueOf(1l);
         JSONValue doubleNumber = JSON.valueOf(1.1d);
-        intNumber.map(Long.class);
-        intNumber.map(Long.TYPE);
-        longNumber.map(Long.class);
-        longNumber.map(Long.TYPE);
-        doubleNumber.map(Long.class);
-        doubleNumber.map(Long.TYPE);
+        intNumber.typeMap(Long.class);
+        intNumber.typeMap(Long.TYPE);
+        longNumber.typeMap(Long.class);
+        longNumber.typeMap(Long.TYPE);
+        doubleNumber.typeMap(Long.class);
+        doubleNumber.typeMap(Long.TYPE);
+        
     }
 
     

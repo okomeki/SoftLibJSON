@@ -10,8 +10,9 @@ import net.siisise.json.JSONReplaceMO;
 import net.siisise.json.JSONReplaceOM;
 import net.siisise.json.JSONReplacer;
 import net.siisise.json.JSONValue;
+import net.siisise.json2.JSON2ReplaceOM;
 
-public class JSONDateM implements JSONReplaceMO<Date>,JSONReplaceOM {
+public class JSONDateM implements JSONReplaceMO<Date>,JSONReplaceOM,JSON2ReplaceOM {
 
     static String ISO = "yyyy-MM-dd'T'HH:mm:ss.SSSX";
     static String ISO2 = "yyyy-MM-dd'T'HH:mm:ssX";
@@ -52,6 +53,11 @@ public class JSONDateM implements JSONReplaceMO<Date>,JSONReplaceOM {
             Logger.getLogger(JSONDateM.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
+    }
+
+    @Override
+    public Object value2Of(Object obj, JSONReplacer replacer) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

@@ -1,5 +1,6 @@
 package net.siisise.json;
 
+import java.lang.reflect.Type;
 import javax.json.JsonValue;
 
 /**
@@ -39,10 +40,16 @@ public class JSONNULL extends JSONValue implements JsonValue {
     }
 
     @Override
-    public Object map(Class cls) {
+    public Object typeMap(Type type) {
+        if ( type == JSONValue.class || type == JSONNULL.class ) {
+            return JSONNULL.NULL;
+        }
+        if ( type == JsonValue.class ) {
+            return JsonValue.NULL;
+        }
         return null;
     }
-
+    
     @Override
     public ValueType getValueType() {
         return JsonValue.ValueType.NULL;

@@ -1,5 +1,6 @@
 package net.siisise.json;
 
+import java.lang.reflect.Type;
 import javax.json.JsonValue;
 
 /**
@@ -21,16 +22,16 @@ public class JSONBoolean extends JSONValue<Boolean> implements JsonValue {
 
     /**
      * boolean,Boolean,String ぐらいに対応
-     *
+     * 
      * @param <T>
-     * @param cls
-     * @return
+     * @param type
+     * @return 
      */
     @Override
-    public <T> T map(Class<T> cls) {
+    public <T> T typeMap(Type type) {
         return (T) value;
     }
-
+    
     @Override
     public ValueType getValueType() {
         return value ? JsonValue.ValueType.TRUE : JsonValue.ValueType.FALSE;

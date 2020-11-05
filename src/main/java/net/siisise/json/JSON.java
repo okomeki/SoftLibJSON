@@ -1,5 +1,6 @@
 package net.siisise.json;
 
+import java.lang.reflect.Type;
 import java.util.Map;
 import javax.json.JsonValue;
 
@@ -12,6 +13,12 @@ import javax.json.JsonValue;
  * ECMA-404 2nd Edition
  * 書式の情報は保存しない
  * 
+ * JSON String to JSON Value #parse(JSON Value)
+ * String,Object,List etc to JSON Value #valueOf(Object)
+ * JSON Value to Obj #map(Class...) / #typeMap(Class/Type)
+ * JSON Value to JSON String  toString() / toString(TAB)
+ * JSON Value to JSONP #toJson()
+ * 
  * Java API for JSON Processing (JSR-353),
  * JSON Processing (JSR-374),JSON-B (JSR-367)相当の機能を持っているが、API準拠はしていない。
  *
@@ -21,7 +28,7 @@ import javax.json.JsonValue;
 public interface JSON<T> {
 
     /**
-     * JSON型のもの
+     * 中
      *
      * @return
      */
@@ -36,22 +43,23 @@ public interface JSON<T> {
     Object map();
 
     /**
+     * 型情報からObject型を推測しながらマッピングする.
      * JSONBっぽいもの
      * String, プリミティブ型、プリミティブ対応型ぐらいに変形できるといい
      * @param <E>
-     * @param cls
+     * @param type
      * @return
      */
-    <E> E map(Class<E> cls);
+    <E> E typeMap(Type type);
     
     /**
      * JSONB
      * @param <E>
      * @param replaces
-     * @param cls
+     * @param type
      * @return
      */
-    <E> E map(Map<Class,JSONReplaceMO> replaces, Class<E> cls);
+    <E> E typeMap(Map<Class,JSONReplaceMO> replaces, Type type);
 
     /**
      * JSON テキスト出力
@@ -96,7 +104,7 @@ public interface JSON<T> {
      * @return オブジェクト
      */
     public static <E> E parseToObj(String json, Class<E> target) {
-        return (E)parse(json).map(target);
+        return (E)parse(json).typeMap(target);
     }
     
     /**
@@ -122,12 +130,22 @@ public interface JSON<T> {
         return JSONValue.valueOf(o).toString();
     }
     */
+    
+    /**
+     * Objectのマッピング方法は3種類ぐらい用意する予定.
+     * public field
+     * private field
+     * bean pattern
+     */
+    static final JSONMap PUBLIC = new JSONMap();
+//    static JSONMap PRIVATE = new JSONMap();
+//    static JSONMap BEAN = new JSONMap();
 
     /**
      * ParserにstaticでvalueOfを実装してみる
      * Replacer としてあとでまとめる
      */
-    static JSONMap PARSERS = new JSONMap();
+    static JSONMap PARSERS = PUBLIC;
 
     /**
      * なんでもJSONに変換する。

@@ -1,5 +1,6 @@
 package net.siisise.json;
 
+import java.lang.reflect.Type;
 import java.util.Set;
 import javax.json.JsonStructure;
 import net.siisise.json.pointer.JSONPointer;
@@ -83,12 +84,30 @@ public interface JSONCollection<K extends String,T> extends Iterable<JSONValue> 
      * JSONObjectからMap<String,Example> の場合 Map.class, String.class, Example.class と指定する。
      * Collection以外(class,array)の内部要素は変数型から判定するので別途指定は不要。
      * 省略時、不足する場合はJSONValueから変換しない。
-     *
+     * Typeを使用したtypeMap(Type) がおすすめかもしれない。
+     * 
+     * @deprecated #typeMap(Type) へ移行する
      * @param <T>
      * @param clss
      * @return
      */
     <T> T map(Class... clss);
+    
+    /**
+     * オブジェクトマッピング JSON版.
+     * JSONから指定された型のオブジェクトに変換する.
+     * 何にでも変換できるといい。
+     * プリミティブ型、Object、String、配列、Collection(List, Map, Set)、JSON for Java(JSONP) などを想定。
+     * リフレクションを使用して、対応する型に自動変換できる想定。
+     * String,Boolean,Numberと該当する型、JSONObjectとJava Object、JSONArrayとList,Set,配列の変換、
+     * JSONArrayとJava コンストラクタの対応
+     * その他拡張、などを想定してみたりみなかったり。
+     * 
+     * @param <T> 指定する型.
+     * @param type 型情報. T相当の Class&lt;T&gt; またはType.
+     * @return 変換された情報
+     */
+    <T> T typeMap(Type type);
 
     /**
      * JSONPに変換

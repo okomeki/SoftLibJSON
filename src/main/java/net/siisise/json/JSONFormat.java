@@ -6,8 +6,8 @@ package net.siisise.json;
  */
 public class JSONFormat {
     
-    String crlf;
-    String tab;
+    public String crlf;
+    public String tab;
 
     JSONFormat(String crlf, String tab) {
         this.crlf = crlf;
