@@ -20,13 +20,20 @@ import net.siisise.json.JSONReplaceMO;
 public interface JSON2Value extends JSON2 {
     
     /**
+     * JSON TEXT
+     * @return 
+     */
+    @Override
+    String toString();
+    
+    /**
      * 固定のJava寄りの型に変換する。
      * List,Map,primitive対応データ型など
      * @param <T>
      * @return 
      */
     <T> T map();
-
+    
     /**
      * 可能な限り指定型に変換する。
      * List,Map,配列,Java Object, Genericなどまで可
@@ -64,7 +71,6 @@ public interface JSON2Value extends JSON2 {
         return typeMap(type);
     }
     
-
     /**
      * JSONP系に準拠する.
      * @return 

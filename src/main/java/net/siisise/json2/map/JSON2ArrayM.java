@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import net.siisise.json.JSONReplacer;
+import net.siisise.json2.JSON2;
 import net.siisise.json2.JSON2Array;
 import net.siisise.json2.JSON2ReplaceOM;
 
@@ -33,7 +34,6 @@ public class JSON2ArrayM implements JSON2ReplaceOM {
             if ( replacer != null ) {
                 List n = new JSON2Array();
                 for ( Object o : (Collection)src) {
-                    o = replacer.replacer(null, o);
                     n.add(o);
                 }
                 return n;

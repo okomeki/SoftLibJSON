@@ -9,7 +9,7 @@ import net.siisise.json.JSONValue;
 /**
  *
  */
-public class JSON2NULL implements JSON2Value {
+public class JSON2NULL implements JSON2Value,JsonValue {
     
     public static final JSON2NULL NULL = new JSON2NULL();
 
@@ -26,7 +26,10 @@ public class JSON2NULL implements JSON2Value {
             return JSON2NULL.NULL;
         } else if ( type == JsonValue.class ) {
             return JsonValue.NULL;
+        } else if ( type == JsonValue.ValueType.class ) {
+            return JsonValue.ValueType.NULL;
         }
+        // String Integer Boolean などもnull
         return null;
     }
 
@@ -43,6 +46,11 @@ public class JSON2NULL implements JSON2Value {
     @Override
     public String toString(JSONFormat format) {
         return "null";
+    }
+
+    @Override
+    public ValueType getValueType() {
+        return JsonValue.ValueType.NULL;
     }
     
 }

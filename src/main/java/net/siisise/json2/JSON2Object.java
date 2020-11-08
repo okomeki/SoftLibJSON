@@ -6,9 +6,13 @@ import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.json.JsonObject;
@@ -26,14 +30,15 @@ import net.siisise.json.jsonp.JSONPObject;
  */
 public class JSON2Object<V> extends HashMap<String, V> implements JSON2Collection<V> {
 
-    private List<String> names = new ArrayList();
+    private final List<String> names = new ArrayList();
     
     public JSON2Object() {
     }
     
     public JSON2Object(Map map) {
         map.keySet().forEach(key -> {
-            V o = (V) JSON2.valueMap(map.get(key));
+//            V o = (V) JSON2.valueMap(map.get(key));
+            V o = (V) map.get(key);
             if ( key instanceof String) {
                 put((String)key, o);
             } else {
@@ -44,7 +49,7 @@ public class JSON2Object<V> extends HashMap<String, V> implements JSON2Collectio
     
     @Override
     public JSON2Value getJSON(String key) {
-        return JSON2.valueWrap(get(key));
+        return JSON2.valueOf(get(key));
     }
 
     @Override
@@ -59,14 +64,14 @@ public class JSON2Object<V> extends HashMap<String, V> implements JSON2Collectio
 
     @Override
     public JSON2Value putJSON(String key, JSON2Value obj) {
-        return JSON2.valueWrap(put(key, obj.map()));
+        return JSON2.valueOf(put(key, obj.map()));
     }
 
     @Override
     public JSON2Value removeJSON(String key) {
         if(names.contains(key)) {
             names.remove(key);
-            return JSON2.valueWrap(remove(key));
+            return JSON2.valueOf(remove(key));
         }
         return null;
     }
@@ -97,46 +102,81 @@ public class JSON2Object<V> extends HashMap<String, V> implements JSON2Collectio
     @Override
     public <T> T typeMap(Type type) {
         if (type instanceof ParameterizedType) {
-                ParameterizedType pt = (ParameterizedType)type;
-                Type raw = pt.getRawType();
-                if ( (raw instanceof Class) && (Map.class.isAssignableFrom(((Class)raw)))) {
-                    Type[] args = pt.getActualTypeArguments();
-                    Map map = new HashMap();
-                    keySet().forEach(key -> {
-                        JSON2String jsonKey = new JSON2String(key);
-                        map.put(jsonKey.typeMap(args[0]), JSON.valueOf(get(key)).typeMap(args[1]));
-                    });
-                    return (T)map;
-                }
-
+            return (T)parameterizedMap((ParameterizedType)type);
         } else if ( type instanceof Class ) {
-            Class cls = (Class)type;
-            if (cls == String.class) {
-                return (T) toString();
-            } else if (cls.isAssignableFrom(this.getClass())) {
-                return (T) this;
-            } else if ( Map.class.isAssignableFrom(cls)) { // 表面だけ軽い複製 ToDO: 全部複製?
-                JSON2Object map = new JSON2Object();
-                keySet().forEach(key -> {
-                    V val = get(key);
-                    map.put(key, val);
-                });
-                return (T)map;
-            }
-            return lcMap((Class)type);
+            return (T)classMap((Class)type);
         }
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    /**
+     * Map<String,Object> のような
+     * @param type
+     * @return 
+     */
+    private Object parameterizedMap(ParameterizedType type) {
+        Type raw = type.getRawType();
+        if ( (raw instanceof Class) && (Map.class.isAssignableFrom(((Class)raw)))) {
+            Type[] args = type.getActualTypeArguments();
+            Map map = typeToMap((Class)raw);
+            keySet().forEach(key -> {
+                JSON2String jsonKey = new JSON2String(key);
+                map.put(jsonKey.typeMap(args[0]), JSON.valueOf(get(key)).typeMap(args[1]));
+            });
+            return map;
+        }
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    private Object classMap(Class cls) {
+        if (cls == String.class || cls == CharSequence.class) {
+            return toString();
+        } else if (cls.isAssignableFrom(this.getClass())) {
+            return this;
+        } else if ( Map.class.isAssignableFrom(cls)) { // 表面だけ軽い複製 ToDO: 全部複製?
+            Map map = typeToMap(cls);
+            keySet().forEach(key -> {
+                V val = get(key);
+                map.put(key, val);
+            });
+            return map;
+        }
+        return lcMap(cls);
+    }
+    
+    static Class[] MAPS = {HashMap.class, JSON2Object.class, LinkedHashMap.class, EnumMap.class, Hashtable.class, TreeMap.class};
+    
+    private static Map typeToMap(Class type) {
+        for ( Class cls : MAPS ) {
+            if ( type.isAssignableFrom(cls)) {
+                try {
+                    return (Map) cls.getConstructor().newInstance();
+                } catch (NoSuchMethodException | SecurityException | InstantiationException
+                        | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+                    Logger.getLogger(JSON2Object.class.getName()).log(Level.SEVERE, null, ex);
+                    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                }
+            }
+        }
+        
+        try {
+            return (Map)type.getConstructor().newInstance();
+        } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException
+                | IllegalArgumentException | InvocationTargetException ex) {
+            Logger.getLogger(JSON2Object.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
     
     @Override
     public <T> T map(Class... clss) {
         Class<T> cls = clss[0];
         if ( cls == String.class) {
-            return (T) toString();
+            return (T) classMap(cls);
         } else if (cls.isAssignableFrom(this.getClass())) {
-            return (T) this;
+            return (T) classMap(cls);
         } else if (Map.class.isAssignableFrom(cls)) { // まだ
-            Map map = new HashMap();
+            Map map = typeToMap(cls);
             keySet().forEach(key -> {
                 V val = get(key);
                 if (clss.length == 3) {
@@ -195,16 +235,17 @@ public class JSON2Object<V> extends HashMap<String, V> implements JSON2Collectio
         } else {
             JSONPObject obj = new JSONPObject();
             keySet().forEach(name -> {
-                obj.put(name, JSON2.valueWrap(get(name)).toJson());
+                obj.put(name, JSON2.valueOf(get(name)).toJson());
             });
             return obj;
         }
     }
 
+    @Override
     public String toString() {
-        return toString(TAB);
+        return toString(NOBR);
     }
-
+    
     @Override
     public String toString(JSONFormat format) {
         StringBuilder sb = new StringBuilder();

@@ -12,10 +12,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 import javax.json.JsonArray;
-import javax.json.JsonStructure;
 import javax.json.JsonValue;
-import net.siisise.json.JSON;
 import net.siisise.json.JSONFormat;
 import net.siisise.json.jsonp.JSONPArray;
 
@@ -23,31 +22,38 @@ import net.siisise.json.jsonp.JSONPArray;
  * Listを拡張したJSONArray.
  * 一般のデータを保持してJSONにも変換可能なスタイル.
  * 配列、Listの他ObjectのコンストラクタにもtypeMap可能
+ *
  * @param <E>
  */
 public class JSON2Array<E> extends ArrayList<E> implements JSON2Collection<E> {
-    
+
+    Class<E> def;
+
     public JSON2Array() {
+    }
+
+    public JSON2Array(Class<E> c) {
+        def = c;
     }
 
     public JSON2Array(Collection<E> vals) {
         super(vals);
     }
-    
+
     @Override
     public JSON2Value getJSON(String key) {
-        return JSON2.valueWrap(get(Integer.parseInt(key)));
+        return JSON2.valueOf(get(Integer.parseInt(key)));
     }
-    
+
     @Override
     public void setJSON(String key, JSON2Value obj) {
         if (key.equals("-")) {
-            add(obj.map());
+            add((E) obj.map());
         } else {
             set(Integer.parseInt(key), obj.map());
         }
     }
-    
+
     @Override
     public void addJSON(String key, JSON2Value obj) {
         if (key.equals("-")) {
@@ -56,75 +62,113 @@ public class JSON2Array<E> extends ArrayList<E> implements JSON2Collection<E> {
             add(Integer.parseInt(key), obj.map());
         }
     }
-    
+
     @Override
     public JSON2Value removeJSON(String key) {
-        return JSON2.valueWrap(remove(Integer.parseInt(key)));
+        return JSON2.valueOf(remove(Integer.parseInt(key)));
     }
-    
+
     @Override
     public JSON2Value putJSON(String key, JSON2Value obj) {
         JSON2Value val = getJSON(key);
         setJSON(key, obj);
         return val;
     }
-    
+
+    /**
+     * primitive に変える
+     *
+     * @param val
+     */
+    public void addValue(Object val) {
+        if (def != null) {
+            val = JSON2.valueOf(val).typeMap(def);
+        } else {
+            val = JSON2.valueMap(val, null);
+        }
+        add((E) val);
+    }
+
 //    JSON2Value getJSON(int index) {
 //        return JSON2.valueOf(get(index));
 //    }
     static Class<? extends Collection>[] COLL = new Class[]{
         JSON2Array.class, ArrayList.class, HashSet.class, LinkedList.class};
     
+    private static Collection typeToList(Class cls) {
+        for (Class<? extends Collection> colCls : COLL ) {
+            if ( cls.isAssignableFrom(colCls)) {
+                try {
+                    return colCls.getConstructor().newInstance();
+                } catch (NoSuchMethodException | SecurityException | InstantiationException
+                        | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+                    Logger.getLogger(JSON2Array.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
+        
+        try {
+            return (Collection)cls.getConstructor().newInstance();
+        } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException
+                | IllegalArgumentException | InvocationTargetException ex) {
+            Logger.getLogger(JSON2Array.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+//        throw new UnsupportedOperationException("未サポートな型:" + cls.getTypeName());
+    }
+    
+
     @Override
     public <T> T typeMap(Type type) {
         if (type instanceof Class) {
-            Class cls = (Class) type;
-            if (cls == String.class) {
-                return (T) toString();
-            } else if (cls.isAssignableFrom(this.getClass())) {
-                return (T) this;
-            } else if (cls.isAssignableFrom(List.class)) {
-                // JsonArrayからList除外
-            } else if (cls.isAssignableFrom(JsonArray.class)) { // List を除く
-                return (T) toJson();
-            } else if (cls.isArray()) { // 配列 要素の型も指定可能, Memberの型ではParameterizedTypeに振り分けられそう?
-                Class componentType = cls.getComponentType();
-                Object array = (Object) Array.newInstance(componentType, size());
-
-                int i = 0;
-                for (Object val : this) {
-                    if ( val instanceof JSON2Value ) {
-                        Array.set(array, i++, ((JSON2Value)val).typeMap(componentType));
-                    } else {
-                        Array.set(array, i++, JSON.valueOf(val).typeMap(componentType));
-                    }
-                }
-                return (T) array;
-            }
-            return (T) lcMap(cls);
+            return (T) classMap((Class) type);
         } else if (type instanceof ParameterizedType) { // List<A>
             ParameterizedType pt = (ParameterizedType) type;
             Type raw = pt.getRawType();
-            Class rawClass = (Class) raw;
-            for (Class<? extends Collection> colCls : COLL) {
-                if (rawClass.isAssignableFrom(colCls)) {
-                    return collectionTypeMap(pt, colCls);
-                }
+            Collection col = typeToList((Class)raw);
+            if ( col != null ) {
+                return collectionTypeMap(pt, col);
             }
         }
-
+//        return null;
         throw new UnsupportedOperationException("未サポートな型:" + type.getTypeName());
     }
-    
-    private <T> T lcMap(Class... clss) {
-        Class<T> cls = clss[0];
 
-        // Collection 要素の型は?
-        for (Class<? extends Collection> colCls : COLL) {
-            if (cls.isAssignableFrom(colCls)) {
-                return collectionMap(colCls, clss);
+    private <T> T classMap(Class<T> cls) {
+        if (cls == String.class || cls == CharSequence.class) {
+            return (T) toString();
+        } else if (cls.isAssignableFrom(this.getClass())) {
+            return (T) this;
+        } else if (cls.isAssignableFrom(List.class)) {
+            // JsonArrayからList除外
+        } else if (cls.isAssignableFrom(JsonArray.class)) { // List を除く
+            return (T) toJson();
+        } else if (cls.isArray()) { // 配列 要素の型も指定可能, Memberの型ではParameterizedTypeに振り分けられそう?
+            Class componentType = cls.getComponentType();
+            Object array = (Object) Array.newInstance(componentType, size());
+
+//            j2Stream().map(v -> v.typeMap(componentType)).array);
+            int i = 0;
+            for (Object val : this) {
+                if (val instanceof JSON2Value) {
+                    Array.set(array, i++, ((JSON2Value) val).typeMap(componentType));
+                } else {
+                    Array.set(array, i++, JSON2.valueOf(val).typeMap(componentType));
+                }
             }
+            return (T) array;
         }
+        
+        // Collection 要素の型は?
+        Collection col = typeToList(cls);
+        if ( col != null ) {
+            return collectionMap(col);
+        }
+        return (T) lcMap(cls);
+    }
+
+    private <T> T lcMap(Class<T> cls) {
+
         // ToDo: コンストラクタに突っ込む.
         int len = size();
         Constructor[] cnss = cls.getConstructors();
@@ -149,11 +193,13 @@ public class JSON2Array<E> extends ArrayList<E> implements JSON2Collection<E> {
             try {
                 for (int i = 0; i < pt.length; i++) {
                     Object o = get(i);
-                    if ( o instanceof JSON2Value ) {
-                        params[i] = ((JSON2Value)o).typeMap(pt[i]);
+                    JSON2Value v;
+                    if (o instanceof JSON2Value) {
+                        v = ((JSON2Value) o);
                     } else {
-                        params[i] = JSON.valueOf(o).typeMap(pt[i]);
+                        v = JSON2.valueOf(o);
                     }
+                    params[i] = v.typeMap(pt[i]);
                 }
                 return (T) c.newInstance(params);
             } catch (UnsupportedOperationException | InstantiationException
@@ -165,91 +211,53 @@ public class JSON2Array<E> extends ArrayList<E> implements JSON2Collection<E> {
         throw new UnsupportedOperationException();
     }
 
+    Stream<JSON2Value> j2Stream() {
+        return stream().map(v -> (JSON2Value) JSON2.valueOf(v));
+    }
+
     /**
-     * 
+     *
      * @param <T>
      * @param type Generic List&lt;A&gt; のA が取れる
      * @param colCls List,Setの実装class
-     * @return 
+     * @return
      */
-    private <T> T collectionTypeMap(ParameterizedType type, Class<? extends Collection> colCls) {
-        Collection col;
-
-        try {
-            col = colCls.getConstructor().newInstance();
-
-            // 要素(単体)の型
-            Type[] argTypes = type.getActualTypeArguments();
-//            Class[] clb = new Class[argTypes.length];
-
-            forEach(o -> {
-                if ( o instanceof JSON2Value ) {
-                    col.add(((JSON2Value)o).typeMap(argTypes[0]));
-                } else {
-                    col.add(JSON.valueOf(o).typeMap(argTypes[0]));
-                }
-            });
-            return (T) col;
-        } catch (NoSuchMethodException | SecurityException | InstantiationException
-                | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
-            Logger.getLogger(JSON2Array.class.getName()).log(Level.SEVERE, null, ex);
+    private <T> T collectionTypeMap(ParameterizedType type, Collection col) {
+        // 要素(単体)の型
+        Type[] argTypes = type.getActualTypeArguments();
+        if (argTypes.length == 0) { // 未検証
+            forEach(col::add);
+        } else {
+            j2Stream().map(v -> v.typeMap(argTypes[0])).forEach(col::add);
         }
-        throw new UnsupportedOperationException();
+        return (T) col;
     }
 
     /**
      *
      * @deprecated #collectionTypeMap(ParameterizedMap,Class<? extends Collection>)
      * @param <T>
-     * @param colCls
-     * @param clss
+     * @param col
      * @return
      */
-    private <T> T collectionMap(Class<? extends Collection> colCls, Class... clss) {
-        Collection col;
-
-        try {
-            col = colCls.getConstructor().newInstance();
-
-            if (clss.length > 1) {
-                Class[] clb = new Class[clss.length - 1];
-                System.arraycopy(clss, 1, clb, 0, clb.length);
-
-                forEach(o -> {
-                    if (o instanceof JSON2Collection) {
-                        col.add(((JSON2Collection)o).map(clb));
-                    } else {
-                        col.add(JSON.valueOf(o).typeMap(clss[1]));
-                    }
-                });
-            } else {
-                forEach(o -> {
-                    col.add(o);
-                });
-            }
-            return (T) col;
-        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException
-                | InvocationTargetException | NoSuchMethodException | SecurityException ex) {
-            Logger.getLogger(JSON2Array.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        throw new UnsupportedOperationException();
+    private <T> T collectionMap(Collection col) {
+        forEach(col::add);
+        return (T) col;
     }
 
     @Override
-    public JsonStructure toJson() {
-        if ( isEmpty() ) {
+    public JsonArray toJson() {
+        if (isEmpty()) {
             return JsonValue.EMPTY_JSON_ARRAY;
         }
         JSONPArray ar = new JSONPArray();
-        forEach(val -> {
-            ar.add(JSON.valueOf(val).toJson());
-        });
+        j2Stream().map(val -> val.toJson()).forEach(ar::add);
         return ar;
     }
 
     @Override
     public String toString() {
-        return toString(TAB);
+        return toString(NOBR);
     }
 
     @Override
@@ -257,17 +265,17 @@ public class JSON2Array<E> extends ArrayList<E> implements JSON2Collection<E> {
         StringBuilder sb = new StringBuilder();
         sb.append("[");
         sb.append(format.crlf);
-        for ( Object val : this ) {
+        for (Object val : this) {
             sb.append(format.tab);
-            if ( val instanceof JSON2Value ) {
-                sb.append(tab(((JSON2Value)val).toString(format)));
+            if (val instanceof JSON2Value) {
+                sb.append(tab(((JSON2Value) val).toString(format)));
             } else {
-                sb.append(tab(JSON.valueOf(val).toString(format)));
+                sb.append(tab(JSON2.valueOf(val).toString(format)));
             }
             sb.append(",");
             sb.append(format.crlf);
         }
-        if ( !isEmpty() ) {
+        if (!isEmpty()) {
             sb.replace(sb.length() - format.crlf.length() - 1, sb.length() - format.crlf.length(), "");
         }
 //        sb.append(format.crlf);
@@ -278,10 +286,8 @@ public class JSON2Array<E> extends ArrayList<E> implements JSON2Collection<E> {
     @Override
     public <T> T map() {
         JSON2Array list = new JSON2Array();
-        forEach(val -> {
-            list.add(val);
-        });
-        return (T)list;
+        forEach(list::add);
+        return (T) list;
     }
 
     /**
@@ -294,19 +300,17 @@ public class JSON2Array<E> extends ArrayList<E> implements JSON2Collection<E> {
      */
     @Override
     public <T> T map(Class... clss) {
-        Class<T> cls = clss[0];
-        if (cls == String.class) {
+        Type cls = clss[0];
+        if (clss.length == 1) {
             return typeMap(cls);
-        } else if (cls.isAssignableFrom(this.getClass()) && clss.length == 1) {
-            return typeMap(cls);
-        } else if (cls.isAssignableFrom(List.class)) {
-            return lcMap(clss);
-        } else if (cls.isAssignableFrom(JsonArray.class)) { // List を除く
-            return typeMap(cls);
-        } else if (cls.isArray()) { // 配列 要素の型も指定可能
-            return typeMap(cls);
+        } else {
+            Type[] tps = new Type[clss.length];
+            int i = 0;
+            for (Class c : clss) {
+                tps[i++] = c;
+            }
+            return typeMap(JSON2.parameterizedType(tps));
         }
-        return lcMap(clss);
     }
 
 }

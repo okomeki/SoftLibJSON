@@ -81,87 +81,43 @@ public class JSONObject extends JSONValue<Map<String, JSONValue>> implements JSO
      */
     @Override
     public <T> T typeMap(Type type) {
-        if (!(type instanceof Class)) {
-            if (type instanceof ParameterizedType) { // まだ Map<A,B> だけ
-                ParameterizedType pt = (ParameterizedType) type;
-                Type raw = pt.getRawType();
-                if ((raw instanceof Class) && (Map.class.isAssignableFrom(((Class) raw)))) {
-                    Type[] args = pt.getActualTypeArguments();
-                    Map map = new HashMap();
-                    value.keySet().forEach(key -> {
-                        JSONString jsonKey = new JSONString(key);
-                        map.put(jsonKey.typeMap(args[0]), value.get(key).typeMap(args[1]));
-                    });
-                    return (T) map;
-                }
-            }
-            throw new UnsupportedOperationException("未実装...:" + type.getClass());
-        } else { // map() からこっちへ持ってくればいい?
-            Class<T> cls = (Class) type;
-            if (cls == String.class) {
-                return (T) toString();
-            } else if (cls.isAssignableFrom(this.getClass())) {
-                return (T) this;
-            } else if (Map.class.isAssignableFrom(cls)) { // GenericのないMapの場合単純なJava型に変換する
-                Map map = new JSON2Object();
-                value.keySet().forEach(key -> {
-                    JSONValue val = value.get(key);
-                    map.put(key, val.map());
-                });
-                return (T) map;
-            } else if (cls.isAssignableFrom(JsonObject.class)) {
-                return (T)toJson();
-            }
-        }
-
-        return (T) map((Class) type);
-    }
-
-    /**
-     * JSONObjectではなくMapから変換可能にしておく
-     *
-     * @param <R>
-     * @param value
-     * @param type
-     * @return
-     */
-    /*
-    public static <T> T typeValueMap(Map<String,Object> value, Type type) {
-        if (!(type instanceof Class)) {
-            if ( type instanceof ParameterizedType ) { // まだ Map<A,B> だけ
-                ParameterizedType pt = (ParameterizedType)type;
-                Type raw = pt.getRawType();
-                if ( (raw instanceof Class) && (Map.class.isAssignableFrom(((Class)raw)))) {
-                    Type[] args = pt.getActualTypeArguments();
-                    Map map = new HashMap();
-                    value.keySet().forEach(key -> {
-                        JSONString jsonKey = new JSONString(key);
-                        map.put(jsonKey.typeMap(args[0]), value.get(key).typeMap(args[1]));
-                    });
-                    
-                    return map((Class)raw, (Class)args[0],(Class)args[1]);
-                }
-            }
-            throw new UnsupportedOperationException("未実装...:" + type.getClass());
-        } else { // map() からこっちへ持ってくればいい?
-            Class cls = (Class)type;
-            if (cls == String.class) {
-                return (T) toString();
-            } else if (cls.isAssignableFrom(this.getClass())) {
-                return (T) this;
-            } else if ( Map.class.isAssignableFrom(cls)) { // GenericのないMapの場合単純なJava型に変換する
+        if (type instanceof Class) {
+            return classMap((Class)type);
+        } else if (type instanceof ParameterizedType) { // まだ Map<A,B> だけ
+            ParameterizedType pt = (ParameterizedType) type;
+            Type raw = pt.getRawType();
+            if ((raw instanceof Class) && (Map.class.isAssignableFrom(((Class) raw)))) {
+                Type[] args = pt.getActualTypeArguments();
                 Map map = new HashMap();
                 value.keySet().forEach(key -> {
-                    JSONValue val = value.get(key);
-                    map.put(key, val.map());
+                    JSONString jsonKey = new JSONString(key);
+                    map.put(jsonKey.typeMap(args[0]), value.get(key).typeMap(args[1]));
                 });
-                return (T)map;
+                return (T) map;
             }
         }
-
-        return (T) valueMap(value, (Class) type);
+        throw new UnsupportedOperationException("未実装...:" + type.getClass());
     }
-     */
+    
+    private <T> T classMap(Class cls) {
+        if (cls == String.class) {
+            return (T) toString();
+        } else if (cls.isAssignableFrom(this.getClass())) {
+            return (T) this;
+        } else if (Map.class.isAssignableFrom(cls)) { // GenericのないMapの場合単純なJava型に変換する
+            Map map = new JSON2Object();
+            value.keySet().forEach(key -> {
+                JSONValue val = value.get(key);
+                map.put(key, val.map());
+            });
+            return (T) map;
+        } else if (cls.isAssignableFrom(JsonObject.class)) {
+            return (T)toJson();
+        }
+        return (T) map(cls);
+        
+    }
+
     /**
      * Collection 文字列、JSONObject, JsonObject, Map, Java Object にマップする
      *
@@ -524,128 +480,4 @@ public class JSONObject extends JSONValue<Map<String, JSONValue>> implements JSO
         return value.values().iterator();
     }
 
-    /*
-     * JSONP互換.
-     * @return 
-     *
-    @Override
-    public ValueType getValueType() {
-        return ValueType.OBJECT;
-    }
-     */
-
- /*
-     * JSONP互換.
-     * @param name
-     * @return 
-     *
-    public JSONArray getJsonArray(String name) {
-        return (JSONArray) get(name);
-    }
-     */
-
- /*
-     * JSONP互換.
-     * @param name
-     * @return 
-     *
-    public JSONObject getJsonObject(String name) {
-        return (JSONObject)get(name);
-    }
-     */
-
- /*
-     * JSONP互換.
-     * @param name
-     * @return 
-     *
-    public JSONNumber getJsonNumber(String name) {
-        return (JSONNumber)get(name);
-    }
-     */
-
- /*
-     * JSONP互換.
-     * @param name
-     * @return 
-     *
-    public JSONString getJsonString(String name) {
-        return (JSONString)get(name);
-    }
-     */
-
- /*
-    public String getString(String name) {
-        JSONValue val = get(name);
-        return (String)val.value();
-    }
-     */
-
- /*
-     * JSONP互換.
-     * @param name
-     * @param def
-     * @return 
-     *
-    public String getString(String name, String def) {
-        JSONValue val = get(name);
-        return ( val == null ) ? def : (String)val.value();
-    }
-     */
-
- /*
-     * JSONP互換.
-     * @param name
-     * @return 
-     *
-    public int getInt(String name) {
-        return (int) get(name).value();
-    }
-     */
-
- /*
-     * JSONP互換.
-     * @param name
-     * @param def
-     * @return 
-     *
-    public int getInt(String name, int def) {
-        JSONNumber val = (JSONNumber) get(name);
-        return ( val == null ) ? def : (int)val.value();
-    }
-     */
-
- /*
-     * JSONP互換.
-     * @param name
-     * @return 
-     *
-    public boolean getBoolean(String name) {
-        JSONBoolean bool = (JSONBoolean) get(name);
-        return bool.map();
-    }
-     */
-
- /*
-     * JSONP互換.
-     * @param name
-     * @param bin
-     * @return 
-     *
-    public boolean getBoolean(String name, boolean bin) {
-        JSONBoolean bool = (JSONBoolean) get(name);
-        return ( bool == null ) ? bin : bool.map();
-    }
-     */
-
- /*
-     * JSONP互換.
-     * @param name
-     * @return 
-     *
-    public boolean isNull(String name) {
-        JSONNULL nul = (JSONNULL) get(name);
-        return ( nul != null );
-    }
-     */
 }

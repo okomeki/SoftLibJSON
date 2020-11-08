@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package net.siisise.json.jsonp;
 
 import java.io.IOException;
@@ -14,11 +9,10 @@ import javax.json.JsonObject;
 import javax.json.JsonStructure;
 import javax.json.JsonValue;
 import javax.json.JsonWriter;
-import net.siisise.json.JSON;
+import net.siisise.json2.JSON2;
 
 /**
  *
- * @author okome
  */
 public class JSONPWriter implements JsonWriter {
 
@@ -32,7 +26,7 @@ public class JSONPWriter implements JsonWriter {
     @Override
     public void writeArray(JsonArray array) {
         try {
-            writer.write(JSON.valueOf(array).toString());
+            writer.write(JSON2.valueOf(array).toString());
             writer.flush();
         } catch (IOException ex) {
             Logger.getLogger(JSONPWriter.class.getName()).log(Level.SEVERE, null, ex);
@@ -43,7 +37,7 @@ public class JSONPWriter implements JsonWriter {
     @Override
     public void writeObject(JsonObject object) {
         try {
-            writer.write(JSON.valueOf(object).toString());
+            writer.write(JSON2.valueOf(object).toString());
             writer.flush();
         } catch (IOException ex) {
             Logger.getLogger(JSONPWriter.class.getName()).log(Level.SEVERE, null, ex);
@@ -54,7 +48,7 @@ public class JSONPWriter implements JsonWriter {
     @Override
     public void write(JsonStructure value) {
         try {
-            writer.write(JSON.valueOf(value).toString());
+            writer.write(JSON2.valueOf(value).toString());
             writer.flush();
         } catch (IOException ex) {
             Logger.getLogger(JSONPWriter.class.getName()).log(Level.SEVERE, null, ex);
@@ -65,7 +59,7 @@ public class JSONPWriter implements JsonWriter {
     @Override
     public void write(JsonValue value) {
         try {
-            writer.write(JSON.valueOf(value).toString());
+            writer.write(JSON2.valueOf(value).toString());
             writer.flush();
         } catch (IOException ex) {
             Logger.getLogger(JSONPWriter.class.getName()).log(Level.SEVERE, null, ex);

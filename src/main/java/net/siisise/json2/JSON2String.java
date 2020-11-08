@@ -10,18 +10,17 @@ import javax.json.JsonValue;
 import net.siisise.abnf.AbstractABNF;
 import net.siisise.io.Packet;
 import net.siisise.json.JSONFormat;
-import net.siisise.json.JSONString;
 import net.siisise.lang.CodePoint;
 
 /**
  *
  */
-public class JSON2String implements JSON2Value {
+public class JSON2String implements JSON2Value,JsonString {
     
     private final String value;
 
-    JSON2String(String val) {
-        value = val;
+    public JSON2String(CharSequence val) {
+        value = val.toString();
     }
 
     @Override
@@ -31,7 +30,7 @@ public class JSON2String implements JSON2Value {
 
     @Override
     public <T> T typeMap(Type type) {
-        if ( type == String.class ) {
+        if ( type == String.class || type == CharSequence.class ) {
             return (T)value;
         } else if ( type == StringBuilder.class ) {
             return (T)new StringBuilder(value);
@@ -61,7 +60,12 @@ public class JSON2String implements JSON2Value {
 
     @Override
     public JsonValue toJson() {
-        return new JSONString(value);
+        return this;
+    }
+    
+    @Override
+    public String toString() {
+        return toString(NOBR);
     }
 
     @Override
@@ -126,5 +130,20 @@ public class JSON2String implements JSON2Value {
             }
         }
         return sb.toString();
+    }
+    
+    @Override
+    public String getString() {
+        return value;
+    }
+
+    @Override
+    public CharSequence getChars() {
+        return value;
+    }
+
+    @Override
+    public ValueType getValueType() {
+        return ValueType.STRING;
     }
 }

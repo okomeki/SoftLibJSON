@@ -3,18 +3,18 @@ package net.siisise.json2;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import javax.json.JsonNumber;
 import javax.json.JsonValue;
 import net.siisise.json.JSONFormat;
-import net.siisise.json.JSONNumber;
 
 /**
  * Number を扱う.
  * データ型は特定のものを想定していないのでいろいろ。
  * これもNumver型になれるので多重ラップしないよう注意。
  */
-public class JSON2Number extends Number implements JSON2Value {
+public class JSON2Number extends Number implements JSON2Value,JsonNumber {
     
-    Number number;
+    private final Number number;
     
     public JSON2Number(Number num) {
         number = num;
@@ -50,29 +50,26 @@ public class JSON2Number extends Number implements JSON2Value {
         if ( cls.isInstance(number)) {
             return (T)number;
         }
-    
-        Number val;
-        val = (Number)number;
 
         if (cls == Integer.TYPE || cls == Integer.class) {
-            return (T) Integer.valueOf(val.intValue());
+            return (T) Integer.valueOf(number.intValue());
         } else if (cls == Long.TYPE || cls == Long.class) {
-            return (T) Long.valueOf(val.longValue());
+            return (T) Long.valueOf(number.longValue());
         } else if (cls == Short.TYPE || cls == Short.class) {
-            return (T) Short.valueOf(val.shortValue());
+            return (T) Short.valueOf(number.shortValue());
         } else if (cls == Character.TYPE || cls == Character.class) {
-            return (T) Character.valueOf((char)val.intValue());
+            return (T) Character.valueOf((char)number.intValue());
         } else if (cls == Byte.TYPE || cls == Byte.class) {
-            return (T) Byte.valueOf(val.byteValue());
+            return (T) Byte.valueOf(number.byteValue());
         } else if (cls == Float.TYPE || cls == Float.class) {
-            return (T) Float.valueOf(val.floatValue());
+            return (T) Float.valueOf(number.floatValue());
         } else if (cls == Double.TYPE || cls == Double.class) {
-            return (T) Double.valueOf(val.doubleValue());
+            return (T) Double.valueOf(number.doubleValue());
         } else if (cls == BigInteger.class) {
-            return (T) new BigInteger(val.toString());
+            return (T) new BigInteger(number.toString());
         } else if (cls == BigDecimal.class) {
-            return (T) new BigDecimal(val.toString());
-        } else if ( cls == String.class ) {
+            return (T) new BigDecimal(number.toString());
+        } else if ( cls == String.class || cls == CharSequence.class ) {
             return (T)number.toString();
         }
 
@@ -81,7 +78,12 @@ public class JSON2Number extends Number implements JSON2Value {
 
     @Override
     public JsonValue toJson() {
-        return new JSONNumber(number);
+        return this;
+    }
+    
+    @Override
+    public String toString() {
+        return toString(NOBR);
     }
 
     @Override
@@ -92,6 +94,47 @@ public class JSON2Number extends Number implements JSON2Value {
     @Override
     public <T> T map() {
         return (T)number;
+    }
+
+    @Override
+    public boolean isIntegral() {
+        if (number instanceof Integer || number instanceof Long || number instanceof Short || number instanceof Byte || number instanceof BigInteger) {
+            return true;
+        }
+        if (number instanceof Float || number instanceof Double || number instanceof BigDecimal) {
+            return false;
+        }
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public int intValueExact() {
+        return typeMap(Integer.class);
+    }
+
+    @Override
+    public long longValueExact() {
+        return typeMap(Long.class);
+    }
+
+    @Override
+    public BigInteger bigIntegerValue() {
+        return typeMap(BigInteger.class);
+    }
+
+    @Override
+    public BigInteger bigIntegerValueExact() {
+        return typeMap(BigInteger.class);
+    }
+
+    @Override
+    public BigDecimal bigDecimalValue() {
+        return typeMap(BigDecimal.class);
+    }
+
+    @Override
+    public ValueType getValueType() {
+        return ValueType.NUMBER;
     }
     
 }

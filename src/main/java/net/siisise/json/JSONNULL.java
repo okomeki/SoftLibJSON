@@ -2,6 +2,8 @@ package net.siisise.json;
 
 import java.lang.reflect.Type;
 import javax.json.JsonValue;
+import net.siisise.json2.JSON2NULL;
+import net.siisise.json2.JSON2Value;
 
 /**
  * JSONデータ null
@@ -41,8 +43,11 @@ public class JSONNULL extends JSONValue implements JsonValue {
 
     @Override
     public Object typeMap(Type type) {
-        if ( type == JSONValue.class || type == JSONNULL.class ) {
+        if ( JSONValue.class.isAssignableFrom((Class)type)) {
             return JSONNULL.NULL;
+        }
+        if ( JSON2Value.class.isAssignableFrom((Class)type)) {
+            return JSON2NULL.NULL;
         }
         if ( type == JsonValue.class ) {
             return JsonValue.NULL;

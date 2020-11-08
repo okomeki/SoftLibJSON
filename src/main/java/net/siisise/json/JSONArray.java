@@ -14,11 +14,14 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import javax.json.JsonArray;
 import javax.json.JsonNumber;
 import javax.json.JsonValue;
 import net.siisise.json.jsonp.JSONPArray;
 import net.siisise.json.pointer.JSONPointer;
+import net.siisise.json2.JSON2;
 import net.siisise.json2.JSON2Array;
 
 /**
@@ -34,15 +37,24 @@ public class JSONArray extends JSONValue<List<JSONValue>> implements JSONCollect
     }
 
     public JSONArray(Collection list) {
-        value = new ArrayList<>();
-        list.forEach(val -> {
-            value.add(JSON.valueOf(val));
-        });
+        //value = new ArrayList<>();
+        value = (List<JSONValue>) list.stream().map(src -> JSON.valueOf(src) ).collect(Collectors.toList());
     }
 
     @Override
     public List<JSONValue> value() {
         return new ArrayList(value);
+    }
+
+    static Collector<JsonValue, ?, List> toJSONPArray() {
+        return Collector.of(
+            JSONPArray::new,
+            List::add,
+            (ls, l2) -> {
+                ls.addAll(l2);
+                return ls;
+            }
+            );
     }
 
     /**
@@ -52,11 +64,7 @@ public class JSONArray extends JSONValue<List<JSONValue>> implements JSONCollect
      */
     @Override
     public List map() {
-        List list = new JSON2Array();
-        value.forEach(val -> {
-            list.add(val.map());
-        });
-        return list;
+        return value.stream().collect(JSON2.toJSON2PrimArray());
     }
 
     static Class<? extends Collection>[] COLL = new Class[]{
@@ -73,7 +81,7 @@ public class JSONArray extends JSONValue<List<JSONValue>> implements JSONCollect
     public <T> T typeMap(Type type) {
         if (type instanceof Class) {
             Class cls = (Class) type;
-            if (cls == String.class) {
+            if (cls == String.class || cls == CharSequence.class ) {
                 return (T) toString();
             } else if (cls.isAssignableFrom(this.getClass())) {
                 return (T) this;
@@ -114,6 +122,7 @@ public class JSONArray extends JSONValue<List<JSONValue>> implements JSONCollect
      * @param clss Collection または配列、JSONArray、それ以外は要素の型として扱う
      * @return 配列をObject に入れる罠
      */
+    @Override
     public <T> T map(Class... clss) {
         Class<T> cls = clss[0];
         if (cls == String.class) {
@@ -179,10 +188,12 @@ public class JSONArray extends JSONValue<List<JSONValue>> implements JSONCollect
         if (value.isEmpty()) {
             return JsonValue.EMPTY_JSON_ARRAY;
         }
+//        JSONPArrayBuilder jpab = new JSONPArrayBuilder();
+//        value.stream().map(val -> val.toJson()).forEach(jpab::add);
+//        return jpab.build();
         JSONPArray ar = new JSONPArray();
-        value.forEach(val -> {
-            ar.add(val.toJson());
-        });
+        value.stream().map(val -> val.toJson()).forEach(ar::add);
+        
         return ar;
     }
 
@@ -203,9 +214,7 @@ public class JSONArray extends JSONValue<List<JSONValue>> implements JSONCollect
             Type[] argTypes = type.getActualTypeArguments();
 //            Class[] clb = new Class[argTypes.length];
 
-            value.forEach(o -> {
-                col.add(o.typeMap(argTypes[0]));
-            });
+            value.stream().map(o -> o.typeMap(argTypes[0])).forEach(col::add);
             return (T) col;
         } catch (NoSuchMethodException | SecurityException | InstantiationException
                 | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
@@ -232,17 +241,15 @@ public class JSONArray extends JSONValue<List<JSONValue>> implements JSONCollect
                 Class[] clb = new Class[clss.length - 1];
                 System.arraycopy(clss, 1, clb, 0, clb.length);
 
-                value.forEach(o -> {
+                value.stream().map(o -> {
                     if (o instanceof JSONCollection) {
-                        col.add(((JSONCollection) o).map(clb));
+                        return ((JSONCollection) o).map(clb);
                     } else {
-                        col.add(o.typeMap(clss[1]));
+                        return o.typeMap(clss[1]);
                     }
-                });
+                    }).forEach(col::add);
             } else {
-                value.forEach(o -> {
-                    col.add(o);
-                });
+                value.forEach(col::add);
             }
             return (T) col;
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException
@@ -282,6 +289,7 @@ public class JSONArray extends JSONValue<List<JSONValue>> implements JSONCollect
         }
 
         int i = 0;
+//        value.stream().map(v -> v.typeMap(contentType) ).forEach(v -> {array[i++] = (T)v; });
         for (JSONValue val : value) {
             array[i++] = (T) val.typeMap(contentType);
         }
@@ -501,36 +509,6 @@ public class JSONArray extends JSONValue<List<JSONValue>> implements JSONCollect
         return value.iterator();
     }
 
-    /*
-    @Override
-    public ValueType getValueType() {
-        return ValueType.ARRAY;
-    }
-
-    public JsonArray asJsonArray() {
-        return super.asJsonArray(); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    public JsonObject getJsonObject(int i) {
-        return (JsonObject) ((JSONCollection) get(i)).toJson();
-    }
-
-    public JsonArray getJsonArray(int i) {
-        return (JsonArray) ((JSONCollection) get(i)).toJson();
-    }
-
-    public JsonNumber getJsonNumber(int i) {
-        return (JsonNumber) get(i);
-    }
-
-    public JsonString getJsonString(int i) {
-        return (JsonString) get(i);
-    }
-
-    public <T extends JsonValue> List<T> getValuesAs(Class<T> type) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-     */
     public String getString(int i) {
         return (String) get(i).value();
     }

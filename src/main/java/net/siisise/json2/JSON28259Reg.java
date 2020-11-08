@@ -54,11 +54,11 @@ public class JSON28259Reg {
 
     public static final ABNF JSONtext = REG.rule("JSON-text", JSON2textParser.class, ws.pl(value, ws));
 
-    public static JSON2Value parse(String json) {
+    public static Object parse(String json) {
         return REG.parse("JSON-text", json);
     }
 
-    public static JSON2Value parse(byte[] json) {
+    public static Object parse(byte[] json) {
         return REG.parse("JSON-text", json);
     }
 }

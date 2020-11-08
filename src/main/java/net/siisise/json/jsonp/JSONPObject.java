@@ -1,17 +1,17 @@
 package net.siisise.json.jsonp;
 
-import java.util.HashMap;
 import javax.json.JsonArray;
 import javax.json.JsonNumber;
 import javax.json.JsonObject;
 import javax.json.JsonString;
 import javax.json.JsonValue;
 import net.siisise.json.pointer.JSONPointer;
+import net.siisise.json2.JSON2Object;
 
 /**
  *
  */
-public class JSONPObject extends HashMap<String,JsonValue> implements JsonObject {
+public class JSONPObject extends JSON2Object<JsonValue> implements JsonObject {
 
     @Override
     public ValueType getValueType() {
@@ -79,17 +79,6 @@ public class JSONPObject extends HashMap<String,JsonValue> implements JsonObject
 
     @Override
     public JsonValue getValue(String jsonPointer) {
-        return new JSONPointer(jsonPointer).step(this,false).val;
+        return new JSONPointer(jsonPointer).step((JsonValue)this,false).val;
     }
-
-    @Override
-    public JsonObject asJsonObject() {
-        return this;
-    }
-
-    @Override
-    public JsonArray asJsonArray() {
-        return JsonObject.super.asJsonArray(); //To change body of generated methods, choose Tools | Templates.
-    }
-    
 }

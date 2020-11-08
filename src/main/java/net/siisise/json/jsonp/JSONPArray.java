@@ -1,6 +1,5 @@
 package net.siisise.json.jsonp;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.json.JsonArray;
@@ -8,17 +7,21 @@ import javax.json.JsonNumber;
 import javax.json.JsonObject;
 import javax.json.JsonString;
 import javax.json.JsonValue;
+import net.siisise.json.JSONBoolean;
 import net.siisise.json.JSONNULL;
+import net.siisise.json2.JSON2Array;
+import net.siisise.json2.JSON2Boolean;
+import net.siisise.json2.JSON2NULL;
 
 /**
  *
  */
-public class JSONPArray extends ArrayList<JsonValue> implements JsonArray {
+public class JSONPArray extends JSON2Array<JsonValue> implements JsonArray {
 
     public JSONPArray() {
-        
+        super(JsonValue.class);
     }
-
+    
     @Override
     public ValueType getValueType() {
         return ValueType.ARRAY;
@@ -26,7 +29,7 @@ public class JSONPArray extends ArrayList<JsonValue> implements JsonArray {
 
     @Override
     public boolean isNull(int i) {
-        return get(i) == JsonValue.NULL || get(i) == JSONNULL.NULL;
+        return get(i) == JsonValue.NULL || get(i) ==JSONNULL.NULL || get(i) == JSON2NULL.NULL;
     }
 
     @Override
@@ -74,7 +77,7 @@ public class JSONPArray extends ArrayList<JsonValue> implements JsonArray {
     @Override
     public boolean getBoolean(int i) {
 //        get(i).getValueType()
-        return ((JsonValue)get(i)) == JsonValue.TRUE;
+        return get(i) == JsonValue.TRUE || get(i) == JSONBoolean.TRUE|| get(i) == JSON2Boolean.TRUE;
     }
 
     @Override

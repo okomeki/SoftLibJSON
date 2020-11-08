@@ -3,7 +3,6 @@ package net.siisise.json2;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import net.siisise.json.JSON;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -19,7 +18,7 @@ public class JSON2Test {
         Map obj = new HashMap();
         String abc = "[1,2,{\"a\":\"b\",\"c\":5}]";
         
-        System.out.println(JSON.parse(abc).toString(JSON.NOBR));
+        System.out.println(JSON2.parseWrap(abc).toString(JSON2.NOBR));
         
         List o = (JSON2Array) JSON2.parse(abc);
         for ( Object v : o ) {

@@ -1,7 +1,10 @@
 package net.siisise.json;
 
 import java.lang.reflect.Type;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collector;
+import java.util.stream.Collector.Characteristics;
 import javax.json.JsonValue;
 
 /**
@@ -175,4 +178,16 @@ public interface JSON<T> {
      * @return Java API系 JsonValue
      */
     public JsonValue toJson();
+    
+    static <T> Collector<T,?,JSONArray> toJSONArray() {
+        return Collector.of(
+                JSONArray::new,
+                JSONArray::add,
+                (ls, vals) -> {
+                    vals.forEach(ls::add);
+                    return ls;
+                },
+                Characteristics.IDENTITY_FINISH
+        );
+    }
 }
