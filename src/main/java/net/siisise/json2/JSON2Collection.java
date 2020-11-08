@@ -1,14 +1,15 @@
 package net.siisise.json2;
 
 /**
- *
- * @param <T>
+ * Collection (List),Mapを統合したような操作をJSON Pointerでできるような感じのもの
+ * @param <T> データ型
  */
 public interface JSON2Collection<T> extends JSON2Value {
     
     JSON2Value getJSON(String key);
     void setJSON(String key, JSON2Value obj);
     void addJSON(String key, JSON2Value obj);
+
     /**
      * 戻り型がJSON2Valueな違い
      * @param key キー

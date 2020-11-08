@@ -8,8 +8,10 @@ import java.util.Map;
 import net.siisise.json.JSON;
 
 /**
- * SoftLibJSON から Object Mapping を分離する.
- * REST 準拠なデータを持つList(JSONArrayだったもの), Map(JSONObjectだったもの) から各種変換をする便利機能.
+ * SoftLibJSON から Object Mapping を分離する。
+ * REST 準拠なデータを持つList(JSONArrayだったもの), Map(JSONObjectだったもの) から各種変換をする便利機能。
+ * 
+* @param <B>
  */
 public class OMAP<B> extends HashMap<String,B> {
     

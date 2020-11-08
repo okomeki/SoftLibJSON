@@ -12,6 +12,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.json.JsonArray;
 import javax.json.JsonValue;
@@ -19,25 +20,33 @@ import net.siisise.json.JSONFormat;
 import net.siisise.json.jsonp.JSONPArray;
 
 /**
- * Listを拡張したJSONArray.
- * 一般のデータを保持してJSONにも変換可能なスタイル.
- * 配列、Listの他ObjectのコンストラクタにもtypeMap可能
- *
+ * Listを拡張したJSONArray。
+ * 一般のデータを保持してJSONにも変換可能なスタイル。
+ * 配列、Listの他ObjectのコンストラクタにもtypeMap可能。
+ * JSONP準拠のものはEをJsonValueにするといい。
+ * 
+ * JsonArray,JsonArrayBuilder,JsonStructure ではない
  * @param <E>
  */
 public class JSON2Array<E> extends ArrayList<E> implements JSON2Collection<E> {
 
-    Class<E> def;
+    /**
+     * Eを参照したいので持っておく型
+     * JsonArray用かもしれない
+     */
+    private final Class<E> def;
 
     public JSON2Array() {
+        def = null;
     }
 
-    public JSON2Array(Class<E> c) {
+    protected JSON2Array(Class<E> c) {
         def = c;
     }
 
     public JSON2Array(Collection<E> vals) {
         super(vals);
+        def = null;
     }
 
     @Override
@@ -47,19 +56,21 @@ public class JSON2Array<E> extends ArrayList<E> implements JSON2Collection<E> {
 
     @Override
     public void setJSON(String key, JSON2Value obj) {
+        E val = def == null ? obj.map() : obj.typeMap(def);
         if (key.equals("-")) {
-            add((E) obj.map());
+            add(val);
         } else {
-            set(Integer.parseInt(key), obj.map());
+            set(Integer.parseInt(key), val);
         }
     }
 
     @Override
     public void addJSON(String key, JSON2Value obj) {
+        E val = def == null ? obj.map() : obj.typeMap(def);
         if (key.equals("-")) {
-            add(obj.map());
+            add(val);
         } else {
-            add(Integer.parseInt(key), obj.map());
+            add(Integer.parseInt(key), val);
         }
     }
 
@@ -139,9 +150,7 @@ public class JSON2Array<E> extends ArrayList<E> implements JSON2Collection<E> {
             return (T) toString();
         } else if (cls.isAssignableFrom(this.getClass())) {
             return (T) this;
-        } else if (cls.isAssignableFrom(List.class)) {
-            // JsonArrayからList除外
-        } else if (cls.isAssignableFrom(JsonArray.class)) { // List を除く
+        } else if (!cls.isAssignableFrom(List.class) && cls.isAssignableFrom(JsonArray.class)) { // List を除く
             return (T) toJson();
         } else if (cls.isArray()) { // 配列 要素の型も指定可能, Memberの型ではParameterizedTypeに振り分けられそう?
             Class componentType = cls.getComponentType();
@@ -162,7 +171,8 @@ public class JSON2Array<E> extends ArrayList<E> implements JSON2Collection<E> {
         // Collection 要素の型は?
         Collection col = typeToList(cls);
         if ( col != null ) {
-            return collectionMap(col);
+            forEach(col::add);
+            return (T)col;
         }
         return (T) lcMap(cls);
     }
@@ -233,18 +243,6 @@ public class JSON2Array<E> extends ArrayList<E> implements JSON2Collection<E> {
         return (T) col;
     }
 
-    /**
-     *
-     * @deprecated #collectionTypeMap(ParameterizedMap,Class<? extends Collection>)
-     * @param <T>
-     * @param col
-     * @return
-     */
-    private <T> T collectionMap(Collection col) {
-        forEach(col::add);
-        return (T) col;
-    }
-
     @Override
     public JsonArray toJson() {
         if (isEmpty()) {
@@ -262,25 +260,8 @@ public class JSON2Array<E> extends ArrayList<E> implements JSON2Collection<E> {
 
     @Override
     public String toString(JSONFormat format) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("[");
-        sb.append(format.crlf);
-        for (Object val : this) {
-            sb.append(format.tab);
-            if (val instanceof JSON2Value) {
-                sb.append(tab(((JSON2Value) val).toString(format)));
-            } else {
-                sb.append(tab(JSON2.valueOf(val).toString(format)));
-            }
-            sb.append(",");
-            sb.append(format.crlf);
-        }
-        if (!isEmpty()) {
-            sb.replace(sb.length() - format.crlf.length() - 1, sb.length() - format.crlf.length(), "");
-        }
-//        sb.append(format.crlf);
-        sb.append("]");
-        return sb.toString();
+        return stream().parallel().map(val -> { return format.crlf + format.tab + tab(JSON2.valueOf(val).toString(format));})
+                .collect( Collectors.joining(",", "[", format.crlf +  "]"));
     }
 
     @Override
