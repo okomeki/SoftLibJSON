@@ -46,7 +46,7 @@ public class JSONArray extends JSONValue<List<JSONValue>> implements JSONCollect
         return new ArrayList(value);
     }
 
-    static Collector<JsonValue, ?, List> toJSONPArray() {
+    static Collector<JsonValue, ?, JSONPArray> toJSONPArray() {
         return Collector.of(
             JSONPArray::new,
             List::add,
@@ -64,7 +64,7 @@ public class JSONArray extends JSONValue<List<JSONValue>> implements JSONCollect
      */
     @Override
     public List map() {
-        return value.stream().collect(JSON2.toJSON2PrimArray());
+        return value.stream().map(v -> v.map()).collect(JSON2.toJSON2PrimArray());
     }
 
     static Class<? extends Collection>[] COLL = new Class[]{
@@ -114,38 +114,12 @@ public class JSONArray extends JSONValue<List<JSONValue>> implements JSONCollect
         throw new UnsupportedOperationException("未サポートな型:" + type.getTypeName());
     }
     
-    /**
-     * List または　配列に変換する.
-     *
-     * @deprecated #typeMap(Type)
-     * @param <T>
-     * @param clss Collection または配列、JSONArray、それ以外は要素の型として扱う
-     * @return 配列をObject に入れる罠
-     */
-    @Override
-    public <T> T map(Class... clss) {
-        Class<T> cls = clss[0];
-        if (cls == String.class) {
-            return typeMap(cls);
-        } else if (cls.isAssignableFrom(this.getClass())) {
-            return typeMap(cls);
-        } else if (cls.isAssignableFrom(List.class)) {
-            return lcMap(clss);
-        } else if (cls.isAssignableFrom(JsonArray.class)) { // List を除く
-            return typeMap(cls);
-        } else if (cls.isArray()) { // 配列 要素の型も指定可能
-            return typeMap(cls);
-        }
-        return lcMap(clss);
-    }
-   
-    private <T> T lcMap(Class... clss) {
-        Class<T> cls = clss[0];
+    private <T> T lcMap(Class<T> cls) {
 
         // Collection 要素の型は?
         for (Class<? extends Collection> colCls : COLL) {
             if (cls.isAssignableFrom(colCls)) {
-                return collectionMap(colCls, clss);
+                return collectionMap(colCls, cls);
             }
         }
         // ToDo: コンストラクタに突っ込む.
@@ -188,13 +162,7 @@ public class JSONArray extends JSONValue<List<JSONValue>> implements JSONCollect
         if (value.isEmpty()) {
             return JsonValue.EMPTY_JSON_ARRAY;
         }
-//        JSONPArrayBuilder jpab = new JSONPArrayBuilder();
-//        value.stream().map(val -> val.toJson()).forEach(jpab::add);
-//        return jpab.build();
-        JSONPArray ar = new JSONPArray();
-        value.stream().map(val -> val.toJson()).forEach(ar::add);
-        
-        return ar;
+        return value.parallelStream().map(val -> val.toJson()).collect(toJSONPArray());
     }
 
     /**
@@ -214,7 +182,7 @@ public class JSONArray extends JSONValue<List<JSONValue>> implements JSONCollect
             Type[] argTypes = type.getActualTypeArguments();
 //            Class[] clb = new Class[argTypes.length];
 
-            value.stream().map(o -> o.typeMap(argTypes[0])).forEach(col::add);
+            value.parallelStream().map(o -> o.typeMap(argTypes[0])).forEach(col::add);
             return (T) col;
         } catch (NoSuchMethodException | SecurityException | InstantiationException
                 | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
@@ -231,26 +199,13 @@ public class JSONArray extends JSONValue<List<JSONValue>> implements JSONCollect
      * @param clss
      * @return
      */
-    private <T> T collectionMap(Class<? extends Collection> colCls, Class... clss) {
+    private <T> T collectionMap(Class<? extends Collection> colCls, Class<T> cls) {
         Collection col;
 
         try {
             col = colCls.getConstructor().newInstance();
 
-            if (clss.length > 1) {
-                Class[] clb = new Class[clss.length - 1];
-                System.arraycopy(clss, 1, clb, 0, clb.length);
-
-                value.stream().map(o -> {
-                    if (o instanceof JSONCollection) {
-                        return ((JSONCollection) o).map(clb);
-                    } else {
-                        return o.typeMap(clss[1]);
-                    }
-                    }).forEach(col::add);
-            } else {
-                value.forEach(col::add);
-            }
+            value.forEach(col::add);
             return (T) col;
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException
                 | InvocationTargetException | NoSuchMethodException | SecurityException ex) {
@@ -277,23 +232,12 @@ public class JSONArray extends JSONValue<List<JSONValue>> implements JSONCollect
      */
     public <T> T[] toArray(T[] a) {
         Class<?> contentType = a.getClass().getComponentType();
-        T[] array;
-        if (a.length != value.size()) {
-            array = (T[]) Array.newInstance(contentType, value.size());
-        } else {
-            array = a;
-        }
 
         if (contentType == JSONValue.class) {
-            return value.toArray(array);
+            return value.toArray(a);
         }
 
-        int i = 0;
-//        value.stream().map(v -> v.typeMap(contentType) ).forEach(v -> {array[i++] = (T)v; });
-        for (JSONValue val : value) {
-            array[i++] = (T) val.typeMap(contentType);
-        }
-        return (T[]) array;
+        return value.parallelStream().map(v -> v.typeMap(contentType)).collect(Collectors.toList()).toArray(a);
     }
 
     public void add(Object o) {

@@ -2,15 +2,24 @@ package net.siisise.json2;
 
 /**
  * Collection (List),Mapを統合したような操作をJSON Pointerでできるような感じのもの
+ * Arrayではindexは文字列に変換して代用。挿入、削除すると配置は変わる。
  * @param <T> データ型
  */
 public interface JSON2Collection<T> extends JSON2Value {
     
     JSON2Value getJSON(String key);
+
+    /**
+     * 値をセットする。
+     * Array系のsetという名称、Object系のputJSONと同じ
+     * @param key
+     * @param obj 
+     */
     void setJSON(String key, JSON2Value obj);
     void addJSON(String key, JSON2Value obj);
 
     /**
+     * 値をセットする。
      * 戻り型がJSON2Valueな違い
      * @param key キー
      * @param obj データ
@@ -25,22 +34,6 @@ public interface JSON2Collection<T> extends JSON2Value {
      */
     JSON2Value removeJSON(String key);
     
-    /**
-     * プリミティブを含む配列、Collection、などに変換する。
-     * 何にでも変換できるといい。
-     * JSONArrayからList<String> にしたい場合 List.class, String.class で変換される。
-     * JSONObjectからMap<String,Example> の場合 Map.class, String.class, Example.class と指定する。
-     * Collection以外(class,array)の内部要素は変数型から判定するので別途指定は不要。
-     * 省略時、不足する場合はJSONValueから変換しない。
-     * Typeを使用したtypeMap(Type) がおすすめかもしれない。
-     * 
-     * @deprecated #typeMap(Type) へ移行する
-     * @param <T>
-     * @param clss
-     * @return
-     */
-    <T> T map(Class... clss);
-
     default String tab(String val) {
         return val.replace("\r\n", "\r\n  ");
     }

@@ -78,22 +78,6 @@ public interface JSONCollection<K extends String,T> extends Iterable<JSONValue> 
     Set<String> keySetJSON();
 
     /**
-     * プリミティブを含む配列、Collection、などに変換する。
-     * 何にでも変換できるといい。
-     * JSONArrayからList<String> にしたい場合 List.class, String.class で変換される。
-     * JSONObjectからMap<String,Example> の場合 Map.class, String.class, Example.class と指定する。
-     * Collection以外(class,array)の内部要素は変数型から判定するので別途指定は不要。
-     * 省略時、不足する場合はJSONValueから変換しない。
-     * Typeを使用したtypeMap(Type) がおすすめかもしれない。
-     * 
-     * @deprecated #typeMap(Type) へ移行する
-     * @param <T>
-     * @param clss
-     * @return
-     */
-    <T> T map(Class... clss);
-    
-    /**
      * オブジェクトマッピング JSON版.
      * JSONから指定された型のオブジェクトに変換する.
      * 何にでも変換できるといい。

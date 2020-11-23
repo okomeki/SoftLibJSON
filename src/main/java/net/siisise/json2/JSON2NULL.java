@@ -3,8 +3,7 @@ package net.siisise.json2;
 import java.lang.reflect.Type;
 import javax.json.JsonValue;
 import net.siisise.json.JSONFormat;
-import net.siisise.json.JSONNULL;
-import net.siisise.json.JSONValue;
+import net.siisise.omap.OMAP;
 
 /**
  *
@@ -20,17 +19,7 @@ public class JSON2NULL implements JSON2Value,JsonValue {
 
     @Override
     public Object typeMap(Type type) {
-        if ( type == JSONValue.class || type == JSONNULL.class ) {
-            return JSONNULL.NULL;
-        } else if ( type == JSON2Value.class || type == JSON2NULL.class ) {
-            return JSON2NULL.NULL;
-        } else if ( type == JsonValue.class ) {
-            return JsonValue.NULL;
-        } else if ( type == JsonValue.ValueType.class ) {
-            return JsonValue.ValueType.NULL;
-        }
-        // String Integer Boolean などもnull
-        return null;
+        return OMAP.typeNull(type);
     }
 
     @Override

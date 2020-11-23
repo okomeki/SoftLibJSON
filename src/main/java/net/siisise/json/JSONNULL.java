@@ -2,8 +2,7 @@ package net.siisise.json;
 
 import java.lang.reflect.Type;
 import javax.json.JsonValue;
-import net.siisise.json2.JSON2NULL;
-import net.siisise.json2.JSON2Value;
+import net.siisise.omap.OMAP;
 
 /**
  * JSONデータ null
@@ -43,16 +42,7 @@ public class JSONNULL extends JSONValue implements JsonValue {
 
     @Override
     public Object typeMap(Type type) {
-        if ( JSONValue.class.isAssignableFrom((Class)type)) {
-            return JSONNULL.NULL;
-        }
-        if ( JSON2Value.class.isAssignableFrom((Class)type)) {
-            return JSON2NULL.NULL;
-        }
-        if ( type == JsonValue.class ) {
-            return JsonValue.NULL;
-        }
-        return null;
+        return OMAP.typeNull(type);
     }
     
     @Override

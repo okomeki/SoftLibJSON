@@ -5,7 +5,7 @@ import net.siisise.abnf.ABNFReg;
 
 /**
  * JavaScript Object Notation (JSON) Text Sequences.
- * https://tools.ietf.org/html/rfc7464
+ * @see https://tools.ietf.org/html/rfc7464
  */
 public class JSON7464Reg {
     

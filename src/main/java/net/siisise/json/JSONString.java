@@ -1,14 +1,12 @@
 package net.siisise.json;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
-import java.util.Map;
 import javax.json.JsonString;
 import javax.json.JsonValue;
 import net.siisise.abnf.AbstractABNF;
 import net.siisise.io.Packet;
 import net.siisise.lang.CodePoint;
+import net.siisise.omap.OMAP;
 
 /**
  * 文字列.
@@ -87,15 +85,6 @@ public class JSONString extends JSONValue<String> implements JsonString,CharSequ
         return sb.toString();
     }
 
-    @Override
-    public <E> E typeMap(Map<Class,JSONReplaceMO> map, Type cls) {
-        JSONReplaceMO conv = map.get(cls);
-        if ( conv != null ) {
-            return (E) conv.replace(this, (Class)cls);
-        }
-        return (E) typeMap(cls);
-    }
-    
     /**
      *
      * @param <T>
@@ -103,33 +92,10 @@ public class JSONString extends JSONValue<String> implements JsonString,CharSequ
      */
     @Override
     public <T> T typeMap(Type type) {
-        if ( type == String.class) {
-            return (T)value;
-        } else if ( type == StringBuilder.class ) {
-            return (T)new StringBuilder(value);
-        } else if ( type == JsonString.class || type == JsonValue.class ) {
-            return (T) toJson();
+        if ( type == JsonString.class || type == JsonValue.class ) {
+            return OMAP.typeString(value, JsonValue.class);
         }
-        if ( !(type instanceof Class)) {
-            throw new UnsupportedOperationException("まだない");
-        }
-        try {
-            Constructor<T> c = ((Class)type).getConstructor(value.getClass());
-            return c.newInstance(value);
-        } catch (NoSuchMethodException ex) {
-//            Logger.getLogger(JSONString.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SecurityException ex) {
-//            Logger.getLogger(JSONString.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-//            Logger.getLogger(JSONString.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-//            Logger.getLogger(JSONString.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IllegalArgumentException ex) {
-//            Logger.getLogger(JSONString.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InvocationTargetException ex) {
-//            Logger.getLogger(JSONString.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return (T) map();
+        return OMAP.typeString(value, type);
     }
 
     @Override

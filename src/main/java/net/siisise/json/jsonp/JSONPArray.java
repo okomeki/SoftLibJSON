@@ -1,6 +1,8 @@
 package net.siisise.json.jsonp;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import javax.json.JsonArray;
 import javax.json.JsonNumber;
@@ -20,6 +22,10 @@ public class JSONPArray extends JSON2Array<JsonValue> implements JsonArray {
 
     public JSONPArray() {
         super(JsonValue.class);
+    }
+    
+    public JSONPArray(Collection<JsonValue> col) {
+        super(col);
     }
     
     @Override
@@ -102,4 +108,20 @@ public class JSONPArray extends JSON2Array<JsonValue> implements JsonArray {
         //return list;
     }
 
+    /**
+     * JSONPArray互換の形式List<JsonValue>で格納する
+     * @param <T> だいたいなんでもいけるかもしれない。
+     * @return JSONP JsonArray対応型データ
+     */
+    public static <T> Collector<T,?,JSONPArray> collector() {
+        return Collector.of(
+                JSONPArray::new,
+                JSONPArray::addValue,
+                (ls, vals) -> {
+                    vals.forEach(ls::addValue);
+                    return ls;
+                },
+                Collector.Characteristics.IDENTITY_FINISH
+        );
+    }
 }

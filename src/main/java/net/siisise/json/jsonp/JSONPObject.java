@@ -12,6 +12,9 @@ import net.siisise.json2.JSON2Object;
  *
  */
 public class JSONPObject extends JSON2Object<JsonValue> implements JsonObject {
+    
+    public JSONPObject() {
+    }
 
     @Override
     public ValueType getValueType() {

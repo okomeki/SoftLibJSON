@@ -6,6 +6,7 @@ import java.math.BigInteger;
 import javax.json.JsonNumber;
 import javax.json.JsonValue;
 import net.siisise.json.JSONFormat;
+import net.siisise.omap.OMAP;
 
 /**
  * Number を扱う.
@@ -18,6 +19,11 @@ public class JSON2Number extends Number implements JSON2Value,JsonNumber {
     
     public JSON2Number(Number num) {
         number = num;
+    }
+
+    @Override
+    public Number numberValue() {
+        return number;
     }
 
     @Override
@@ -42,38 +48,7 @@ public class JSON2Number extends Number implements JSON2Value,JsonNumber {
 
     @Override
     public <T> T typeMap(Type type) {
-        if ( !(type instanceof Class) ) {
-            throw new UnsupportedOperationException("まだ");
-        }
-        Class<T> cls = (Class)type;
-        
-        if ( cls.isInstance(number)) {
-            return (T)number;
-        }
-
-        if (cls == Integer.TYPE || cls == Integer.class) {
-            return (T) Integer.valueOf(number.intValue());
-        } else if (cls == Long.TYPE || cls == Long.class) {
-            return (T) Long.valueOf(number.longValue());
-        } else if (cls == Short.TYPE || cls == Short.class) {
-            return (T) Short.valueOf(number.shortValue());
-        } else if (cls == Character.TYPE || cls == Character.class) {
-            return (T) Character.valueOf((char)number.intValue());
-        } else if (cls == Byte.TYPE || cls == Byte.class) {
-            return (T) Byte.valueOf(number.byteValue());
-        } else if (cls == Float.TYPE || cls == Float.class) {
-            return (T) Float.valueOf(number.floatValue());
-        } else if (cls == Double.TYPE || cls == Double.class) {
-            return (T) Double.valueOf(number.doubleValue());
-        } else if (cls == BigInteger.class) {
-            return (T) new BigInteger(number.toString());
-        } else if (cls == BigDecimal.class) {
-            return (T) new BigDecimal(number.toString());
-        } else if ( cls == String.class || cls == CharSequence.class ) {
-            return (T)number.toString();
-        }
-
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return (T) OMAP.typeNumber(number, type);
     }
 
     @Override

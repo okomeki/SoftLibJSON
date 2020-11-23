@@ -1,16 +1,13 @@
 package net.siisise.json2;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.json.JsonString;
 import javax.json.JsonValue;
 import net.siisise.abnf.AbstractABNF;
 import net.siisise.io.Packet;
 import net.siisise.json.JSONFormat;
 import net.siisise.lang.CodePoint;
+import net.siisise.omap.OMAP;
 
 /**
  *
@@ -23,6 +20,10 @@ public class JSON2String implements JSON2Value,JsonString {
         value = val.toString();
     }
 
+    public JSON2String(String val) {
+        value = val;
+    }
+
     @Override
     public <T> T map() {
         return (T)value;
@@ -30,32 +31,10 @@ public class JSON2String implements JSON2Value,JsonString {
 
     @Override
     public <T> T typeMap(Type type) {
-        if ( type == String.class || type == CharSequence.class ) {
-            return (T)value;
-        } else if ( type == StringBuilder.class ) {
-            return (T)new StringBuilder(value);
-        } else if ( type == StringBuffer.class ) {
-            return (T)new StringBuffer(value);
-        } else if ( type == JsonString.class || type == JsonValue.class ) {
+        if ( type == JsonString.class || type == JsonValue.class ) {
             return (T) toJson();
         }
-        try {
-            Constructor<T> c = ((Class)type).getConstructor(value.getClass());
-            return c.newInstance(value);
-        } catch (NoSuchMethodException ex) {
-            Logger.getLogger(JSON2String.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SecurityException ex) {
-            Logger.getLogger(JSON2String.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            Logger.getLogger(JSON2String.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            Logger.getLogger(JSON2String.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IllegalArgumentException ex) {
-            Logger.getLogger(JSON2String.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InvocationTargetException ex) {
-            Logger.getLogger(JSON2String.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return (T)value;
+        return (T)OMAP.typeString(value, type);
     }
 
     @Override

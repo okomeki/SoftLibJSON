@@ -1,11 +1,10 @@
 package net.siisise.json;
 
 import java.lang.reflect.Type;
-import java.util.List;
-import java.util.Map;
 import java.util.stream.Collector;
 import java.util.stream.Collector.Characteristics;
 import javax.json.JsonValue;
+import net.siisise.omap.OMAP;
 
 /**
  * JSON中間形式なinterface.
@@ -55,15 +54,6 @@ public interface JSON<T> {
      */
     <E> E typeMap(Type type);
     
-    /**
-     * JSONB
-     * @param <E>
-     * @param replaces
-     * @param type
-     * @return
-     */
-    <E> E typeMap(Map<Class,JSONReplaceMO> replaces, Type type);
-
     /**
      * JSON テキスト出力
      *
@@ -135,32 +125,6 @@ public interface JSON<T> {
     */
     
     /**
-     * Objectのマッピング方法は3種類ぐらい用意する予定.
-     * public field
-     * private field
-     * bean pattern
-     */
-    static final JSONMap PUBLIC = new JSONMap();
-//    static JSONMap PRIVATE = new JSONMap();
-//    static JSONMap BEAN = new JSONMap();
-
-    /**
-     * ParserにstaticでvalueOfを実装してみる
-     * Replacer としてあとでまとめる
-     */
-    static JSONMap PARSERS = PUBLIC;
-
-    /**
-     * なんでもJSONに変換する。
-     * プリミティブ型、配列、Collection、Object boolean byte short char int long float double List Map Number null String、
-     * @param src なんでも
-     * @return JSONValue
-     */
-    public static JSONValue valueOf(Object src) {
-        return valueOf(src, null);
-    }
-
-    /**
      * なんでもJSONに変換する。
      * プリミティブ型、配列、Collection、Object boolean byte short char int long float
      * double List Map Number null String
@@ -169,8 +133,8 @@ public interface JSON<T> {
      * @param replacer
      * @return JSONValue
      */
-    public static JSONValue valueOf(Object src, JSONReplacer replacer) {
-        return PARSERS.valueOf(src, replacer);
+    public static JSONValue valueOf(Object src) {
+        return OMAP.valueOf(src, JSONValue.class);
     }
 
     /**
@@ -179,7 +143,12 @@ public interface JSON<T> {
      */
     public JsonValue toJson();
     
-    static <T> Collector<T,?,JSONArray> toJSONArray() {
+    /**
+     * 
+     * @param <T>
+     * @return 
+     */
+    public static <T> Collector<T,?,JSONArray> toJSONArray() {
         return Collector.of(
                 JSONArray::new,
                 JSONArray::add,

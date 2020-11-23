@@ -50,7 +50,11 @@ public class JSONPointer implements JsonPointer {
         vp.coll.addJSON(vp.key, value);
     }
 
-    /** wrap いらないかも */
+    /**
+     * wrap いらないかも
+     * @param target
+     * @param value
+     */
     public void add(JSON2Collection target, JSON2Value value) {
         Col2Key vp = step(target);
         vp.coll.addJSON(vp.key, value);

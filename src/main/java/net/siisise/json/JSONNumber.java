@@ -9,6 +9,7 @@ import net.siisise.abnf.ABNF;
 import net.siisise.abnf.AbstractABNF;
 import net.siisise.abnf.parser.ABNFPacketParser;
 import net.siisise.io.FrontPacket;
+import net.siisise.omap.OMAP;
 
 /**
  * BigDecimal
@@ -44,6 +45,11 @@ public class JSONNumber<T> extends JSONValue<T> implements JsonNumber {
         }
         throw new UnsupportedOperationException();
     }
+    
+    @Override
+    public Number numberValue() {
+        return map();
+    }
 
     /**
      * Number系数値に変換
@@ -55,45 +61,13 @@ public class JSONNumber<T> extends JSONValue<T> implements JsonNumber {
      */
     @Override
     public <T> T typeMap(Type type) {
-        if ( !(type instanceof Class) ) {
-            throw new UnsupportedOperationException("まだ");
-        }
-        Class<T> cls = (Class)type;
-        
-        if ( cls.isInstance(value)) {
-            return (T)value;
-        }
-    
         Number val;
         if ( value instanceof String ) {
             val = map();
         } else {
             val = (Number)value;
         }
-
-        if (cls == Integer.TYPE || cls == Integer.class) {
-            return (T) Integer.valueOf(val.intValue());
-        } else if (cls == Long.TYPE || cls == Long.class) {
-            return (T) Long.valueOf(val.longValue());
-        } else if (cls == Short.TYPE || cls == Short.class) {
-            return (T) Short.valueOf(val.shortValue());
-        } else if (cls == Character.TYPE || cls == Character.class) {
-            return (T) Character.valueOf((char)val.intValue());
-        } else if (cls == Byte.TYPE || cls == Byte.class) {
-            return (T) Byte.valueOf(val.byteValue());
-        } else if (cls == Float.TYPE || cls == Float.class) {
-            return (T) Float.valueOf(val.floatValue());
-        } else if (cls == Double.TYPE || cls == Double.class) {
-            return (T) Double.valueOf(val.doubleValue());
-        } else if (cls == BigInteger.class) {
-            return (T) new BigInteger(val.toString());
-        } else if (cls == BigDecimal.class) {
-            return (T) new BigDecimal(val.toString());
-        } else if ( cls == String.class ) {
-            return (T)value.toString();
-        }
-
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return (T)OMAP.typeNumber(val, type);
     }
 
     @Override
