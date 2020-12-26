@@ -36,6 +36,16 @@ public class StringConvert implements MtoConvert<String> {
     }
 
     @Override
+    public String arrayValue(Object array) {
+        Class cls = array.getClass();
+        Class componentClass = cls.getComponentType();
+        if ( componentClass == Character.TYPE ) {
+            return new String((char[])array);
+        }
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
     public Object listValue(Collection list) {
         return list.toString();
     }

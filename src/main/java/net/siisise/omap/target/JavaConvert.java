@@ -36,6 +36,11 @@ public class JavaConvert implements MtoConvert {
     }
 
     @Override
+    public Object arrayValue(Object array) {
+        return array;
+    }
+
+    @Override
     public Object listValue(Collection list) {
         return list;
     }

@@ -1,4 +1,4 @@
-package net.siisise.json.jsonp;
+package net.siisise.json2.jsonp;
 
 import javax.json.JsonArray;
 import javax.json.JsonNumber;

@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.Set;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
-import net.siisise.json.jsonp.JSONPObject;
+import net.siisise.json2.jsonp.JSONPObject;
 import net.siisise.json.pointer.JSONPointer;
 import net.siisise.json2.JSON2Object;
 import net.siisise.omap.OMAP;

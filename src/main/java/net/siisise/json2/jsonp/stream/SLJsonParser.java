@@ -1,4 +1,4 @@
-package net.siisise.json.jsonp.stream;
+package net.siisise.json2.jsonp.stream;
 
 import java.io.IOException;
 import java.io.InputStream;

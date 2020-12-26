@@ -39,7 +39,7 @@ public class JSON2NULL implements JSON2Value,JsonValue {
 
     @Override
     public ValueType getValueType() {
-        return JsonValue.ValueType.NULL;
+        return ValueType.NULL;
     }
     
 }

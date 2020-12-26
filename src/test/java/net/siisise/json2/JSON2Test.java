@@ -1,6 +1,7 @@
 package net.siisise.json2;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +41,9 @@ public class JSON2Test {
     JSON2 j2val;
     JSONNULL nval;
     JSON2NULL n2val;
+    List<? extends Integer> lint;
+    Integer[] aint;
+    List<Integer>[] laint;
 
     @Test
     public void testNullMap() throws NoSuchFieldException {
@@ -50,6 +54,22 @@ public class JSON2Test {
         Field fj2val = getClass().getDeclaredField("j2val");
         Field fnval = getClass().getDeclaredField("nval");
         Field fn2val = getClass().getDeclaredField("n2val");
+        
+        Field lint = getClass().getDeclaredField("lint");
+        Field aint = getClass().getDeclaredField("aint");
+        
+        Type lintt = lint.getGenericType();
+        Type aintt = aint.getGenericType();
+        
+        System.out.println("type test");
+        System.out.println(lintt.getClass().getName());
+        System.out.println(lintt.getClass().isArray());
+        System.out.println(lintt.getTypeName());
+//        System.out.println(lintt.getType().getClass().getName());
+        System.out.println(aintt.getClass().getName()); // 配列
+        System.out.println(aintt.getClass().isArray()); // 配列
+        System.out.println(aintt.getTypeName());
+//        System.out.println(aint.getType().getClass().getName());
         
         System.out.println(JSONNULL.NULL.typeMap(foval.getType()));
         System.out.println(JSONNULL.NULL.typeMap(fval.getType()).getClass().getName());

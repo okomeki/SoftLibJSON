@@ -17,16 +17,17 @@ import net.siisise.omap.OMAP;
  * JSONP toJson()
  */
 public interface JSON2 {
-   
+
     static class ParameterizedTypeImpl implements ParameterizedType {
+
         private Type rawType;
         private Type[] args;
-        
+
         ParameterizedTypeImpl(Type raw, Type[] args) {
             rawType = raw;
             this.args = args;
         }
-        
+
         ParameterizedTypeImpl(Type... clss) {
             rawType = clss[0];
             args = new Type[clss.length - 1];
@@ -48,100 +49,107 @@ public interface JSON2 {
          */
         @Override
         public Type getOwnerType() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            throw new UnsupportedOperationException("Not supported yet.");
         }
     }
-    
+
     static Type parameterizedType(Type... clss) {
         return new ParameterizedTypeImpl(clss);
     }
-    
+
     static Type listType(Type c) {
         return new ParameterizedTypeImpl(List.class, c);
     }
 
     /**
      * JSON文字列からObjectにパースする.
-     * 
+     *
      * @param json
-     * @return 
+     * @return
      */
     static Object parse(String json) {
         return JSON28259Reg.parse(json);
     }
-    
-    static JSON2Value parseWrap(String json) {
+
+    public static JSON2Value parseWrap(String json) {
         return valueWrap(JSON28259Reg.parse(json));
     }
 
     /**
      * JSONデータ列からObjectにパースする
+     *
      * @param json
-     * @return 
+     * @return
      */
     static Object parse(byte[] json) {
         return JSON28259Reg.parse(json);
     }
 
-    static JSON2Value parseWrap(byte[] json) {
+    public static JSON2Value parseWrap(byte[] json) {
         return valueWrap(JSON28259Reg.parse(json));
     }
 
     public static JSONFormat NOBR = JSON.NOBR;
     public static JSONFormat TAB = JSON.TAB;
-    
+
     /**
      * JSON (JavaのString)として出力する.
+     *
      * @return JSON
      */
     @Override
     String toString();
+
     /**
      * 書式を指定してJSONとして出力する.
+     *
      * @param format
-     * @return 
+     * @return
      */
     String toString(JSONFormat format);
-    
+
     /**
-     * JSON中間型(風) Listまたは Map型で返す。 
+     * JSON中間型(風) Listまたは Map型で返す。
+     *
      * @param src
      * @return JSON2系ListとMapのJavaっぽいデータ
      */
     public static Object valueMap(Object src) {
         return OMAP.valueOf(src, Object.class);
     }
-    
+
     /**
      * valueOf で結果が単体(primitive型)のときラップしてから返す
+     *
      * @param src
-     * @return 
+     * @return
      */
     public static JSON2Value valueOf(Object src) {
         return OMAP.valueOf(src, JSON2Value.class);
     }
-    
+
     static JSON2Value valueWrap(Object val) {
-        if ( val == null ) {
+        if (val == null) {
             return JSON2NULL.NULL;
-        } else if ( val instanceof JSON2Value ) {
-            return (JSON2Value)val;
-        } else if ( val instanceof Boolean ) {
-            return (Boolean)val ? JSON2Boolean.TRUE : JSON2Boolean.FALSE;
-        } else if ( val instanceof Number ) {
-            return new JSON2Number((Number)val);
-        } else if ( val instanceof CharSequence ) {
-            return new JSON2String((CharSequence)val);
+        } else if (val instanceof JSON2Value) {
+            return (JSON2Value) val;
+        } else if (val instanceof Boolean) {
+            return (Boolean) val ? JSON2Boolean.TRUE : JSON2Boolean.FALSE;
+        } else if (val instanceof Number) {
+            return new JSON2Number((Number) val);
+        } else if (val instanceof CharSequence) {
+            return new JSON2String((CharSequence) val);
         }
         throw new UnsupportedOperationException("未" + val.getClass().getName());
     }
 
     /**
      * 要素をそのまま維持してJSON2Arrayにする。
+     *
      * @param <T>
-     * @return 
+     * @return
      */
-    public static <T> Collector<T,?,JSON2Array> toJSON2Array() {
+    public static <T> Collector<T, ?, JSON2Array> toJSON2Array() {
         return Collector.of(
                 JSON2Array::new,
                 JSON2Array::add,
@@ -155,10 +163,11 @@ public interface JSON2 {
 
     /**
      * StreamからREST寄りのprimitive型に変換して格納する。
+     *
      * @param <T>
-     * @return 
+     * @return
      */
-    public static <T> Collector<T,?,JSON2Array> toJSON2PrimArray() {
+    public static <T> Collector<T, ?, JSON2Array> toJSON2PrimArray() {
         return Collector.of(
                 JSON2Array::new,
                 JSON2Array::addValue,

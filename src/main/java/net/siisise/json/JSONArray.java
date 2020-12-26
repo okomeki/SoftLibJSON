@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 import javax.json.JsonArray;
 import javax.json.JsonNumber;
 import javax.json.JsonValue;
-import net.siisise.json.jsonp.JSONPArray;
+import net.siisise.json2.jsonp.JSONPArray;
 import net.siisise.json.pointer.JSONPointer;
 import net.siisise.json2.JSON2;
 import net.siisise.json2.JSON2Array;
@@ -338,6 +338,7 @@ public class JSONArray extends JSONValue<List<JSONValue>> implements JSONCollect
      * @param o
      * @return
      */
+    @Override
     public JSONValue put(String key, Object o) {
         JSONValue v = get(key);
         set(key, o);

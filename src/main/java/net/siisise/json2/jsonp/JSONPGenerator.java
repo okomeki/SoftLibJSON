@@ -1,4 +1,4 @@
-package net.siisise.json.jsonp;
+package net.siisise.json2.jsonp;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -246,7 +246,7 @@ public class JSONPGenerator implements JsonGenerator {
 
     @Override
     public JsonGenerator write(boolean value) {
-        write((JSONValue) new JSONBoolean(value));
+        write((JSONValue) (value ? JSONBoolean.TRUE : JSONBoolean.FALSE));
         return this;
     }
 

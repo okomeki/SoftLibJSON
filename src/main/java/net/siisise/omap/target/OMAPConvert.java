@@ -3,6 +3,7 @@ package net.siisise.omap.target;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -25,11 +26,11 @@ import java.util.logging.Logger;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
+import net.siisise.io.BASE64;
 import net.siisise.json.JSONBoolean;
 import net.siisise.json.JSONNULL;
 import net.siisise.json.JSONString;
-import net.siisise.json.jsonp.JSONPArray;
-import net.siisise.json2.JSON2;
+import net.siisise.json2.jsonp.JSONPArray;
 import net.siisise.json2.JSON2Array;
 import net.siisise.json2.JSON2Boolean;
 import net.siisise.json2.JSON2NULL;
@@ -159,6 +160,15 @@ public class OMAPConvert<T> extends OBJConvert<T> {
                 return val;
             }
             Class cls = (Class)type;
+            if ( cls.isArray() ) {
+                if ( cls.getComponentType() == Character.TYPE ) {
+                    return val.toCharArray();
+                } else if ( cls.getComponentType() == Byte.TYPE ) {
+                    BASE64 b64 = new BASE64(BASE64.URL,0);
+                    return b64.decode(val);
+                }
+                throw new UnsupportedOperationException("謎の配列");
+            }
             if ( cls.isAssignableFrom(JSON2String.class) ) {
                 return new JSON2String(val);
             }
@@ -191,9 +201,8 @@ public class OMAPConvert<T> extends OBJConvert<T> {
     @Override
     public Object listValue(Collection list) {
         if (type instanceof Class) {
-            Class cls = (Class) type;
             return listClassCast(list, (Class)type);
-        } else if ( type instanceof ParameterizedType ) {
+        } else if ( type instanceof ParameterizedType ) { // List<Generic>
             ParameterizedType pt = (ParameterizedType) type;
             Type raw = pt.getRawType();
             Collection col = typeToList((Class)raw);
@@ -201,11 +210,23 @@ public class OMAPConvert<T> extends OBJConvert<T> {
                 return listCollectionTypeMap(list, pt, col);
             }
 
+        } else if ( type instanceof GenericArrayType ) { // XXX<String>[]
+            GenericArrayType gat = (GenericArrayType)type;
+            Type component = gat.getGenericComponentType();
+            return listToArray(list, component);
         }
         
         throw new UnsupportedOperationException("未サポートな型:" + type.getTypeName());
     }
 
+    /**
+     * 
+     * @param <I>
+     * @param <T>
+     * @param src
+     * @param cls
+     * @return 
+     */
     public static <I,T> T listClassCast(Collection<I> src, Class<T> cls) {
         if (cls == String.class || cls == CharSequence.class) {
             return (T) src.toString();
@@ -217,19 +238,7 @@ public class OMAPConvert<T> extends OBJConvert<T> {
             }
             return (T) src.stream().collect(JSONPArray.collector());
         } else if (cls.isArray()) { // 配列 要素の型も指定可能, Memberの型ではParameterizedTypeに振り分けられそう?
-            Class componentType = cls.getComponentType();
-            Object array = (Object) Array.newInstance(componentType, src.size());
-
-//            j2Stream().map(v -> v.typeMap(componentType)).array);
-            int i = 0;
-            for (Object val : src) {
-                if (val instanceof JSON2Value) {
-                    Array.set(array, i++, ((JSON2Value) val).typeMap(componentType));
-                } else {
-                    Array.set(array, i++, JSON2.valueOf(val).typeMap(componentType));
-                }
-            }
-            return (T) array;
+            return (T) listToArray(src, cls.getComponentType());
         }
         
         // Collection 要素の型は?
@@ -246,6 +255,46 @@ public class OMAPConvert<T> extends OBJConvert<T> {
         }
         return (T) listLcCast(list, cls);
     }
+    
+    /**
+     * Genericを外す仮
+     * @param type
+     * @return 
+     */
+    private static Class unGene( Type type ) {
+        if ( type instanceof ParameterizedType ) {
+            return (Class) ((ParameterizedType) type).getRawType();
+        } else if ( type instanceof GenericArrayType ) {
+            Type gct = ((GenericArrayType) type).getGenericComponentType();
+            Class c = unGene(gct);
+            return Array.newInstance(c, 0).getClass(); // 配列の型を作る方法は? arrayType() JDK12以降
+        } else if ( type instanceof Class ) {
+            return (Class) type;
+        }
+        throw new UnsupportedOperationException();
+    }
+    
+    /**
+     * Genericを外した形で作ればいいのかどうか
+     * @param <I>
+     * @param src
+     * @param componentType
+     * @return 
+     */
+    private static <I> Object listToArray(Collection<I> src, Type componentType) {
+        Class raw = unGene(componentType);
+        Object array = Array.newInstance(raw, src.size());
+        
+        int i = 0;
+        for ( I val : src ) {
+            if ( val instanceof JSON2Value ) { // 中身はGeneric対応で変換
+                Array.set(array, i++, ((JSON2Value) val).typeMap(componentType));
+            } else {
+                Array.set(array, i++, OMAP.valueOf(val,componentType));
+            }
+        }
+        return array;
+    }
 
     /**
      *
@@ -260,7 +309,7 @@ public class OMAPConvert<T> extends OBJConvert<T> {
         if (argTypes.length == 0) { // 未検証
             list.forEach(col::add);
         } else {
-            list.stream().map(m -> JSON2.valueOf(m).typeMap(argTypes[0])).forEach(col::add);
+            list.stream().map(m -> OMAP.valueOf(m,argTypes[0])).forEach(col::add);
         }
         return (T) col;
     }
@@ -287,11 +336,10 @@ public class OMAPConvert<T> extends OBJConvert<T> {
                     Object o = array.get(i);
                     JSON2Value v;
                     if (o instanceof JSON2Value) {
-                        v = ((JSON2Value) o);
+                        params[i] = ((JSON2Value) o).typeMap(pt[i]);
                     } else {
-                        v = JSON2.valueOf(o);
+                        params[i] = OMAP.valueOf(o, pt[i]);
                     }
-                    params[i] = v.typeMap(pt[i]);
                 }
                 return (T) c.newInstance(params);
             } catch (UnsupportedOperationException | InstantiationException
@@ -328,9 +376,7 @@ public class OMAPConvert<T> extends OBJConvert<T> {
             Type[] args = type.getActualTypeArguments();
             Map map = typeToMap((Class) raw);
             src.entrySet().forEach(es -> {
-//                JSON2Value jsonKey = JSON2.valueOf(es.getKey());
                 Object tkey = OMAP.valueOf(es.getKey(), args[0]);
-//                JSON2Value jsonVal =  JSON2.valueOf(es.getValue());
                 Object tval = OMAP.valueOf(es.getValue(), args[1]);
                 map.put(tkey, tval);
             });

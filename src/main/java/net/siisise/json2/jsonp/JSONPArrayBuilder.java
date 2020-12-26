@@ -1,4 +1,4 @@
-package net.siisise.json.jsonp;
+package net.siisise.json2.jsonp;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -15,7 +15,7 @@ import net.siisise.json2.JSON2String;
  */
 public class JSONPArrayBuilder implements JsonArrayBuilder {
 
-    private JSONPArray array = new JSONPArray();
+    private final JSONPArray array = new JSONPArray();
 
     @Override
     public JsonArrayBuilder add(JsonValue val) {

@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
 import net.siisise.json.JSONFormat;
-import net.siisise.json.jsonp.JSONPObject;
+import net.siisise.json2.jsonp.JSONPObject;
 import net.siisise.omap.OMAP;
 
 /**
@@ -87,8 +87,8 @@ public class JSON2Object<V> extends LinkedHashMap<String, V> implements JSON2Col
             return JsonValue.EMPTY_JSON_OBJECT;
         } else {
             JSONPObject obj = new JSONPObject();
-            keySet().forEach(name -> {
-                obj.put(name, getJSON(name).toJson());
+            entrySet().forEach(e -> {
+                obj.put(e.getKey(), OMAP.valueOf(e.getValue(), JsonValue.class));
             });
             return obj;
         }

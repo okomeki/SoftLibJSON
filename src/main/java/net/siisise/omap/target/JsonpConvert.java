@@ -6,7 +6,7 @@ import javax.json.JsonArray;
 import javax.json.JsonNumber;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
-import net.siisise.json.jsonp.JSONPArray;
+import net.siisise.json2.jsonp.JSONPArray;
 import net.siisise.json2.JSON2;
 import net.siisise.json2.JSON2Number;
 import net.siisise.json2.JSON2Object;

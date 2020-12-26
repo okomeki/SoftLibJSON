@@ -46,74 +46,98 @@ public class JSONPointer implements JsonPointer {
     }
 
     public void add(JSONCollection target, JSONValue value) {
-        ColKey vp = step(target);
+        ColKey<JSONCollection> vp = step(target);
         vp.coll.addJSON(vp.key, value);
     }
 
     /**
      * wrap いらないかも
+     *
      * @param target
      * @param value
      */
     public void add(JSON2Collection target, JSON2Value value) {
-        Col2Key vp = step(target);
+        ColKey<JSON2Collection> vp = step(target);
         vp.coll.addJSON(vp.key, value);
     }
 
+    @Override
+    public <T extends JsonStructure> T add(T target, JsonValue value) {
+        ColKey<JsonStructure> vp = step(target);
+        if (vp.coll instanceof JsonArray) {
+            ((JsonArray) vp.coll).add(Integer.parseInt(vp.key), value);
+        } else if (vp.coll instanceof JsonObject) {
+            ((JsonObject) vp.coll).put(vp.key, value);
+        }
+        return target;
+    }
+
+    /**
+     *
+     * @param target
+     * @return 値?
+     */
     public JSONValue remove(JSONCollection target) {
-        ColKey vp = step(target);
+        ColKey<JSONCollection> vp = step(target);
         return vp.coll.removeJSON(vp.key);
     }
 
     public JSON2Value remove(JSON2Collection target) {
-        Col2Key vp = step(target);
+        ColKey<JSON2Collection> vp = step(target);
         return vp.coll.removeJSON(vp.key);
     }
 
+    /**
+     * なにかちがう?
+     *
+     * @param <T>
+     * @param target
+     * @return ??
+     */
+    @Override
+    public <T extends JsonStructure> T remove(T target) {
+        ColKey<JsonStructure> vp = step(target);
+        if (vp.coll instanceof JsonArray) {
+            ((JsonArray) vp.coll).remove(Integer.parseInt(vp.key));
+        } else if (vp.coll instanceof JsonObject) {
+            ((JsonObject) vp.coll).remove(vp.key);
+        }
+        return target;
+    }
+
     public JSONValue get(JSONCollection target) {
-        return step((JSONValue)target,false).val;
-        //return obj.get(this);
+        return step((JSONValue) target, false).val;
     }
 
     public JSON2Value get(JSON2Collection target) {
-        return step((JSON2Value)target,false).val;
-        //return obj.get(this);
+        return step((JSON2Value) target, false).val;
     }
 
     public void set(JSONCollection target, Object value) {
-        ColKey vp = step(target);
+        ColKey<JSONCollection> vp = step(target);
         vp.coll.setJSON(vp.key, JSON.valueOf(value));
     }
 
     public void set(JSON2Collection target, Object value) {
-        Col2Key vp = step(target);
+        ColKey<JSON2Collection> vp = step(target);
         vp.coll.setJSON(vp.key, JSON2.valueOf(value));
     }
 
     public void replace(JSONCollection target, Object value) {
-        ColKey vp = step(target);
+        ColKey<JSONCollection> vp = step(target);
         vp.coll.removeJSON(vp.key);
         vp.coll.addJSON(vp.key, JSON.valueOf(value));
     }
 
     public void replace(JSON2Collection target, Object value) {
-        Col2Key vp = step(target);
+        ColKey<JSON2Collection> vp = step(target);
         vp.coll.removeJSON(vp.key);
         vp.coll.addJSON(vp.key, JSON2.valueOf(value));
     }
 
-    private static class ColKey {
-        private JSONCollection coll;
-        private String key;
-    }
+    private static class ColKey<J> {
 
-    private static class Col2Key {
-        private JSON2Collection coll;
-        private String key;
-    }
-
-    private static class JsonColKey {
-        private JsonStructure coll;
+        private J coll;
         private String key;
     }
 
@@ -221,118 +245,63 @@ public class JSONPointer implements JsonPointer {
     }
 
     @Override
-    public <T extends JsonStructure> T add(T target, JsonValue value) {
-        JsonColKey vp = step(target);
-        if ( vp.coll instanceof JsonArray ) {
-            ((JsonArray)vp.coll).add(Integer.parseInt(vp.key), value);
-        } else if ( vp.coll instanceof JsonObject ) {
-            ((JsonObject)vp.coll).put(vp.key, value);
-        }
-        return target;
-    }
-
-    @Override
-    public <T extends JsonStructure> T remove(T target) {
-        JsonColKey vp = step(target);
-        if ( vp.coll instanceof JsonArray ) {
-            ((JsonArray)vp.coll).remove(Integer.parseInt(vp.key));
-        } else if ( vp.coll instanceof JsonObject ) {
-            ((JsonObject)vp.coll).remove(vp.key);
-        }
-        return target;
-    }
-
-    @Override
     public <T extends JsonStructure> T replace(T target, JsonValue value) {
-        JsonColKey vp = step(target);
-        if ( vp.coll instanceof JsonArray ) {
-            ((JsonArray)vp.coll).remove(Integer.parseInt(vp.key));
-            ((JsonArray)vp.coll).add(Integer.parseInt(vp.key), value);
-        } else if ( vp.coll instanceof JsonObject ) {
-            ((JsonObject)vp.coll).remove(vp.key);
-            ((JsonObject)vp.coll).put(vp.key, value);
+        ColKey<JsonStructure> vp = step(target);
+        if (vp.coll instanceof JsonArray) {
+            ((JsonArray) vp.coll).remove(Integer.parseInt(vp.key));
+            ((JsonArray) vp.coll).add(Integer.parseInt(vp.key), value);
+        } else if (vp.coll instanceof JsonObject) {
+            ((JsonObject) vp.coll).remove(vp.key);
+            ((JsonObject) vp.coll).put(vp.key, value);
         }
         return target;
     }
 
     @Override
     public boolean containsValue(JsonStructure target) {
-        JsonColKey vp = step(target);
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            ColKey<JsonStructure> vp = step(target);
+            return true;
+        } catch (UnsupportedOperationException e) {
+            return false;
+        }
     }
 
     @Override
     public JsonValue getValue(JsonStructure target) {
-        JsonColKey vp = step(target);
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return step(target, false).val;
     }
 
-    static class ValuePointer {
-        final JSONValue val;
+    public static class ValuePointer<T> {
+
+        public final T val;
         final JSONPointer path;
-        
-        ValuePointer(JSONValue value, JSONPointer p) {
+
+        ValuePointer(T value, JSONPointer p) {
             val = value;
             path = p;
         }
     }
 
-    static class Value2Pointer {
-        final JSON2Value val;
-        final JSONPointer path;
-        
-        Value2Pointer(JSON2Value value, JSONPointer p) {
-            val = value;
-            path = p;
-        }
-    }
-
-    public static class JsonValuePointer {
-        public final JsonValue val;
-        public final JSONPointer path;
-        
-        JsonValuePointer(JsonValue value, JSONPointer p) {
-            val = value;
-            path = p;
-        }
-    }
-    
     /**
      * JSONPatch用
+     *
      * @param src
      * @param keep 1段前までで止める
-     * @return 
+     * @return
      */
-    public ValuePointer step(JSONValue src, boolean keep) {
+    public <J> ValuePointer<J> step(J src, boolean keep) {
         String[] ds = toDecodeString();
-        JSONValue tg = src;
+        J tg = src;
         if (ds.length == 1) {
             return new ValuePointer(tg, null);
         } else if (ds.length == 2 && keep) {
             return new ValuePointer(tg, this);
         } else if (tg instanceof JSONCollection) {
-            tg = ((JSONCollection) tg).getJSON(ds[1]);
+            tg = (J) ((JSONCollection) tg).getJSON(ds[1]);
             return sub().step(tg, keep);
-        } else {
-            throw new java.lang.UnsupportedOperationException();
-        }
-    }
-    
-    /**
-     * JSONPatch用
-     * @param src
-     * @param keep 1段前までで止める
-     * @return 
-     */
-    public Value2Pointer step(JSON2Value src, boolean keep) {
-        String[] ds = toDecodeString();
-        JSON2Value tg = src;
-        if (ds.length == 1) {
-            return new Value2Pointer(tg, null);
-        } else if (ds.length == 2 && keep) {
-            return new Value2Pointer(tg, this);
         } else if (tg instanceof JSON2Collection) {
-            tg = ((JSON2Collection) tg).getJSON(ds[1]);
+            tg = (J) ((JSON2Collection) tg).getJSON(ds[1]);
             return sub().step(tg, keep);
         } else {
             throw new java.lang.UnsupportedOperationException();
@@ -341,37 +310,39 @@ public class JSONPointer implements JsonPointer {
 
     /**
      * JSON版
+     *
      * @param obj
-     * @return 
+     * @return
      */
-    private ColKey step(JSONCollection obj) {
-        JSONPointer.ValuePointer vp = step((JSONValue)obj, true);
+    private ColKey<JSONCollection> step(JSONCollection obj) {
+        JSONPointer.ValuePointer<JSONValue> vp = step((JSONValue) obj, true);
         ColKey kv = new ColKey();
         kv.coll = (JSONCollection) vp.val;
         kv.key = vp.path.toDecodeString()[1];
         return kv;
     }
-    
+
     /**
      * JSON版
+     *
      * @param obj
-     * @return 
+     * @return
      */
-    private Col2Key step(JSON2Collection obj) {
-        JSONPointer.Value2Pointer vp = step((JSON2Value)obj, true);
-        Col2Key kv = new Col2Key();
+    private ColKey<JSON2Collection> step(JSON2Collection obj) {
+        JSONPointer.ValuePointer<JSON2Value> vp = step((JSON2Value) obj, true);
+        ColKey<JSON2Collection> kv = new ColKey();
         kv.coll = (JSON2Collection) vp.val;
         kv.key = vp.path.toDecodeString()[1];
         return kv;
     }
 
-    public JsonValuePointer step(JsonValue src, boolean keep) {
+    public ValuePointer<JsonValue> step(JsonValue src, boolean keep) {
         String[] ds = toDecodeString();
         JsonValue tg = src;
         if (ds.length == 1) {
-            return new JsonValuePointer(tg, null);
+            return new ValuePointer(tg, null);
         } else if (ds.length == 2 && keep) {
-            return new JsonValuePointer(tg, this);
+            return new ValuePointer(tg, this);
         } else if (tg instanceof JsonArray) {
             tg = ((JsonArray) tg).get(Integer.parseInt(ds[1]));
             return sub().step(tg, keep);
@@ -382,15 +353,16 @@ public class JSONPointer implements JsonPointer {
             throw new java.lang.UnsupportedOperationException();
         }
     }
-    
+
     /**
      * Json版
+     *
      * @param obj Json
-     * @return 
+     * @return
      */
-    private JsonColKey step(JsonStructure obj) {
-        JSONPointer.JsonValuePointer vp = step(obj, true);
-        JsonColKey kv = new JsonColKey();
+    private ColKey<JsonStructure> step(JsonStructure obj) {
+        JSONPointer.ValuePointer<JsonValue> vp = step(obj, true);
+        ColKey<JsonStructure> kv = new ColKey<>();
         kv.coll = (JsonStructure) vp.val;
         return kv;
     }

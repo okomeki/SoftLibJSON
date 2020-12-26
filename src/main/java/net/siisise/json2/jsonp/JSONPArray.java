@@ -1,4 +1,4 @@
-package net.siisise.json.jsonp;
+package net.siisise.json2.jsonp;
 
 import java.util.Collection;
 import java.util.List;
@@ -35,7 +35,7 @@ public class JSONPArray extends JSON2Array<JsonValue> implements JsonArray {
 
     @Override
     public boolean isNull(int i) {
-        return get(i) == JsonValue.NULL || get(i) ==JSONNULL.NULL || get(i) == JSON2NULL.NULL;
+        return get(i) == JsonValue.NULL || get(i) == JSONNULL.NULL || get(i) == JSON2NULL.NULL;
     }
 
     @Override
@@ -83,7 +83,7 @@ public class JSONPArray extends JSON2Array<JsonValue> implements JsonArray {
     @Override
     public boolean getBoolean(int i) {
 //        get(i).getValueType()
-        return get(i) == JsonValue.TRUE || get(i) == JSONBoolean.TRUE|| get(i) == JSON2Boolean.TRUE;
+        return get(i) == JsonValue.TRUE || get(i) == JSONBoolean.TRUE || get(i) == JSON2Boolean.TRUE;
     }
 
     @Override

@@ -8,7 +8,7 @@ import java.util.stream.Stream;
 import javax.json.JsonArray;
 import javax.json.JsonValue;
 import net.siisise.json.JSONFormat;
-import net.siisise.json.jsonp.JSONPArray;
+import net.siisise.json2.jsonp.JSONPArray;
 import net.siisise.omap.OMAP;
 
 /**
@@ -107,9 +107,9 @@ public class JSON2Array<E> extends ArrayList<E> implements JSON2Collection<E> {
     }
     
     /**
-     *
+     * データを適当な型に変換して納めるので変換可能な配列ならなんでもいい。
      * @param <T>
-     * @param a
+     * @param a 抽出したい型の配列 0または必要数
      * @return
      */
     @Override
@@ -143,10 +143,13 @@ public class JSON2Array<E> extends ArrayList<E> implements JSON2Collection<E> {
                 .collect( Collectors.joining(",", "[", format.crlf +  "]"));
     }
 
+    /**
+     * ListっぽいJSON2Arrayの複製(表面のみ)で返す。
+     * @param <T>
+     * @return 
+     */
     @Override
     public <T> T map() {
-        JSON2Array list = new JSON2Array();
-        forEach(list::add);
-        return (T) list;
+        return (T)new JSON2Array(this);
     }
 }

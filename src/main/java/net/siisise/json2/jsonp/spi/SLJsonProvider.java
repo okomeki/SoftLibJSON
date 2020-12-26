@@ -1,4 +1,4 @@
-package net.siisise.json.jsonp.spi;
+package net.siisise.json2.jsonp.spi;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -18,12 +18,12 @@ import javax.json.stream.JsonGenerator;
 import javax.json.stream.JsonGeneratorFactory;
 import javax.json.stream.JsonParser;
 import javax.json.stream.JsonParserFactory;
-import net.siisise.json.jsonp.JSONPBuilderFactory;
-import net.siisise.json.jsonp.JSONPGeneratorFactory;
-import net.siisise.json.jsonp.JSONPReaderFactory;
-import net.siisise.json.jsonp.JSONPWriterFactory;
-import net.siisise.json.jsonp.stream.SLJsonParser;
-import net.siisise.json.jsonp.stream.SLJsonParserFactory;
+import net.siisise.json2.jsonp.JSONPBuilderFactory;
+import net.siisise.json2.jsonp.JSONPGeneratorFactory;
+import net.siisise.json2.jsonp.JSONPReaderFactory;
+import net.siisise.json2.jsonp.JSONPWriterFactory;
+import net.siisise.json2.jsonp.stream.SLJsonParser;
+import net.siisise.json2.jsonp.stream.SLJsonParserFactory;
 import net.siisise.json.pointer.JSONPointer;
 
 /**

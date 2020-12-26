@@ -16,7 +16,7 @@ public class JSONNULL extends JSONValue implements JsonValue {
      */
     public static final JSONNULL NULL = new JSONNULL();
 
-    public JSONNULL() {
+    JSONNULL() {
 
     }
 

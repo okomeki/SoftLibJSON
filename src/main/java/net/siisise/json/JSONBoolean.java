@@ -5,7 +5,8 @@ import javax.json.JsonValue;
 import net.siisise.omap.OMAP;
 
 /**
- *
+ * JSON Boolean 型
+ * 特定のTRUE, FALSEを持たなかったが JSONPにあわせてみた
  */
 public class JSONBoolean extends JSONValue<Boolean> implements JsonValue {
     

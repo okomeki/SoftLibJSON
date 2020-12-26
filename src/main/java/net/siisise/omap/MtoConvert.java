@@ -19,6 +19,7 @@ public interface MtoConvert<T> {
     <T> T numberValue(Number num);
     <T> T stringValue(CharSequence str);
     <T> T listValue(Collection list);
+    <T> T arrayValue(Object array);
     <T> T mapValue(Map map);
     <T> T objectValue(Object obj);
 }
