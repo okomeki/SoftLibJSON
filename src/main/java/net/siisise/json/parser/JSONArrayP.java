@@ -13,8 +13,8 @@ import net.siisise.json.JSONValue;
  */
 public class JSONArrayP extends ABNFList<JSONArray, JSONValue> {
 
-    public JSONArrayP(ABNF def, ABNFReg reg, ABNFReg base) {
-        super(def, reg, base, "value");
+    public JSONArrayP(ABNF rule, ABNFReg reg, ABNFReg base) {
+        super(rule, reg, base, "value");
     }
 
     @Override

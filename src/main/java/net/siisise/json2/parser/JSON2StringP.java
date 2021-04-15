@@ -6,12 +6,13 @@ import net.siisise.abnf.ABNFReg;
 import net.siisise.abnf.parser.ABNFList;
 
 /**
- *
+ * 文字列の組み立て
+ * char を codepointとして扱う
  */
 public class JSON2StringP extends ABNFList<String, Integer> {
 
-    public JSON2StringP(ABNF def, ABNFReg reg, ABNFReg base) {
-        super(def, reg, base, "char");
+    public JSON2StringP(ABNF rule, ABNFReg reg, ABNFReg base) {
+        super(rule, reg, base, "char");
     }
     
     @Override

@@ -11,8 +11,8 @@ import net.siisise.json.JSONString;
  */
 public class JSONStringP extends ABNFList<JSONString, Integer> {
 
-    public JSONStringP(ABNF def, ABNFReg reg, ABNFReg base) {
-        super(def, reg, base, "char");
+    public JSONStringP(ABNF rule, ABNFReg reg, ABNFReg base) {
+        super(rule, reg, base, "char");
     }
 
     @Override

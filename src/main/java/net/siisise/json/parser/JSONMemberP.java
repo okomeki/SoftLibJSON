@@ -1,10 +1,9 @@
 package net.siisise.json.parser;
 
+import java.util.List;
 import net.siisise.abnf.ABNF;
 import net.siisise.abnf.ABNFReg;
-import net.siisise.abnf.parser.ABNFBaseParser;
-import net.siisise.io.FrontPacket;
-import net.siisise.json.JSON8259Reg;
+import net.siisise.abnf.parser.ABNFList;
 import net.siisise.json.JSONMember;
 import net.siisise.json.JSONString;
 import net.siisise.json.JSONValue;
@@ -12,21 +11,16 @@ import net.siisise.json.JSONValue;
 /**
  *
  */
-public class JSONMemberP extends ABNFBaseParser<JSONMember, JSONValue> {
+public class JSONMemberP extends ABNFList<JSONMember, JSONValue> {
 
-    public JSONMemberP(ABNF def, ABNFReg reg, ABNFReg base) {
-        super(def, reg, base, "string", "value");
+    public JSONMemberP(ABNF rule, ABNFReg reg, ABNFReg base) {
+        super(rule, reg, base, "string", "value");
     }
 
     @Override
-    public JSONMember parse(FrontPacket pac) {
-        inst();
-        ABNF.C<JSONValue> ret = def.find(pac, subs);
-        if (ret == null) {
-            return null;
-        }
-        JSONString str = (JSONString) ret.get(JSON8259Reg.string).get(0);
-        JSONValue val = ret.get(JSON8259Reg.value).get(0);
+    protected JSONMember parse(List<JSONValue> list) {
+        JSONString str = (JSONString) list.get(0);
+        JSONValue val = list.get(1);
         return new JSONMember(str, val);
     }
 

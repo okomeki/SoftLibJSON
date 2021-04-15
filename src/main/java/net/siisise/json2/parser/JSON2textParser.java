@@ -9,7 +9,7 @@ import net.siisise.abnf.parser.ABNFSub;
  */
 public class JSON2textParser extends ABNFSub<Object> {
     
-    public JSON2textParser(ABNF def, ABNFReg reg, ABNFReg base) {
-        super(def, reg, base, "value");
+    public JSON2textParser(ABNF rule, ABNFReg reg, ABNFReg base) {
+        super(rule, reg, base, "value");
     }
 }

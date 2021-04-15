@@ -10,8 +10,8 @@ import net.siisise.json.JSONValue;
  */
 public class JSONtextParser extends ABNFSub<JSONValue> {
 
-    public JSONtextParser(ABNF def, ABNFReg reg, ABNFReg base) {
-        super(def, reg, base, "value");
+    public JSONtextParser(ABNF rule, ABNFReg reg, ABNFReg base) {
+        super(rule, reg, base, "value");
     }
 
 }

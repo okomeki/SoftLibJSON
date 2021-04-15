@@ -14,8 +14,8 @@ import net.siisise.lang.CodePoint;
  */
 public class JSONCharP extends ABNFBaseParser<Integer, JSONValue> {
 
-    public JSONCharP(ABNF def, ABNFReg reg, ABNFReg base) {
-        super(def, reg, base);
+    public JSONCharP(ABNF rule, ABNFReg reg, ABNFReg base) {
+        super(rule, reg, base);
     }
 
     static ABNF utf16 = JSON8259Reg.escape.pl(ABNF.bin(0x75), ABNF5234.HEXDIG.x(4, 4));

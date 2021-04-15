@@ -1,31 +1,25 @@
 package net.siisise.json2.parser;
 
+import java.util.List;
 import net.siisise.abnf.ABNF;
 import net.siisise.abnf.ABNFReg;
-import net.siisise.abnf.parser.ABNFBaseParser;
-import net.siisise.io.FrontPacket;
-import net.siisise.json2.JSON28259Reg;
+import net.siisise.abnf.parser.ABNFList;
 import net.siisise.json2.JSON2Member;
 
 /**
  *
  */
-public class JSON2MemberP extends ABNFBaseParser<JSON2Member, Object> {
+public class JSON2MemberP extends ABNFList<JSON2Member, Object> {
 
-    public JSON2MemberP(ABNF def, ABNFReg reg, ABNFReg base) {
-        super(def, reg, base, "string", "value");
+    public JSON2MemberP(ABNF rule, ABNFReg reg, ABNFReg base) {
+        super(rule, reg, base, "string", "value");
     }
 
     @Override
-    public JSON2Member parse(FrontPacket pac) {
-        inst();
-        ABNF.C<Object> ret = def.find(pac, subs);
-        if (ret == null) {
-            return null;
-        }
-        String str = (String) ret.get(JSON28259Reg.string).get(0);
-        Object val = ret.get(JSON28259Reg.value).get(0);
-        return new JSON2Member(str, val);
+    protected JSON2Member parse(List<Object> val) {
+        String str = (String) val.get(0);
+        Object value = val.get(1);
+        return new JSON2Member(str, value);
     }
 
 }

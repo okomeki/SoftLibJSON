@@ -11,8 +11,8 @@ import net.siisise.json2.JSON2Array;
  */
 public class JSON2ArrayP extends ABNFList<JSON2Array, Object> {
     
-    public JSON2ArrayP(ABNF def, ABNFReg reg, ABNFReg base) {
-        super(def, reg, base, "value");
+    public JSON2ArrayP(ABNF rule, ABNFReg reg, ABNFReg base) {
+        super(rule, reg, base, "value");
     }
 
     @Override

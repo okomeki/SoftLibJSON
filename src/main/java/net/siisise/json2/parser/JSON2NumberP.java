@@ -13,14 +13,21 @@ import net.siisise.json2.JSON28259Reg;
 import net.siisise.json2.JSON2Value;
 
 /**
- *
+ * JSON Number の組み立て
+ * 浮動小数点型は IEEE 754
+ * Java の Number 型でまとめる
  */
 public class JSON2NumberP extends ABNFBaseParser<Number, JSON2Value> {
 
-    public JSON2NumberP(ABNF def, ABNFReg reg, ABNFReg base) {
-        super(def, reg, base);
+    public JSON2NumberP(ABNF rule, ABNFReg reg, ABNFReg base) {
+        super(rule, reg, base);
     }
 
+    /**
+     *
+     * @param pac 
+     * @return
+     */
     @Override
     public Number parse(FrontPacket pac) {
         ABNF.C<Packet> ret = find(pac, JSON28259Reg.frac, JSON28259Reg.exp);
@@ -28,13 +35,10 @@ public class JSON2NumberP extends ABNFBaseParser<Number, JSON2Value> {
             return null;
         }
 
-        //    Packet i = ret.get("int").get(0);
-        //    List<Packet> m = ret.get("minus");
         List<Packet> f = ret.get(JSON8259Reg.frac); // 小数点
         List<Packet> e = ret.get(JSON8259Reg.exp); // 浮動小数点
         if (f != null || e != null) {
             return new BigDecimal(str(ret.ret));
-//            return new JSONNumber<>(Double.valueOf(str(ret.ret)));
         } else { // 整数
             return new BigInteger(str(ret.ret));
         }
