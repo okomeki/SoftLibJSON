@@ -7,7 +7,6 @@ import java.util.List;
 import javax.json.JsonNumber;
 import net.siisise.abnf.ABNF;
 import net.siisise.abnf.AbstractABNF;
-import net.siisise.abnf.parser.ABNFPacketParser;
 import net.siisise.io.FrontPacket;
 import net.siisise.omap.OMAP;
 
@@ -80,10 +79,6 @@ public class JSONNumber<T> extends JSONValue<T> implements JsonNumber {
         return this;
     }
 
-    ABNFPacketParser x(ABNF bnf) {
-        return new ABNFPacketParser(bnf, JSON8259Reg.REG);
-    }
-
     @Override
     public boolean isIntegral() {
         if (value instanceof Integer || value instanceof Long || value instanceof Short || value instanceof Character || value instanceof Byte || value instanceof BigInteger) {
@@ -93,7 +88,7 @@ public class JSONNumber<T> extends JSONValue<T> implements JsonNumber {
             return false;
         }
         if (value instanceof String) {
-            ABNF.C<FrontPacket> r = JSON8259Reg.number.find(AbstractABNF.pac((String) value), x(JSON8259Reg.exp), x(JSON8259Reg.frac));
+            ABNF.C<FrontPacket> r = JSON8259Reg.number.findPacket(AbstractABNF.pac((String) value), JSON8259Reg.exp, JSON8259Reg.frac);
             if (r != null) {
                 List<FrontPacket> exp = r.get(JSON8259Reg.exp);
                 List<FrontPacket> frag = r.get(JSON8259Reg.frac);

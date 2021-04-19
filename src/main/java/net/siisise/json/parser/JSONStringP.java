@@ -7,7 +7,8 @@ import net.siisise.abnf.parser.ABNFList;
 import net.siisise.json.JSONString;
 
 /**
- *
+ * 文字列.
+ * codepoint単位で.
  */
 public class JSONStringP extends ABNFList<JSONString, Integer> {
 

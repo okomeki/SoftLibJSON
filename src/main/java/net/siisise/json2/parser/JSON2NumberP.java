@@ -7,8 +7,6 @@ import net.siisise.abnf.ABNF;
 import net.siisise.abnf.ABNFReg;
 import net.siisise.abnf.parser.ABNFBaseParser;
 import net.siisise.io.FrontPacket;
-import net.siisise.io.Packet;
-import net.siisise.json.JSON8259Reg;
 import net.siisise.json2.JSON28259Reg;
 import net.siisise.json2.JSON2Value;
 
@@ -30,13 +28,13 @@ public class JSON2NumberP extends ABNFBaseParser<Number, JSON2Value> {
      */
     @Override
     public Number parse(FrontPacket pac) {
-        ABNF.C<Packet> ret = find(pac, JSON28259Reg.frac, JSON28259Reg.exp);
+        ABNF.C<FrontPacket> ret = rule.findPacket(pac, JSON28259Reg.frac, JSON28259Reg.exp);
         if (ret == null) {
             return null;
         }
 
-        List<Packet> f = ret.get(JSON8259Reg.frac); // 小数点
-        List<Packet> e = ret.get(JSON8259Reg.exp); // 浮動小数点
+        List<FrontPacket> f = ret.get(JSON28259Reg.frac); // 小数点
+        List<FrontPacket> e = ret.get(JSON28259Reg.exp); // 浮動小数点
         if (f != null || e != null) {
             return new BigDecimal(str(ret.ret));
         } else { // 整数
