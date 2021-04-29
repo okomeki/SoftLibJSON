@@ -6,13 +6,10 @@ import net.siisise.abnf.parser.ABNFSelect;
 import net.siisise.io.FrontPacket;
 import net.siisise.json.JSON8259Reg;
 
-/**
- *
- */
 public class JSON2ValueP extends ABNFSelect<Object> {
     
-    public JSON2ValueP(ABNF rule, ABNFReg reg, ABNFReg base) {
-        super(rule, reg, base, "object", "array", "number", "string");
+    public JSON2ValueP(ABNF rule, ABNFReg base) {
+        super(rule, null, base, "object", "array", "number", "string");
     }
     
     @Override

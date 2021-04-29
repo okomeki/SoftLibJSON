@@ -12,12 +12,12 @@ import net.siisise.json.JSONString;
  */
 public class JSONStringP extends ABNFList<JSONString, Integer> {
 
-    public JSONStringP(ABNF rule, ABNFReg reg, ABNFReg base) {
-        super(rule, reg, base, "char");
+    public JSONStringP(ABNF rule, ABNFReg base) {
+        super(rule, base, "char");
     }
 
     @Override
-    public JSONString parse(List<Integer> val) {
+    protected JSONString build(List<Integer> val) {
         StringBuilder sb = new StringBuilder();
         if (val != null) {
             val.forEach(ch -> {

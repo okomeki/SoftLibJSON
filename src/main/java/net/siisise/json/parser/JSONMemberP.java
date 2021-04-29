@@ -13,15 +13,15 @@ import net.siisise.json.JSONValue;
  */
 public class JSONMemberP extends ABNFList<JSONMember, JSONValue> {
 
-    public JSONMemberP(ABNF rule, ABNFReg reg, ABNFReg base) {
-        super(rule, reg, base, "string", "value");
+    public JSONMemberP(ABNF rule, ABNFReg base) {
+        super(rule, base, "string", "value");
     }
 
     @Override
-    protected JSONMember parse(List<JSONValue> list) {
+    protected JSONMember build(List<JSONValue> list) {
         JSONString str = (JSONString) list.get(0);
         JSONValue val = list.get(1);
-        return new JSONMember(str, val);
+        return new JSONMember(str.value(), val);
     }
 
 }

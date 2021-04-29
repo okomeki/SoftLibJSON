@@ -11,12 +11,12 @@ import net.siisise.abnf.parser.ABNFList;
  */
 public class JSON2StringP extends ABNFList<String, Integer> {
 
-    public JSON2StringP(ABNF rule, ABNFReg reg, ABNFReg base) {
-        super(rule, reg, base, "char");
+    public JSON2StringP(ABNF rule, ABNFReg base) {
+        super(rule, base, "char");
     }
     
     @Override
-    protected String parse(List<Integer> val) {
+    protected String build(List<Integer> val) {
         StringBuilder sb = new StringBuilder();
         if ( val != null ) {
             val.forEach(ch -> {

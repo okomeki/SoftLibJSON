@@ -14,8 +14,8 @@ import net.siisise.json.JSONValue;
  */
 public class JSONValueP extends ABNFSelect<JSONValue> {
 
-    public JSONValueP(ABNF rule, ABNFReg reg, ABNFReg base) {
-        super(rule, reg, base, "object", "array", "number", "string");
+    public JSONValueP(ABNF rule, ABNFReg base) {
+        super(rule, base, "object", "array", "number", "string");
     }
 
     @Override

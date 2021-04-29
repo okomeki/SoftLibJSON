@@ -13,16 +13,16 @@ import net.siisise.json.JSONValue;
  */
 public class JSONObjectP extends ABNFList<JSONValue, JSONMember> {
 
-    public JSONObjectP(ABNF rule, ABNFReg reg, ABNFReg base) {
-        super(rule, reg, base, "member");
+    public JSONObjectP(ABNF rule, ABNFReg base) {
+        super(rule, base, "member");
     }
 
     @Override
-    public JSONObject parse(List<JSONMember> mlist) {
+    public JSONObject build(List<JSONMember> mlist) {
         JSONObject obj = new JSONObject();
         if ( mlist != null ) {
             mlist.forEach(mem -> {
-                obj.setJSON(mem.str.value(), mem.value);
+                obj.setJSON(mem.str, mem.value);
             });
         }
         return obj;

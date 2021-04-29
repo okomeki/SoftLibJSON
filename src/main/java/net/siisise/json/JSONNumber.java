@@ -88,10 +88,11 @@ public class JSONNumber<T> extends JSONValue<T> implements JsonNumber {
             return false;
         }
         if (value instanceof String) {
-            ABNF.C<FrontPacket> r = JSON8259Reg.number.findPacket(AbstractABNF.pac((String) value), JSON8259Reg.exp, JSON8259Reg.frac);
+            //ABNF.C r = JSON8259Reg.REG.find(AbstractABNF.pac((String)value), "number", null, "exp", "frac");
+            ABNF.C r = JSON8259Reg.number.find(AbstractABNF.pac((String) value), JSON8259Reg.REG.parser("exp", null), JSON8259Reg.REG.parser("frac", null));
             if (r != null) {
-                List<FrontPacket> exp = r.get(JSON8259Reg.exp);
-                List<FrontPacket> frag = r.get(JSON8259Reg.frac);
+                List<FrontPacket> exp = r.get("exp");
+                List<FrontPacket> frag = r.get("frac");
                 return exp == null && frag == null;
             }
         }

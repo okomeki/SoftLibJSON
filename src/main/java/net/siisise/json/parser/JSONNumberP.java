@@ -5,39 +5,31 @@ import java.math.BigInteger;
 import java.util.List;
 import net.siisise.abnf.ABNF;
 import net.siisise.abnf.ABNFReg;
-import net.siisise.abnf.parser.ABNFBaseParser;
+import net.siisise.abnf.parser.ABNFBuildParser;
 import net.siisise.io.FrontPacket;
-import net.siisise.json.JSON8259Reg;
 import net.siisise.json.JSONNumber;
 import net.siisise.json.JSONValue;
 
 /**
  *
  */
-public class JSONNumberP extends ABNFBaseParser<JSONValue, JSONValue> {
+public class JSONNumberP extends ABNFBuildParser<JSONValue, FrontPacket> {
 
-    public JSONNumberP(ABNF rule, ABNFReg reg, ABNFReg base) {
-        super(rule, reg, base);
+    public JSONNumberP(ABNF rule, ABNFReg base) {
+        super(rule, base, "frac", "exp");
     }
 
     /**
      * まだ評価してない
      *
-     * @param pac
+     * @param ret
      * @return
      */
     @Override
-    public JSONNumber parse(FrontPacket pac) {
-        ABNF.C<FrontPacket> ret = rule.findPacket(pac, JSON8259Reg.frac, JSON8259Reg.exp);
-        if (ret == null) {
-            return null;
-        }
-
-        //    Packet i = ret.get("int").get(0);
-        //    List<Packet> m = ret.get("minus");
-        List<FrontPacket> f = ret.get(JSON8259Reg.frac); // 小数点
-        List<FrontPacket> e = ret.get(JSON8259Reg.exp); // 浮動小数点
-        if (f != null || e != null) {
+    protected JSONNumber build(ABNF.C<FrontPacket> ret) {
+        List<FrontPacket> frac = ret.get("frac"); // 小数点
+        List<FrontPacket> exp = ret.get("exp"); // 浮動小数点
+        if (frac != null || exp != null) {
             return new JSONNumber<>(new BigDecimal(str(ret.ret)));
 //            return new JSONNumber<>(Double.valueOf(str(ret.ret)));
         } else { // 整数

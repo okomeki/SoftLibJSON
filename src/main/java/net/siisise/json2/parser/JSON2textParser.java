@@ -2,14 +2,14 @@ package net.siisise.json2.parser;
 
 import net.siisise.abnf.ABNF;
 import net.siisise.abnf.ABNFReg;
-import net.siisise.abnf.parser.ABNFSub;
+import net.siisise.abnf.parser.ABNFSelect;
 
 /**
  *
  */
-public class JSON2textParser extends ABNFSub<Object> {
+public class JSON2textParser extends ABNFSelect<Object> {
     
-    public JSON2textParser(ABNF rule, ABNFReg reg, ABNFReg base) {
-        super(rule, reg, base, "value");
+    public JSON2textParser(ABNF rule, ABNFReg base) {
+        super(rule, null, base, "value");
     }
 }

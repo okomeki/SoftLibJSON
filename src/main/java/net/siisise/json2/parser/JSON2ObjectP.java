@@ -12,12 +12,12 @@ import net.siisise.json2.JSON2Object;
  */
 public class JSON2ObjectP extends ABNFList<JSON2Object, JSON2Member> {
     
-    public JSON2ObjectP(ABNF rule, ABNFReg reg, ABNFReg base) {
-        super(rule, reg, base, "member");
+    public JSON2ObjectP(ABNF rule, ABNFReg base) {
+        super(rule, base, "member");
     }
 
     @Override
-    protected JSON2Object parse(List<JSON2Member> mlist) {
+    protected JSON2Object build(List<JSON2Member> mlist) {
         JSON2Object obj = new JSON2Object();
         if ( mlist != null ) {
             mlist.forEach(mem -> {
