@@ -2,6 +2,14 @@
 
 ABNFで RFC 8259 JSONとRFC 6901 JSON Pointer, RFC 6902 JSON Patch, RFC 7396 JSON Merge Patchを実装してみたもの
 
+## ダウンロード
+
+ https://siisise.net/softlib/
+
+SoftLibとABNFとJSONが必要です。
+
+## 例?
+
 JavaScript からの例
 オブジェクトを文字列に変換する
 
