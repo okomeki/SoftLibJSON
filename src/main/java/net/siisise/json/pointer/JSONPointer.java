@@ -10,7 +10,7 @@ import javax.json.JsonPointer;
 import javax.json.JsonStructure;
 import javax.json.JsonValue;
 import net.siisise.abnf.AbstractABNF;
-import net.siisise.io.Packet;
+import net.siisise.io.FrontPacket;
 import net.siisise.json.JSON;
 import net.siisise.json.JSONCollection;
 import net.siisise.json.JSONValue;
@@ -33,11 +33,11 @@ public class JSONPointer implements JsonPointer {
         this.path = escapedPath.split("/");
     }
 
-    JSONPointer(List<Packet> lp) {
+    JSONPointer(List<? extends FrontPacket> lp) {
         path = new String[lp.size() + 1];
         path[0] = "";
         int i = 1;
-        for (Packet p : lp) {
+        for (FrontPacket p : lp) {
             path[i] = AbstractABNF.str(p);
             if (!JSONPointerReg.referenceToken.eq(path[i++])) {
                 throw new java.lang.UnsupportedOperationException();
@@ -142,7 +142,7 @@ public class JSONPointer implements JsonPointer {
     }
 
     public JSONPointer sub() {
-        List<Packet> lp = new ArrayList<>();
+        List<FrontPacket> lp = new ArrayList<>();
         if (path.length <= 1) {
             return null;
         }

@@ -4,7 +4,7 @@ import java.lang.reflect.Type;
 import javax.json.JsonString;
 import javax.json.JsonValue;
 import net.siisise.abnf.AbstractABNF;
-import net.siisise.io.Packet;
+import net.siisise.io.FrontPacket;
 import net.siisise.lang.CodePoint;
 import net.siisise.omap.OMAP;
 
@@ -29,7 +29,7 @@ public class JSONString extends JSONValue<String> implements JsonString,CharSequ
     
     private static String esc(String val) {
         StringBuilder sb = new StringBuilder();
-        Packet pac = AbstractABNF.pac(val);
+        FrontPacket pac = AbstractABNF.pac(val);
         int ch;
         while (pac.length() > 0) {
             ch = CodePoint.utf8(pac);

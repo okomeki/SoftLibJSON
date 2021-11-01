@@ -7,6 +7,11 @@ package net.siisise.json2;
  */
 public interface JSON2Collection<T> extends JSON2Value {
     
+    /**
+     * JSON2Value として内容を変換している
+     * @param key
+     * @return 
+     */
     JSON2Value getJSON(String key);
 
     /**
