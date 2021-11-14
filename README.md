@@ -50,23 +50,28 @@ Objectはfield(内部の変数)を変換します。beanなどにも対応は予
 
 ## 例?
 
+val はJSON2Value、obj は Javaの型として
+
+JSONをparseしてJava Objcetに変換する
+
+    byte[] json; UTF-8限定 または String json;
+
+    JSON2Value val = JSON2.parse(json);
+    Objcet obj = val.map();
+
 Java由来のものをJSONに変換する
 
-    JSON2Value value = JSON2.valueOf( Object object )
-    out.println(value);
-
-json2から Java型に変換する
-
-    Object o = obj.map();
+    JSON2Value val = JSON2.valueOf( Object object )
+    out.println(val); または val.toString();
 
 json2から特定の型のJava classに変換する
 
-    ObjectX x = obj.typeMap(ObjcetX.class);
-    int i = obj.typeMap(Integer.TYPE);
+    ObjectX obj = val.typeMap(ObjcetX.class);
+    int i = val.typeMap(Integer.TYPE);
 
 json2 から JavaのJSONPっぽいものに変換する
 
-    JsonValue json = obj.toJson();
+    JsonValue jsonp = val.toJson();
 
 JSON2Array, JSON2Object は stream も対応しているかもしれません。
 
