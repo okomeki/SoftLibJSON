@@ -2,13 +2,75 @@
 
 ABNFで RFC 8259 JSONとRFC 6901 JSON Pointer, RFC 6902 JSON Patch, RFC 7396 JSON Merge Patchを実装してみたもの
 
-## ダウンロード
+## リリース?
 
- https://siisise.net/softlib/
+1.0.1 GitHubで使えるパッケージ名になおした。
 
-SoftLibとABNFとJSONが必要です。
+## なにができる?
+
+JSONのパース、オブジェクトマッピング、JSON Pointer, JSON Patch などがつかえるよ?
+JavaのJSONPに準拠した実装もしてみたり。
+実装はjsonとjson2 という名前で2つあるのでjson2の方をつかってください。このライブラリ内では内部型をjson2と呼びます。
+
+storingifyはてきとーに実装しているのでまだ。
+
+## 使用方法
+
+SoftLibとSoftLibABNFとSoftLibJSONが必要です。
+
+## 型情報
+
+JavaとJSONの変換をするに当たって該当オブジェクトの中間型をとりあえず設けています。
+
+pakage net.siisise.json2
+
+- JSON2
+    - JSON2Value
+        - JSON2NULL
+        - JSON2Boolean
+        - JSON2Number
+        - JSON2String
+        - JSON2Collcetion
+            - JSON2Array
+            - JSON2Object
+
+JSONの配列はJavaの配列、Listと変換でき、JSONのObjectはJavaのObjectやMapと相互に変換できます。
+
+JSON2Array は List として扱うことができ、JSONに変換可能なものを格納できます。
+
+JSON2Object は Map として扱うことができ、JSONに変換可能なものを格納できます。
+
+JSON Pointer, JSON PatchなどでArrayとObjectをまとめて扱うためにJSON2Collcetionを設けています。
+
+Objectはfield(内部の変数)を変換します。beanなどにも対応は予定していたり。
+
+ということで、ほとんど何も気にせずJavaとJSONの変換をこなしてくれます。
+
+公開や更新したくない要素などセキュリティには注意してください。
 
 ## 例?
+
+Java由来のものをJSONに変換する
+
+    JSON2Value value = JSON2.valueOf( Object object )
+    out.println(value);
+
+json2から Java型に変換する
+
+    Object o = obj.map();
+
+json2から特定の型のJava classに変換する
+
+    ObjectX x = obj.typeMap(ObjcetX.class);
+    int i = obj.typeMap(Integer.TYPE);
+
+json2 から JavaのJSONPっぽいものに変換する
+
+    JsonValue json = obj.toJson();
+
+JSON2Array, JSON2Object は stream も対応しているかもしれません。
+
+これ以降はjson1系の説明なのでちょっと古い
 
 JavaScript からの例
 オブジェクトを文字列に変換する
