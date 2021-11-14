@@ -23,9 +23,9 @@ public class JSONPBuilderFactory implements JsonBuilderFactory {
     @Override
     public JsonObjectBuilder createObjectBuilder(JsonObject object) {
         JsonObjectBuilder ob = createObjectBuilder();
-        for (String name : object.keySet()) {
+        object.keySet().forEach(name -> {
             ob.add(name, JSON2.valueOf(object.get(name)).toJson());
-        }
+        });
         return ob;
     }
 

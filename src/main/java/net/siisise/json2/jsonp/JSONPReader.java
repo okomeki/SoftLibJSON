@@ -12,12 +12,12 @@ import javax.json.JsonValue;
 import net.siisise.json.JSONValue;
 
 /**
- *
+ * リーダー
  */
 public class JSONPReader implements JsonReader {
 
     private final Reader rd;
-    private JSONValue json;
+    private final JSONValue json;
 
     JSONPReader(Reader reader, JSONValue json) {
         rd = reader;
@@ -52,5 +52,5 @@ public class JSONPReader implements JsonReader {
             Logger.getLogger(JSONPReader.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
 }

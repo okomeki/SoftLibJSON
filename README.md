@@ -38,9 +38,11 @@ pakage net.siisise.json2
 
 JSONの配列はJavaの配列、Listと変換でき、JSONのObjectはJavaのObjectやMapと相互に変換できます。
 
-JSON2Array は List として扱うことができ、JSONに変換可能なものを格納できます。
+JSON2Array<E> は List<E> として扱うことができ、JSONに変換可能なものを格納できます。
 
-JSON2Object は Map として扱うことができ、JSONに変換可能なものを格納できます。
+JSON2Object<E> は Map<String,E> として扱うことができ、JSONに変換可能なものを格納できます。
+
+<E>は、Javaの型として扱いたい型を指定します。コンストラクタで型を指定することでJSONからの変換も適度に処理してくれます。
 
 JSON Pointer, JSON PatchなどでArrayとObjectをまとめて扱うためにJSON2Collcetionを設けています。
 

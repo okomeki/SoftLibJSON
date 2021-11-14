@@ -9,7 +9,7 @@ import net.siisise.json.pointer.JSONPointer;
 import net.siisise.json2.JSON2Object;
 
 /**
- *
+ * それっぽく互換性をかもしだしたもの
  */
 public class JSONPObject extends JSON2Object<JsonValue> implements JsonObject {
     

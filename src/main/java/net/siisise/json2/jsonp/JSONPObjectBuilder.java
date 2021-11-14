@@ -10,11 +10,20 @@ import net.siisise.json2.JSON2Number;
 import net.siisise.json2.JSON2String;
 
 /**
- *
+ * びるだー
  */
 public class JSONPObjectBuilder implements JsonObjectBuilder {
-    
+
     JSONPObject obj = new JSONPObject();
+
+    JSONPObjectBuilder() {
+        obj = new JSONPObject();
+    }
+
+    JSONPObjectBuilder(JsonObject src) {
+        obj = new JSONPObject();
+        src.keySet().forEach(name -> obj.put(name, src.get(name)));
+    }
 
     @Override
     public JsonObjectBuilder add(String name, JsonValue value) {
@@ -85,9 +94,9 @@ public class JSONPObjectBuilder implements JsonObjectBuilder {
     @Override
     public JsonObjectBuilder addAll(JsonObjectBuilder builder) {
         JsonObject src = builder.build();
-        for ( String key : src.keySet() ) {
-            obj.put(key,src.get(key));
-        }
+        src.keySet().forEach(key -> {
+            obj.put(key, src.get(key));
+        });
         return this;
     }
 
@@ -101,5 +110,5 @@ public class JSONPObjectBuilder implements JsonObjectBuilder {
     public JsonObject build() {
         return obj;
     }
-    
+
 }

@@ -17,8 +17,8 @@ public interface JSON2Collection<T> extends JSON2Value {
     /**
      * 値をセットする。
      * Array系のsetという名称、Object系のputJSONと同じ
-     * @param key
-     * @param obj 
+     * @param key キー
+     * @param obj
      */
     void setJSON(String key, JSON2Value obj);
     void addJSON(String key, JSON2Value obj);
