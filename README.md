@@ -9,7 +9,9 @@ ABNFで RFC 8259 JSONとRFC 6901 JSON Pointer, RFC 6902 JSON Patch, RFC 7396 JSO
 ## なにができる?
 
 JSONのパース、オブジェクトマッピング、JSON Pointer, JSON Patch などがつかえるよ?
+
 JavaのJSONPに準拠した実装もしてみたり。
+
 実装はjsonとjson2 という名前で2つあるのでjson2の方をつかってください。このライブラリ内では内部型をjson2と呼びます。
 
 storingifyはてきとーに実装しているのでまだ。
