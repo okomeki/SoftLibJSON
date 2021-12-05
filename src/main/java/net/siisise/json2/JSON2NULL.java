@@ -2,7 +2,6 @@ package net.siisise.json2;
 
 import java.lang.reflect.Type;
 import javax.json.JsonValue;
-import net.siisise.json.JSONFormat;
 import net.siisise.omap.OMAP;
 
 /**
@@ -33,7 +32,7 @@ public class JSON2NULL implements JSON2Value,JsonValue {
     }
 
     @Override
-    public String toString(JSONFormat format) {
+    public String toString(JSON2Format format) {
         return "null";
     }
 

@@ -6,6 +6,9 @@ import net.siisise.abnf.ABNFReg;
 import net.siisise.abnf.parser.ABNFList;
 import net.siisise.json2.JSON2Member;
 
+/**
+ * object内のmember. stringとvalueの仮の組
+ */
 public class JSON2MemberP extends ABNFList<JSON2Member, Object> {
 
     public JSON2MemberP(ABNF rule, ABNFReg base) {

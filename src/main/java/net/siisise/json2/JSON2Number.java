@@ -5,7 +5,6 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import javax.json.JsonNumber;
 import javax.json.JsonValue;
-import net.siisise.json.JSONFormat;
 import net.siisise.omap.OMAP;
 
 /**
@@ -62,7 +61,7 @@ public class JSON2Number extends Number implements JSON2Value,JsonNumber {
     }
 
     @Override
-    public String toString(JSONFormat format) {
+    public String toString(JSON2Format format) {
         return number.toString();
     }
 

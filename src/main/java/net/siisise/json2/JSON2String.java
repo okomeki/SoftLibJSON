@@ -5,7 +5,6 @@ import javax.json.JsonString;
 import javax.json.JsonValue;
 import net.siisise.abnf.AbstractABNF;
 import net.siisise.io.FrontPacket;
-import net.siisise.json.JSONFormat;
 import net.siisise.lang.CodePoint;
 import net.siisise.omap.OMAP;
 
@@ -48,7 +47,7 @@ public class JSON2String implements JSON2Value,JsonString {
     }
 
     @Override
-    public String toString(JSONFormat format) {
+    public String toString(JSON2Format format) {
         return "\"" + esc(value) + "\"";
     }
     

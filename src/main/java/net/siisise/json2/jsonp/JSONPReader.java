@@ -9,7 +9,7 @@ import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.json.JsonStructure;
 import javax.json.JsonValue;
-import net.siisise.json.JSONValue;
+import net.siisise.json2.JSON2Value;
 
 /**
  * リーダー
@@ -17,9 +17,9 @@ import net.siisise.json.JSONValue;
 public class JSONPReader implements JsonReader {
 
     private final Reader rd;
-    private final JSONValue json;
+    private final JSON2Value json;
 
-    JSONPReader(Reader reader, JSONValue json) {
+    JSONPReader(Reader reader, JSON2Value json) {
         rd = reader;
         this.json = json;
     }

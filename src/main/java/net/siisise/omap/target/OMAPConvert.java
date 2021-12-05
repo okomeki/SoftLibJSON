@@ -94,7 +94,7 @@ public class OMAPConvert<T> extends OBJConvert<T> {
             } else if ( cls.isAssignableFrom(Short.class) ) {
                 return Short.valueOf( bool ? (short)1 : (short)0 );
             } else if ( cls.isAssignableFrom(Long.class) ) {
-                return Long.valueOf( bool ? 1 : 0 );
+                return Long.valueOf( bool ? 1l : 0l );
             }
         }
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -334,7 +334,6 @@ public class OMAPConvert<T> extends OBJConvert<T> {
             try {
                 for (int i = 0; i < pt.length; i++) {
                     Object o = array.get(i);
-                    JSON2Value v;
                     if (o instanceof JSON2Value) {
                         params[i] = ((JSON2Value) o).typeMap(pt[i]);
                     } else {

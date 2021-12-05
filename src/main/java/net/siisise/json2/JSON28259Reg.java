@@ -18,7 +18,7 @@ import net.siisise.json2.parser.JSON2textParser;
  */
 public class JSON28259Reg {
 
-    public static ABNFReg REG = new ABNFReg(ABNF5234.BASE, ABNF5234.REG);
+    static final ABNFReg REG = new ABNFReg(ABNF5234.BASE, ABNF5234.REG);
 
     public static final ABNF FALSE = REG.rule("false", "%x66.61.6c.73.65");
     public static final ABNF NULL = REG.rule("null", "%x6e.75.6c.6c");

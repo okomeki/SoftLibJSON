@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.json.JsonArray;
 import javax.json.JsonValue;
-import net.siisise.json.JSONFormat;
 import net.siisise.json2.jsonp.JSONPArray;
 import net.siisise.omap.OMAP;
 
@@ -18,7 +17,7 @@ import net.siisise.omap.OMAP;
  * JSONP準拠のものはEをJsonValueにするといい。
  * 
  * JsonArray,JsonArrayBuilder,JsonStructure ではない
- * @param <E>
+ * @param <E> 内部で保持する型。JSONではなくていい。
  */
 public class JSON2Array<E> extends ArrayList<E> implements JSON2Collection<E> {
 
@@ -121,6 +120,10 @@ public class JSON2Array<E> extends ArrayList<E> implements JSON2Collection<E> {
         return j2Stream().map(v -> v.typeMap(contentType)).collect(Collectors.toList()).toArray(a);
     }
 
+    /**
+     * JSON2な
+     * @return JsonArrayに 
+     */
     @Override
     public JsonArray toJson() {
         if (isEmpty()) {
@@ -137,7 +140,7 @@ public class JSON2Array<E> extends ArrayList<E> implements JSON2Collection<E> {
     }
 
     @Override
-    public String toString(JSONFormat format) {
+    public String toString(JSON2Format format) {
         return j2Stream().map(val -> 
             format.crlf + format.tab + tab(val.toString(format)))
                 .collect( Collectors.joining(",", "[", format.crlf +  "]"));

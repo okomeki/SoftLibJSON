@@ -1,11 +1,6 @@
 package net.siisise.json2;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.List;
 import java.util.stream.Collector;
-import net.siisise.json.JSON;
-import net.siisise.json.JSONFormat;
 import net.siisise.omap.OMAP;
 
 /**
@@ -18,59 +13,23 @@ import net.siisise.omap.OMAP;
  */
 public interface JSON2 {
 
-    static class ParameterizedTypeImpl implements ParameterizedType {
-
-        private Type rawType;
-        private Type[] args;
-
-        ParameterizedTypeImpl(Type raw, Type[] args) {
-            rawType = raw;
-            this.args = args;
-        }
-
-        ParameterizedTypeImpl(Type... clss) {
-            rawType = clss[0];
-            args = new Type[clss.length - 1];
-            System.arraycopy(clss, 1, args, 0, clss.length - 1);
-        }
-
-        @Override
-        public Type[] getActualTypeArguments() {
-            return args;
-        }
-
-        @Override
-        public Type getRawType() {
-            return rawType;
-        }
-
-        /**
-         * 使わない
-         */
-        @Override
-        public Type getOwnerType() {
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
-    }
-
-    static Type parameterizedType(Type... clss) {
-        return new ParameterizedTypeImpl(clss);
-    }
-
-    static Type listType(Type c) {
-        return new ParameterizedTypeImpl(List.class, c);
-    }
-
     /**
      * JSON文字列からObjectにパースする.
-     *
+     * Number, String, Boolean, List, Map, null なんかで返る。
      * @param json
-     * @return
+     * @return Number, String, Boolean, List, Map, null などかな
      */
     static Object parse(String json) {
         return JSON28259Reg.parse(json);
     }
 
+    /**
+     * JSONっぽくくるんで返す。
+     * 
+     * 中身はJavaっぽくなっているのかも。
+     * @param json
+     * @return JSON2Valueな値
+     */
     public static JSON2Value parseWrap(String json) {
         return valueWrap(JSON28259Reg.parse(json));
     }
@@ -85,28 +44,18 @@ public interface JSON2 {
         return JSON28259Reg.parse(json);
     }
 
+    /**
+     * JSONっぽくくるんで返す。
+     * 中身はJavaっぽくなっているのかも。
+     * @param json
+     * @return JSON2Valueな値
+     */
     public static JSON2Value parseWrap(byte[] json) {
         return valueWrap(JSON28259Reg.parse(json));
     }
 
-    public static JSONFormat NOBR = JSON.NOBR;
-    public static JSONFormat TAB = JSON.TAB;
-
-    /**
-     * JSON (JavaのString)として出力する.
-     *
-     * @return JSON
-     */
-    @Override
-    String toString();
-
-    /**
-     * 書式を指定してJSONとして出力する.
-     *
-     * @param format
-     * @return
-     */
-    String toString(JSONFormat format);
+    public static final JSON2Format NOBR = new JSON2Format("","");
+    public static final JSON2Format TAB = new JSON2Format("\r\n","  ");
 
     /**
      * JSON中間型(風) Listまたは Map型で返す。
@@ -128,6 +77,11 @@ public interface JSON2 {
         return OMAP.valueOf(src, JSON2Value.class);
     }
 
+    /**
+     * 
+     * @param val
+     * @return 
+     */
     static JSON2Value valueWrap(Object val) {
         if (val == null) {
             return JSON2NULL.NULL;

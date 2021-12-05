@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
-import net.siisise.json.JSONFormat;
 import net.siisise.json2.jsonp.JSONPObject;
 import net.siisise.omap.OMAP;
 
@@ -65,20 +64,24 @@ public class JSON2Object<V> extends LinkedHashMap<String, V> implements JSON2Col
     }
     
     /**
-     *
-     * @param
-     * @return
+     * 入れ物なので複製しないで自身を返す
+     * @return 自身を返す
      */
     @Override
     public HashMap<String, V> map() {
         return this;
     }
 
+    /**
+     * 特定の型情報に変換できる場合は変換する。
+     * OMAP側に分けてある機能。
+     * @param <T> 型
+     * @param type 型情報
+     * @return 変換されたオブジェクト
+     */
     @Override
     public <T> T typeMap(Type type) {
         return OMAP.typeMap(this, type);
-//        OMAPConvert omc = new OMAPConvert(type);
-//        return (T) omc.mapValue(this);
     }
 
     @Override
@@ -100,7 +103,7 @@ public class JSON2Object<V> extends LinkedHashMap<String, V> implements JSON2Col
     }
 
     @Override
-    public String toString(JSONFormat format) {
+    public String toString(JSON2Format format) {
         return keySet().stream().map(key -> {
             return format.crlf + format.tab + new JSON2String(key).toString(format) + ":"
                     + tab(getJSON(key).toString(format));

@@ -24,7 +24,7 @@ public class JSON2Test {
         Map obj = new HashMap();
         String abc = "[1,2,{\"a\":\"b\",\"c\":5}]";
         
-        System.out.println(JSON2.parseWrap(abc).toString(JSON2.NOBR));
+        System.out.println(JSON2.parseWrap(abc).toString(JSON2Value.NOBR));
         
         List o = (JSON2Array) JSON2.parse(abc);
         for ( Object v : o ) {
@@ -38,7 +38,7 @@ public class JSON2Test {
     Integer intval;
     JsonValue val;
     JSON jval;
-    JSON2 j2val;
+    JSON2Value j2val;
     JSONNULL nval;
     JSON2NULL n2val;
     List<? extends Integer> lint;

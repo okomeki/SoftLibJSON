@@ -18,6 +18,11 @@ public class JSONValueP extends ABNFSelect<JSONValue> {
         super(rule, base, "object", "array", "number", "string");
     }
 
+    /**
+     * object, array, number, string に該当しない boolとnullの処理.
+     * @param pac 抽出列
+     * @return JSON true false null または該当無しのJava null
+     */
     @Override
     protected JSONValue other(FrontPacket pac) {
         FrontPacket p = JSON8259Reg.FALSE.is(pac);

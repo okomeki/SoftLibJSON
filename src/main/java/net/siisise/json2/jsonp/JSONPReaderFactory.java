@@ -12,8 +12,8 @@ import java.util.logging.Logger;
 import javax.json.JsonReader;
 import javax.json.JsonReaderFactory;
 import net.siisise.io.FileIO;
-import net.siisise.json.JSON;
-import net.siisise.json.JSONValue;
+import net.siisise.json2.JSON2;
+import net.siisise.json2.JSON2Value;
 
 /**
  *
@@ -27,7 +27,7 @@ public class JSONPReaderFactory implements JsonReaderFactory {
         try {
             StringWriter out = new StringWriter();
             FileIO.io(reader, out);
-            JSONValue json = JSON.parse(out.toString());
+            JSON2Value json = JSON2.parseWrap(out.toString());
             return new JSONPReader(reader,json);
         } catch (IOException ex) {
             Logger.getLogger(JSONPReaderFactory.class.getName()).log(Level.SEVERE, null, ex);

@@ -4,6 +4,7 @@ import java.lang.reflect.Type;
 import javax.json.JsonValue;
 
 /**
+ * 要素的なJSON。
  * 
  * JSON2Object implements Map
  * JSON2Array implements List
@@ -13,19 +14,33 @@ import javax.json.JsonValue;
  * JSON2NULL 互換なし
  *
  * toString() をJSON出力にすること
+ * 
+ * JSON2を継承する必要はなくなったのでどこかで外す。
  */
 public interface JSON2Value extends JSON2 {
     
     /**
-     * JSON TEXT
-     * @return 
+     * JSON (JavaのString)として出力する.
+     * @return JSON文字列
      */
     @Override
     String toString();
-    
+
+    public static final JSON2Format NOBR = new JSON2Format("","");
+    public static final JSON2Format TAB = new JSON2Format("\r\n","  ");
+
+    /**
+     * 書式を指定してJSONとして出力する.
+     *
+     * @param format
+     * @return
+     */
+    String toString(JSON2Format format);
+
     /**
      * 固定のJava寄りの型に変換する。
      * List,Map,primitive対応データ型など
+     * array, object, またはその中身は型変換が介入しない場合は複製されない
      * @param <T>
      * @return 
      */
