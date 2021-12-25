@@ -2,6 +2,8 @@ package net.siisise.json;
 
 import java.util.ArrayList;
 import java.util.List;
+import net.siisise.json2.JSON2;
+import net.siisise.json2.JSON2Value;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -61,11 +63,11 @@ public class JSONValueTest {
         aa.b = bb;
         aa.lb = new ArrayList();
         aa.lb.add(bb2);
-        JSONValue aajson = JSON.valueOf(aa);
+        JSON2Value aajson = JSON2.valueOf(aa);
         System.out.println(aajson);
         TestA cc = (TestA)aajson.typeMap(TestA.class);
         TestB nb = cc.lb.get(0);
-        aajson = JSON.valueOf(cc);
+        aajson = JSON2.valueOf(cc);
         System.out.println(aajson);
 //        assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
@@ -74,9 +76,9 @@ public class JSONValueTest {
     
     @Test
     public void testMap() {
-        JSONValue intNumber = JSON.valueOf(1);
-        JSONValue longNumber = JSON.valueOf(1l);
-        JSONValue doubleNumber = JSON.valueOf(1.1d);
+        JSON2Value intNumber = JSON2.valueOf(1);
+        JSON2Value longNumber = JSON2.valueOf(1l);
+        JSON2Value doubleNumber = JSON2.valueOf(1.1d);
         intNumber.typeMap(Long.class);
         intNumber.typeMap(Long.TYPE);
         longNumber.typeMap(Long.class);

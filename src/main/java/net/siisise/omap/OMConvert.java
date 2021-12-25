@@ -16,8 +16,7 @@ public interface OMConvert {
      * @param <T>
      * @param obj 変換もと
      * @param outConvert 変換器
-     * @param replacer 変換器2 とりあえず外してある
-     * @return 
+     * @return 未確定な場合はoutConvert を返す
      */
     <T> T valueOf(Object obj, MtoConvert<T> outConvert);
 

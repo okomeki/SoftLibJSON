@@ -27,9 +27,6 @@ import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
 import net.siisise.io.BASE64;
-import net.siisise.json.JSONBoolean;
-import net.siisise.json.JSONNULL;
-import net.siisise.json.JSONString;
 import net.siisise.json2.jsonp.JSONPArray;
 import net.siisise.json2.JSON2Array;
 import net.siisise.json2.JSON2Boolean;
@@ -67,8 +64,6 @@ public class OMAPConvert<T> extends OBJConvert<T> {
             Class cls = (Class)type;
             if ( cls.isAssignableFrom(JSON2NULL.class)) {
                 return JSON2NULL.NULL;
-            } if ( cls.isAssignableFrom(JSONNULL.class)) {
-                return JSONNULL.NULL;
             }
         }
         // String Integer Boolean などもnull
@@ -85,8 +80,6 @@ public class OMAPConvert<T> extends OBJConvert<T> {
                 return Boolean.toString(bool);
             } else if ( cls.isAssignableFrom(JSON2Boolean.class) ) {
                 return (bool ? JSON2Boolean.TRUE : JSON2Boolean.FALSE);
-            } else if ( cls.isAssignableFrom(JSONBoolean.class) ) {
-                return (bool ? JSONBoolean.TRUE : JSONBoolean.FALSE);
             } else if ( cls.isAssignableFrom(Integer.class) ) {
                 return Integer.valueOf( bool ? 1 : 0 );
             } else if ( cls.isAssignableFrom(Byte.class) ) {
@@ -171,9 +164,6 @@ public class OMAPConvert<T> extends OBJConvert<T> {
             }
             if ( cls.isAssignableFrom(JSON2String.class) ) {
                 return new JSON2String(val);
-            }
-            if ( cls.isAssignableFrom(JSONString.class) ) {
-                return new JSONString(val);
             }
             if ( type == UUID.class ) {
                 return UUID.fromString(val);
@@ -366,6 +356,7 @@ public class OMAPConvert<T> extends OBJConvert<T> {
     }
 
     /**
+     * Mapを指定の型に収まるよう加工する
      * @param type
      * @return
      */
@@ -374,9 +365,9 @@ public class OMAPConvert<T> extends OBJConvert<T> {
         if ((raw instanceof Class) && (Map.class.isAssignableFrom(((Class) raw)))) {
             Type[] args = type.getActualTypeArguments();
             Map map = typeToMap((Class) raw);
-            src.entrySet().forEach(es -> {
-                Object tkey = OMAP.valueOf(es.getKey(), args[0]);
-                Object tval = OMAP.valueOf(es.getValue(), args[1]);
+            src.forEach((k,v) -> {
+                Object tkey = OMAP.valueOf(k, args[0]);
+                Object tval = OMAP.valueOf(v, args[1]);
                 map.put(tkey, tval);
             });
             return map;
@@ -391,8 +382,8 @@ public class OMAPConvert<T> extends OBJConvert<T> {
             return obj;
         } else if (Map.class.isAssignableFrom(cls)) { // 表面だけ軽い複製 ToDO: 全部複製?
             Map<K,V> map = typeToMap(cls);
-            obj.entrySet().forEach(es -> {
-                map.put(es.getKey(), es.getValue());
+            obj.forEach((k,v) -> {
+                map.put(k, v);
             });
             return map;
         }

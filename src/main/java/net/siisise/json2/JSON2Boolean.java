@@ -47,4 +47,16 @@ public class JSON2Boolean implements JSON2Value,JsonValue {
     public ValueType getValueType() {
         return bool ? JsonValue.ValueType.TRUE : JsonValue.ValueType.FALSE;
     }
+    
+    public boolean equals(Object obj) {
+        if ( obj instanceof JSON2Boolean) {
+            return bool == (Boolean)((JSON2Boolean) obj).map();
+        } else if ( obj == JsonValue.TRUE ) {
+            return bool;
+        } else if ( obj == JsonValue.FALSE ) {
+            return !bool;
+        }
+        return false;
+    }
+    
 }

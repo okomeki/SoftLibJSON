@@ -16,17 +16,15 @@ import net.siisise.omap.OMAP;
  * JsonValue以外の型でも持てるのでJSONPに適さない
  * JSONPではBuilder系かもしれない
  *
- * @param <V> JSONで可能な型、または自由?
+ * @param <V> JSONに変換可能な型、または自由
  */
 public class JSON2Object<V> extends LinkedHashMap<String, V> implements JSON2Collection<V> {
 
     public JSON2Object() {
     }
 
-    public JSON2Object(Map map) {
-        map.keySet().forEach(key -> {
-//            V o = (V) JSON2.valueMap(map.get(key));
-            V o = (V) map.get(key);
+    public JSON2Object(Map<?,V> map) {
+        map.forEach((key, o) -> {
             if (key instanceof String) {
                 put((String) key, o);
             } else {
@@ -90,8 +88,8 @@ public class JSON2Object<V> extends LinkedHashMap<String, V> implements JSON2Col
             return JsonValue.EMPTY_JSON_OBJECT;
         } else {
             JSONPObject obj = new JSONPObject();
-            entrySet().forEach(e -> {
-                obj.put(e.getKey(), OMAP.valueOf(e.getValue(), JsonValue.class));
+            forEach((k, v) -> {
+                obj.put(k, OMAP.valueOf(v, JsonValue.class));
             });
             return obj;
         }

@@ -1,32 +1,36 @@
-package net.siisise.json.parser;
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package net.siisise.json2.parser;
 
 import net.siisise.abnf.ABNF;
 import net.siisise.abnf.ABNFReg;
 import net.siisise.abnf.parser.ABNFBaseParser;
 import net.siisise.abnf.parser5234.ABNF5234;
 import net.siisise.io.FrontPacket;
-import net.siisise.json.JSON8259Reg;
-import net.siisise.json.JSONValue;
+import net.siisise.json2.JSON28259Reg;
+import net.siisise.json2.JSON2Value;
 import net.siisise.lang.CodePoint;
 
 /**
- * JSONChar の代わりにIntegerを使用する
+ * 文字解析用
  */
-public class JSONCharP extends ABNFBaseParser<Integer, JSONValue> {
+public class JSON2CharP extends ABNFBaseParser<Integer, JSON2Value> {
 
-    public JSONCharP(ABNF rule, ABNFReg base) {
+    public JSON2CharP(ABNF rule, ABNFReg base) {
         super(rule);
     }
 
-    static ABNF utf16 = JSON8259Reg.escape.pl(ABNF.bin(0x75), ABNF5234.HEXDIG.x(4, 4));
+    static ABNF utf16 = JSON28259Reg.escape.pl(ABNF.bin(0x75), ABNF5234.HEXDIG.x(4, 4));
 
     @Override
     public Integer parse(FrontPacket pac) {
-        FrontPacket p = JSON8259Reg.unescaped.is(pac);
+        FrontPacket p = JSON28259Reg.unescaped.is(pac);
         if (p != null) {
             return CodePoint.utf8(p);
         }
-        p = JSON8259Reg.escape.is(pac);
+        p = JSON28259Reg.escape.is(pac);
         if (p != null) {
             int es = pac.read();
             switch (es) {

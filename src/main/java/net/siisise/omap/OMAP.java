@@ -2,7 +2,6 @@ package net.siisise.omap;
 
 import net.siisise.omap.target.JavaConvert;
 import net.siisise.omap.target.JSON2Convert;
-import net.siisise.omap.target.JSON1Convert;
 import net.siisise.omap.target.JsonpConvert;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -14,10 +13,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.siisise.json.JSON;
 import net.siisise.json.map.JSONDateM;
 import net.siisise.json.map.JSONUUIDM;
-import net.siisise.json2.JSON2Value;
 import net.siisise.omap.source.JSON2ArrayM;
 import net.siisise.omap.source.JSON2NumberM;
 import net.siisise.omap.source.JSON2ObjectM;
@@ -29,7 +26,8 @@ import net.siisise.omap.target.OMAPConvert;
 import net.siisise.omap.target.StringConvert;
 
 /**
- * SoftLibJSON から Object Mapping を分離する。 PoJoとか言われているらしいもの?
+ * SoftLibJSON から Object Mapping を分離する。
+ * PoJoとか言われているらしいもの?
  * REST準拠なデータを持つList(JSONArrayだったもの), Map(JSONObjectだったもの) から各種変換をする便利機能。
  *
  * ToDo: JSON2Stringなどで Stringがデータのみの場合と書式込みの場合をどうにかして分ける
@@ -40,7 +38,7 @@ public class OMAP {
     /**
      * 中間 Java/JSON型振り分け
      */
-    static OMConvert[] OMDS = {
+    static final OMConvert[] OMDS = {
         new JSON2ValueM(),
         new JSON2NumberM(),
         new JSONUUIDM(),
@@ -53,18 +51,23 @@ public class OMAP {
     /**
      * 出力別
      */
-    static MtoConvert[] OUTTYPES = {
+    static final MtoConvert[] OUTTYPES = {
         new JsonpConvert(),
         new JsonValueTypeConvert(),
-        new JSON1Convert(),
         new JSON2Convert(),
         new DateConvert(), // 別にしたい
         new StringConvert(),
         new JavaConvert() // なにもしない
     };
 
+    /**
+     * 型別に整理したOMDS
+     */
     public static final Map<Class, List<OMConvert>> OMMAP = new HashMap<>();
 
+    /**
+     * 型別に整理したOUTTYPES
+     */
     public static Map<Type, MtoConvert> CONVS = new HashMap();
 
     static {
@@ -87,7 +90,7 @@ public class OMAP {
      * ToDo: 拡張可能にする
      *
      * @param type
-     * @return
+     * @return 出力先変換器
      */
     static MtoConvert convert(Type type) {
         MtoConvert pjc = CONVS.get(type);
@@ -102,29 +105,31 @@ public class OMAP {
         return valueOf(src, pjc);
     }
 
+    /**
+     * 出力先が決まっているときの対応
+     * @param <T>
+     * @param src
+     * @param pjc 出力型変換器
+     * @return 
+     */
     public static <T> T valueOf(Object src, MtoConvert<T> pjc) {
-        List<OMConvert> ms;
+        List<OMConvert> omcs;
         synchronized (OMMAP) {
-            ms = OMMAP.get(src == null ? null : src.getClass());
+            omcs = OMMAP.get(src == null ? null : src.getClass());
         }
-        if (ms != null) {
-//            System.out.println("ヒット" + (src == null ? null : src.getClass()));
-//            if ( ms.size() > 1 ) { // 型が同じとき変換しない以外にないかもしれないので省略するかも
-//                System.out.println("多重" + ms.size());
-//            }
-            for (OMConvert om : ms) {
+        if (omcs != null) {
+            for (OMConvert om : omcs) { // ソースから変換可能なOMCを探す
                 T val = om.valueOf(src, pjc);
-                if (val != om) {
+                if (val != om) { // omが返れば未対応 srcから変換可能なので抜ける
                     return val;
                 }
             }
         }
-        // System.out.println("キャッシュミス" + src.getClass());
         // ヒットしないので一から探すすもしれない
         for (OMConvert ps : OMDS) {
             T val = ps.valueOf(src, pjc);
             if (val != ps) {
-                putOMS(src.getClass(), ps);
+                putOMS(src == null ? null : src.getClass(), ps);
                 return val;
             }
         }
@@ -132,6 +137,11 @@ public class OMAP {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * 入力変換器キャッシュの追加
+     * @param cls nullあり
+     * @param om 
+     */
     private static void putOMS(Class cls, OMConvert om) {
         synchronized (OMMAP) {
             List<OMConvert> oms = OMMAP.get(cls);
@@ -146,39 +156,35 @@ public class OMAP {
     }
 
     /**
-     * あとで分ける.
-     *
-     * @param <T> てきとう
-     * @param value primitive,Collection寄りな値
-     * @param type
-     * @return
+     * 特定の型のnullっぽいものを返す
+     * @param <T>
+     * @param type 出力型
+     * @return nullに該当する概念
      */
-    public static <T> T typeValue(Object value, Type type) {
-        if (type instanceof Class) {
-            if (type == String.class) {
-                return (T) valueOf(value, JSON2Value.class).toString();
-            } else if (JSON.class.isAssignableFrom((Class) type)) {
-                JSON v = JSON.valueOf(value);
-                if (((Class) type).isAssignableFrom(v.getClass())) {
-                    return (T) v;
-                } else {
-                    throw new ClassCastException("JSONの型が不一致");
-                }
-            }
-        }
-        throw new UnsupportedOperationException("まだない");
-    }
-
     public static <T> T typeNull(Type type) {
         MtoConvert<T> cnv = convert(type);
         return cnv.nullValue();
     }
 
+    /**
+     * booleanから特定の型に変える
+     * @param <T>
+     * @param bool
+     * @param type 出力型
+     * @return booleanっぽいもの
+     */
     public static <T> T typeBoolean(boolean bool, Type type) {
         MtoConvert<T> cnv = convert(type);
         return cnv.booleanValue(bool);
     }
 
+    /**
+     * 特定の型の数値っぼいものに変換する
+     * @param <T>
+     * @param number 該当する数値っぽいもの
+     * @param type
+     * @return type型のnumberっぽいもの
+     */
     public static <T> T typeNumber(Number number, Type type) {
         MtoConvert<T> cnv = convert(type);
         return cnv.numberValue(number);
@@ -204,6 +210,11 @@ public class OMAP {
         return (T) cnv.stringValue(value);
     }
 
+    /**
+     * toJSONメソッドがあればJSONに変換し、なければその他の方法で変換する
+     * @param obj null不可
+     * @return 
+     */
     public static String toJSON(Object obj) {
         Class<? extends Object> cls = obj.getClass();
         try {

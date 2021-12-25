@@ -35,10 +35,20 @@ public class JSON2NULL implements JSON2Value,JsonValue {
     public String toString(JSON2Format format) {
         return "null";
     }
-
+    
     @Override
     public ValueType getValueType() {
         return ValueType.NULL;
+    }
+
+    /**
+     * JsonValueは一方的な比較
+     * @param obj
+     * @return 
+     */
+    public boolean equals(Object obj) {
+        return (obj != null && (obj instanceof JSON2NULL || obj == JsonValue.NULL));
+            
     }
     
 }

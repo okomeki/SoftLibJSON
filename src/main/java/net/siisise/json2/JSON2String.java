@@ -119,6 +119,14 @@ public class JSON2String implements JSON2Value,JsonString {
     public CharSequence getChars() {
         return value;
     }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if ( obj instanceof JsonString) {
+            return value.equals(((JsonString) obj).getString());
+        }
+        return false;
+    }
 
     @Override
     public ValueType getValueType() {

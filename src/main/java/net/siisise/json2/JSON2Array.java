@@ -45,6 +45,10 @@ public class JSON2Array<E> extends ArrayList<E> implements JSON2Collection<E> {
         return JSON2.valueOf(get(Integer.parseInt(key)));
     }
 
+//    JSON2Value getJSON(int index) {
+//        return JSON2.valueOf(get(index));
+//    }
+
     @Override
     public void setJSON(String key, JSON2Value obj) {
         E val = def == null ? obj.map() : obj.typeMap(def);
@@ -65,6 +69,11 @@ public class JSON2Array<E> extends ArrayList<E> implements JSON2Collection<E> {
         }
     }
 
+    /**
+     * 指定位置のデータを配列から取り除く
+     * @param key 配列のindex相当文字列
+     * @return 削除した値
+     */
     @Override
     public JSON2Value removeJSON(String key) {
         return JSON2.valueOf(remove(Integer.parseInt(key)));
@@ -86,23 +95,18 @@ public class JSON2Array<E> extends ArrayList<E> implements JSON2Collection<E> {
         if (def != null) {
             val = OMAP.valueOf(val,def);
         } else {
-            val = JSON2.valueMap(val);
+            val = JSON2.valueMap(val); // Object系に変換
         }
         add((E) val);
     }
 
-//    JSON2Value getJSON(int index) {
-//        return JSON2.valueOf(get(index));
-//    }
-
     @Override
     public <T> T typeMap(Type type) {
         return OMAP.typeList(this, type);
-//        return (T) new OMAPConvert(type).listValue(this);
     }
 
     Stream<JSON2Value> j2Stream() {
-        return parallelStream().map(v -> JSON2.valueOf(v));
+        return parallelStream().map(JSON2::valueOf);
     }
     
     /**

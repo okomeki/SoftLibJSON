@@ -11,7 +11,8 @@ import net.siisise.omap.MtoConvert;
 import net.siisise.omap.OMConvert;
 
 /**
- *
+ * Array and List
+ * 配列とリスト
  */
 public class JSON2ArrayM implements OMConvert {
 
@@ -20,15 +21,22 @@ public class JSON2ArrayM implements OMConvert {
         return new Class[] { Collection.class, ArrayList.class };
     }
 
+    /**
+     * 配列も一度Collectionにまとめてから出力側に振る
+     * @param src Collection(List), 配列
+     * @param outConvert 出力先変換器
+     * @return 
+     */
     @Override
     public Object valueOf(Object src, MtoConvert outConvert) {
         Class cls = src.getClass();
-        if ( cls.isArray() ) {
+        if ( cls.isArray() ) { // 配列をCollectionに変更する
             Class ar = cls.getComponentType();
             if (ar.isPrimitive()) {
                 List cnv;
                 int len = Array.getLength(src);
                 // byte[], char[] は別にするかも
+                /*
                 if ( ar == Byte.TYPE ) {
                     BASE64 b64 = new BASE64(BASE64.URL,0);
                     String b64src = b64.encode((byte[])src);
@@ -36,6 +44,7 @@ public class JSON2ArrayM implements OMConvert {
                 } else if ( ar == Character.TYPE ) {
                     
                 }
+                */
                 cnv = new JSON2Array();
                 for ( int i = 0; i < len; i++ ) {
                     cnv.add(Array.get(src, i));

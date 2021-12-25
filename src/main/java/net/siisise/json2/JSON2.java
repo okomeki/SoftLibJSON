@@ -4,6 +4,7 @@ import java.util.stream.Collector;
 import net.siisise.omap.OMAP;
 
 /**
+ * RFC 8259
  * 中間形式をListとMap対応にして実質なくした版
  * JSON文字列 toString()
  * JSON2Object valueOf()
@@ -71,7 +72,7 @@ public interface JSON2 {
      * valueOf で結果が単体(primitive型)のときラップしてから返す
      *
      * @param src
-     * @return
+     * @return JSON2Valueな値
      */
     public static JSON2Value valueOf(Object src) {
         return OMAP.valueOf(src, JSON2Value.class);

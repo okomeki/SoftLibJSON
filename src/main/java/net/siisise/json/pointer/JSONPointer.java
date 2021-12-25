@@ -11,9 +11,6 @@ import javax.json.JsonStructure;
 import javax.json.JsonValue;
 import net.siisise.abnf.AbstractABNF;
 import net.siisise.io.FrontPacket;
-import net.siisise.json.JSON;
-import net.siisise.json.JSONCollection;
-import net.siisise.json.JSONValue;
 import net.siisise.json2.JSON2;
 import net.siisise.json2.JSON2Collection;
 import net.siisise.json2.JSON2Value;
@@ -24,7 +21,7 @@ import net.siisise.json2.JSON2Value;
  */
 public class JSONPointer implements JsonPointer {
 
-    String[] path;
+    private String[] path;
 
     public JSONPointer(String escapedPath) {
         if (!JSONPointerReg.jsonPointer.eq(escapedPath)) {
@@ -33,6 +30,10 @@ public class JSONPointer implements JsonPointer {
         this.path = escapedPath.split("/");
     }
 
+    /**
+     * 
+     * @param lp reference-token の Packet列
+     */
     JSONPointer(List<? extends FrontPacket> lp) {
         path = new String[lp.size() + 1];
         path[0] = "";
@@ -43,11 +44,6 @@ public class JSONPointer implements JsonPointer {
                 throw new java.lang.UnsupportedOperationException();
             }
         }
-    }
-
-    public void add(JSONCollection target, JSONValue value) {
-        ColKey<JSONCollection> vp = step(target);
-        vp.coll.addJSON(vp.key, value);
     }
 
     /**
@@ -77,11 +73,6 @@ public class JSONPointer implements JsonPointer {
      * @param target
      * @return 値?
      */
-    public JSONValue remove(JSONCollection target) {
-        ColKey<JSONCollection> vp = step(target);
-        return vp.coll.removeJSON(vp.key);
-    }
-
     public JSON2Value remove(JSON2Collection target) {
         ColKey<JSON2Collection> vp = step(target);
         return vp.coll.removeJSON(vp.key);
@@ -105,28 +96,13 @@ public class JSONPointer implements JsonPointer {
         return target;
     }
 
-    public JSONValue get(JSONCollection target) {
-        return step((JSONValue) target, false).val;
-    }
-
     public JSON2Value get(JSON2Collection target) {
         return step((JSON2Value) target, false).val;
-    }
-
-    public void set(JSONCollection target, Object value) {
-        ColKey<JSONCollection> vp = step(target);
-        vp.coll.setJSON(vp.key, JSON.valueOf(value));
     }
 
     public void set(JSON2Collection target, Object value) {
         ColKey<JSON2Collection> vp = step(target);
         vp.coll.setJSON(vp.key, JSON2.valueOf(value));
-    }
-
-    public void replace(JSONCollection target, Object value) {
-        ColKey<JSONCollection> vp = step(target);
-        vp.coll.removeJSON(vp.key);
-        vp.coll.addJSON(vp.key, JSON.valueOf(value));
     }
 
     public void replace(JSON2Collection target, Object value) {
@@ -197,6 +173,12 @@ public class JSONPointer implements JsonPointer {
         return sb.toString();
     }
 
+    /**
+     * JSON Pointer escaped のデコード
+     * @param str
+     * @return
+     * @throws MalformedInputException 
+     */
     static String decode(String str) throws MalformedInputException {
         StringBuilder sb = new StringBuilder(100);
         StringBuilder src = new StringBuilder(str);
@@ -297,29 +279,12 @@ public class JSONPointer implements JsonPointer {
             return new ValuePointer(tg, null);
         } else if (ds.length == 2 && keep) {
             return new ValuePointer(tg, this);
-        } else if (tg instanceof JSONCollection) {
-            tg = (J) ((JSONCollection) tg).getJSON(ds[1]);
-            return sub().step(tg, keep);
         } else if (tg instanceof JSON2Collection) {
             tg = (J) ((JSON2Collection) tg).getJSON(ds[1]);
             return sub().step(tg, keep);
         } else {
             throw new java.lang.UnsupportedOperationException();
         }
-    }
-
-    /**
-     * JSON版
-     *
-     * @param obj
-     * @return
-     */
-    private ColKey<JSONCollection> step(JSONCollection obj) {
-        JSONPointer.ValuePointer<JSONValue> vp = step((JSONValue) obj, true);
-        ColKey kv = new ColKey();
-        kv.coll = (JSONCollection) vp.val;
-        kv.key = vp.path.toDecodeString()[1];
-        return kv;
     }
 
     /**

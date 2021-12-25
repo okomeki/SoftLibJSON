@@ -1,8 +1,8 @@
 package net.siisise.json.pointer;
 
-import net.siisise.json.JSON;
-import net.siisise.json.JSONCollection;
-import net.siisise.json.JSONValue;
+import net.siisise.json2.JSON2;
+import net.siisise.json2.JSON2Collection;
+import net.siisise.json2.JSON2Value;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -69,8 +69,8 @@ public class JSONPointerTest {
     public void testOther() {
         int[] a = {1, 2, 3};
         int[][] b = {a};
-        JSONCollection val = (JSONCollection) JSON.valueOf(b);
-        JSONValue t = val.get(new JSONPointer("/0/2"));
+        JSON2Collection val = (JSON2Collection) JSON2.valueOf(b);
+        JSON2Value t = new JSONPointer("/0/2").get(val);
         System.out.println(t);
     }
     

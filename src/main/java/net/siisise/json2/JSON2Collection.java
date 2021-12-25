@@ -21,6 +21,12 @@ public interface JSON2Collection<T> extends JSON2Value {
      * @param obj
      */
     void setJSON(String key, JSON2Value obj);
+
+    /**
+     * 
+     * @param key 末尾に追加する場合は "-"
+     * @param obj 
+     */
     void addJSON(String key, JSON2Value obj);
 
     /**

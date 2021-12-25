@@ -5,7 +5,7 @@ import net.siisise.abnf.ABNFReg;
 import net.siisise.abnf.parser5234.ABNF5234;
 import net.siisise.json2.parser.JSON2ArrayP;
 import net.siisise.json2.parser.JSON2ObjectP;
-import net.siisise.json.parser.JSONCharP;
+import net.siisise.json2.parser.JSON2CharP;
 import net.siisise.json2.parser.JSON2MemberP;
 import net.siisise.json2.parser.JSON2NumberP;
 import net.siisise.json2.parser.JSON2StringP;
@@ -35,7 +35,7 @@ public class JSON28259Reg {
     public static final ABNF unescaped = REG.rule("unescaped", "%x20-21 / %x23-5B / %x5D-10FFFF");
     public static final ABNF escape = REG.rule("escape", ABNF.bin(0x5c));
     static final ABNF quotation_mark = REG.rule("quotation-mark", ABNF.bin(0x22));
-    public static final ABNF CHAR = REG.rule("char", JSONCharP.class, "unescaped / escape ( %x22 / %x5C / %x2F / %x62 / %x66 / %x6E / %x72 / %x74 / %x75 4HEXDIG )");
+    public static final ABNF CHAR = REG.rule("char", JSON2CharP.class, "unescaped / escape ( %x22 / %x5C / %x2F / %x62 / %x66 / %x6E / %x72 / %x74 / %x75 4HEXDIG )");
     public static final ABNF string = REG.rule("string", JSON2StringP.class, quotation_mark.pl(CHAR.x(), quotation_mark));
     static final ABNF e = REG.rule("e", "%x65 / %x45");
     static final ABNF minus = REG.rule("minus", ABNF.bin(0x2d));
