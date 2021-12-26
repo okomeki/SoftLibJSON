@@ -27,7 +27,7 @@ JavaとJSONの変換をするに当たって該当オブジェクトの中間型
 pakage net.siisise.json2
 
 - JSON2
-- JSON2Value
+- JSON2Value : Object
     - JSON2NULL : null
     - JSON2Boolean : Boolean
     - JSON2Number : Number, BigInteger, BigDecimal
@@ -36,21 +36,28 @@ pakage net.siisise.json2
         - JSON2Array : List
         - JSON2Object : Map
 
-JSON2の配列はJavaの配列、Listと変換でき、JSON2のObjectはJavaのObjectやMapと相互に変換できます。
+JSON2の配列JSON2ArrayはJavaの配列、Listとして扱うことができ、JSON2ObjectはJavaのMapとして扱えます。内部はJavaの値でBoolean,Number,String,List,Mapなどの形式で保存されています。
 
-Boolean,Number,StringもJavaのオブジェクトとして扱うこともでき、JSON2Valueな型として扱うこともできる状態で格納することができます。
+JSON2.valueOf()でJSON2Valueに変換できそうなものはそのまま格納して問題ありません。
 
-JSON2Array<E> は List<E> として扱うことができ、JSONに変換可能なものを格納できます。
+getJSON(), setJSON(), addJSON() などのメソッドでJSON2Value形式の値を扱うことができます。
 
-JSON2Object<E> は Map<String,E> として扱うことができ、JSONに変換可能なものを格納できます。
+JSON2Array<E> は List&lt;E&gt; として扱うことができ、JSONに変換可能なものを格納できます。
 
-<E>は、Javaの型として扱いたい型を指定します。コンストラクタで型を指定することでJSONからの変換も適度に処理してくれます。
+JSON2Object<E> は Map&lt;String,E&gt; として扱うことができ、JSONに変換可能なものを格納できます。
+
+&lt;E&gt;は、Javaの型として扱いたい型を指定します。コンストラクタで型を指定することでJSONからの変換も適度に処理してくれます。
+
+JSON2NumberはJSONからの変換ではmap()で取り出せる内部型にBigInteger型またはBigDecimal型を持っています。また、JSON2NumberもNumberを継承しています。いずれもNumber型として扱えるのでIntegerなど適切な型に変換してから使います。
 
 JSON Pointer, JSON PatchなどでArrayとObjectをまとめて扱うためにJSON2Collcetionを設けています。
 
 Objectはfield(内部の変数)を変換します。beanなどにも対応は予定していたり。
 
 ということで、ほとんど何も気にせずJavaとJSONの変換をこなしてくれます。
+
+変換関連はnet.siissie.omap.OMAP などにまとめています。
+OMAP.valueOf(ソース,型) がJSON2Value.typeMap(型) の実体です。
 
 公開や更新したくない要素などセキュリティには注意してください。
 
@@ -82,28 +89,29 @@ json2 から JavaのJSONPっぽいものに変換する
 
 JSON2Array, JSON2Object は stream も対応しているかもしれません。
 
-これ以降はjson1系の説明なのでちょっと古い
-
 JavaScript からの例
 オブジェクトを文字列に変換する
 
     JavaScript:JSON.stringify(obj)
-    Java;JSON.stringify(obj)
-    Java:JSONValue.valueOf(obj).toString();
+    Java;JSON2.stringify(obj); //  まだかも
+    Java:JSON2.valueOf(obj).toString();
 
-文字列をオブジェクトに変換する
+JSON文字列をオブジェクトに変換する
 
     JavaScript:JSON.parse(src)
-    Java:JSON.parseToObj(src,class);
-    Java:JSON.parse(src)
-
+    Java:JSON2.parseWrap(src,class); JSON2Valueへ
+    Java:JSON2.parse(src); Javaへ  
+    
 おぶじぇくとまっぴんぐ各種
 
 ## String to JSON2Value to String
 
-    String str = "{ abc: def }";
-    JSON2Value value = JSON2.parseWrap(str);
-    String str = value.toString();
+    String json = "{ abc: def }";
+    JSON2Value value = JSON2.parseWrap(json);
+    String json = value.toString();
+    
+    JSON2Value#toString() はJSON書式で出力します JSON2Stringなどの値はmap()またはtypeMap(Type) で取得します。
+    TypeはClassの互換で<型情報>などをまとめたものです。
 
     String str = "文字列";
     JSON2String value = JSON2.valueOf(str);
@@ -113,7 +121,7 @@ JavaScript からの例
     List list = new ArrayList();
     (略)
     JSON2Array array = JSON2.valueOf(list);
-    list = array.map();
+    list = array.map(); // Listと互換なのでarrayをそのまま返します
     list = array.typeMap(List.class);
 
     String[] stringArray = {略};
