@@ -12,7 +12,7 @@ JSONのパース、オブジェクトマッピング、JSON Pointer, JSON Patch 
 
 JavaのJSONPに準拠した実装もしてみたり。
 
-実装はjsonとjson2 という名前で2つあるのでjson2の方をつかってください。このライブラリ内では内部型をjson2と呼びます。
+実装はjsonとjson2 という名前で分かれているので主要な機能はjson2の方をつかってください。
 
 storingifyはてきとーに実装しているのでまだ。
 
@@ -27,16 +27,18 @@ JavaとJSONの変換をするに当たって該当オブジェクトの中間型
 pakage net.siisise.json2
 
 - JSON2
-    - JSON2Value
-        - JSON2NULL
-        - JSON2Boolean
-        - JSON2Number
-        - JSON2String
-        - JSON2Collcetion
-            - JSON2Array
-            - JSON2Object
+- JSON2Value
+    - JSON2NULL : null
+    - JSON2Boolean : Boolean
+    - JSON2Number : Number, BigInteger, BigDecimal
+    - JSON2String : String, CharSequence
+    - JSON2Collcetion
+        - JSON2Array : List
+        - JSON2Object : Map
 
-JSONの配列はJavaの配列、Listと変換でき、JSONのObjectはJavaのObjectやMapと相互に変換できます。
+JSON2の配列はJavaの配列、Listと変換でき、JSON2のObjectはJavaのObjectやMapと相互に変換できます。
+
+Boolean,Number,StringもJavaのオブジェクトとして扱うこともでき、JSON2Valueな型として扱うこともできる状態で格納することができます。
 
 JSON2Array<E> は List<E> として扱うことができ、JSONに変換可能なものを格納できます。
 
@@ -60,8 +62,9 @@ JSONをparseしてJava Objcetに変換する
 
     byte[] json; UTF-8限定 または String json;
 
-    JSON2Value val = JSON2.parse(json);
+    JSON2Value val = JSON2.parseWrap(json); JSON2Value型 (JSON2Array,JSON2Object, JSON2Strign, JSON2Number, JSON2Booleanなど)として受けたい場合
     Objcet obj = val.map();
+    Object obj = JSON2.parse(json); Object型 (ListやMap,String,Integer,Booleanなど)として直接結果を受けたい場合
 
 Java由来のものをJSONに変換する
 
@@ -96,30 +99,30 @@ JavaScript からの例
 
 おぶじぇくとまっぴんぐ各種
 
-## String to JSONValue to String
+## String to JSON2Value to String
 
     String str = "{ abc: def }";
-    JSONValue value = JSON8259Reg.parse(str);
+    JSON2Value value = JSON2.parseWrap(str);
     String str = value.toString();
 
     String str = "文字列";
-    JSONString value = JSONValue.valueOf(str);
+    JSON2String value = JSON2.valueOf(str);
     Boolean, Number系も同じ。
-    str = value.value();
+    str = value.map();
 
     List list = new ArrayList();
     (略)
-    JSONArray array = JSONValue.valueOf(list);
-    list = array.value();
-    list = array.map(List.class);
+    JSON2Array array = JSON2.valueOf(list);
+    list = array.map();
+    list = array.typeMap(List.class);
 
     String[] stringArray = {略};
-    JSONArray array = JSONValue.valueOf(stringArray);
+    JSON2Array array = JSON2.valueOf(stringArray);
     stringArray = array.map(はいれつのくらす);
 
     int[] abc = {1,2,3};
-    JSONArray array = JSONValue.valueOf(abc);
-    abc = array.map(int[]のくらす);
+    JSON2Array array = JSON2.valueOf(abc);
+    abc = array.typeMap(int[]のくらす);
     abc = array.toArray(new int[0]); // も可 new
 
 object は publicなデータを持つおぶじぇくと
@@ -131,10 +134,10 @@ object は publicなデータを持つおぶじぇくと
     }
 
     A object;
-    JSONObject obj = JSONValue.valueOf(object);
-    JSONArray numVal = (JSONArray)obj.get("b");
-    object = obj.map(A.class);
+    JSON2Object obj = JSON2.valueOf(object);
+    JSON2Array numVal = (JSON2Array)obj.get("b");
+    object = obj.typeMap(A.class);
 
     Map map = new HashMap();
-    JSONObject obj = JSONValue.valueOf(map);
-    map = obj.map(Map.class);
+    JSON2Object obj = JSON2.valueOf(map);
+    map = obj.typeMap(Map.class);
