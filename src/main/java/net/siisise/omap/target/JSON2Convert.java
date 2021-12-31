@@ -50,7 +50,6 @@ public class JSON2Convert extends OBJConvert<JSON2Value> {
     @Override
     public JSON2Array listValue(Collection list) {
         return new JSON2Array(list);
-//        return (JSON2Array) list.stream().collect(JSON2.toJSON2Array());
     }
 
     /**

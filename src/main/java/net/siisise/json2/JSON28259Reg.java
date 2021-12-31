@@ -3,6 +3,7 @@ package net.siisise.json2;
 import net.siisise.abnf.ABNF;
 import net.siisise.abnf.ABNFReg;
 import net.siisise.abnf.parser5234.ABNF5234;
+import net.siisise.io.FrontPacket;
 import net.siisise.json2.parser.JSON2ArrayP;
 import net.siisise.json2.parser.JSON2ObjectP;
 import net.siisise.json2.parser.JSON2CharP;
@@ -59,6 +60,10 @@ public class JSON28259Reg {
     }
 
     public static Object parse(byte[] json) {
+        return REG.parse("JSON-text", json);
+    }
+
+    public static Object parse(FrontPacket json) {
         return REG.parse("JSON-text", json);
     }
 }

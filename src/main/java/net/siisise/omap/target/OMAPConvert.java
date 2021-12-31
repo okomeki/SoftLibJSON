@@ -121,6 +121,9 @@ public class OMAPConvert<T> extends OBJConvert<T> {
         } else if (cls == BigInteger.class) {
             return new BigInteger(number.toString());
         } else if (cls == BigDecimal.class) {
+            if ( number instanceof BigInteger ) {
+                return new BigDecimal((BigInteger)number);
+            }
             return new BigDecimal(number.toString());
         } else if ( cls == String.class || cls == CharSequence.class ) {
             return number.toString();

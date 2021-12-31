@@ -1,5 +1,6 @@
 package net.siisise.omap.source;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import javax.json.JsonNumber;
 import net.siisise.json2.JSON2Number;
@@ -13,7 +14,7 @@ public class JSON2NumberM implements OMConvert {
 
     @Override
     public Class[] getSrcClasses() {
-        return new Class[]{JsonNumber.class, JSON2Number.class, Number.class, Integer.class, Long.class, Short.class, BigInteger.class, Double.class};
+        return new Class[]{JsonNumber.class, JSON2Number.class, Number.class, Integer.class, Long.class, Float.class, Short.class, BigInteger.class, Double.class, BigDecimal.class};
     }
 
     @Override

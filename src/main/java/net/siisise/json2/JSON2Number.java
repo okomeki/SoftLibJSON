@@ -83,12 +83,12 @@ public class JSON2Number extends Number implements JSON2Value,JsonNumber {
 
     @Override
     public int intValueExact() {
-        return typeMap(Integer.class);
+        return ((BigDecimal)typeMap(BigDecimal.class)).intValueExact();
     }
 
     @Override
     public long longValueExact() {
-        return typeMap(Long.class);
+        return ((BigDecimal)typeMap(BigDecimal.class)).longValueExact();
     }
 
     @Override
@@ -98,7 +98,7 @@ public class JSON2Number extends Number implements JSON2Value,JsonNumber {
 
     @Override
     public BigInteger bigIntegerValueExact() {
-        return typeMap(BigInteger.class);
+        return ((BigDecimal)typeMap(BigDecimal.class)).toBigIntegerExact();
     }
 
     @Override

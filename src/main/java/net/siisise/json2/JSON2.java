@@ -1,6 +1,7 @@
 package net.siisise.json2;
 
 import java.util.stream.Collector;
+import net.siisise.io.FrontPacket;
 import net.siisise.omap.OMAP;
 
 /**
@@ -52,6 +53,26 @@ public interface JSON2 {
      * @return JSON2Valueな値
      */
     public static JSON2Value parseWrap(byte[] json) {
+        return valueWrap(JSON28259Reg.parse(json));
+    }
+
+    /**
+     * JSONデータ列からObjectにパースする
+     *
+     * @param json
+     * @return
+     */
+    static Object parse(FrontPacket json) {
+        return JSON28259Reg.parse(json);
+    }
+
+    /**
+     * JSONっぽくくるんで返す。
+     * 中身はJavaっぽくなっているのかも。
+     * @param json
+     * @return JSON2Valueな値
+     */
+    public static JSON2Value parseWrap(FrontPacket json) {
         return valueWrap(JSON28259Reg.parse(json));
     }
 
