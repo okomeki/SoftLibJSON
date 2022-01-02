@@ -26,12 +26,12 @@ public class JSON28259Reg {
     public static final ABNF TRUE = REG.rule("true", "%x74.72.75.65");
     static final ABNF ws = REG.rule("ws", "*( %x20 / %x09 / %x0A / %x0D )");
 
-    static final ABNF begin_array = REG.rule("begin-array", ws.pl(ABNF.bin(0x5b), ws)); // [
-    static final ABNF begin_object = REG.rule("begin-object", ws.pl(ABNF.bin(0x7b), ws)); // {
-    static final ABNF end_array = REG.rule("end-array", ws.pl(ABNF.bin(0x5D), ws)); // ]
-    static final ABNF end_object = REG.rule("end-object", ws.pl(ABNF.bin(0x7D), ws)); // }
-    static final ABNF name_separator = REG.rule("name-separator", ws.pl(ABNF.bin(0x3A), ws)); // :
-    static final ABNF value_separator = REG.rule("value-separator", ws.pl(ABNF.bin(0x2C), ws)); // ,
+    public static final ABNF begin_array = REG.rule("begin-array", ws.pl(ABNF.bin(0x5b), ws)); // [
+    public static final ABNF begin_object = REG.rule("begin-object", ws.pl(ABNF.bin(0x7b), ws)); // {
+    public static final ABNF end_array = REG.rule("end-array", ws.pl(ABNF.bin(0x5D), ws)); // ]
+    public static final ABNF end_object = REG.rule("end-object", ws.pl(ABNF.bin(0x7D), ws)); // }
+    public static final ABNF name_separator = REG.rule("name-separator", ws.pl(ABNF.bin(0x3A), ws)); // :
+    public static final ABNF value_separator = REG.rule("value-separator", ws.pl(ABNF.bin(0x2C), ws)); // ,
 
     public static final ABNF unescaped = REG.rule("unescaped", "%x20-21 / %x23-5B / %x5D-10FFFF");
     public static final ABNF escape = REG.rule("escape", ABNF.bin(0x5c));
@@ -66,4 +66,9 @@ public class JSON28259Reg {
     public static Object parse(FrontPacket json) {
         return REG.parse("JSON-text", json);
     }
+    
+    public static <T> T parse(String name, FrontPacket json) {
+        return (T)REG.parse(name, json);
+    }
+            
 }

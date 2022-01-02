@@ -6,9 +6,9 @@ import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonValue;
-import net.siisise.json2.JSON2Boolean;
 import net.siisise.json2.JSON2Number;
 import net.siisise.json2.JSON2String;
+import net.siisise.omap.OMAP;
 
 /**
  *
@@ -61,7 +61,7 @@ public class JSONPArrayBuilder implements JsonArrayBuilder {
 
     @Override
     public JsonArrayBuilder add(boolean val) {
-        array.add(new JSON2Boolean(val).toJson());
+        array.add(OMAP.valueOf(val, JsonValue.class));
         return this;
     }
 
