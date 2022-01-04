@@ -1,43 +1,30 @@
 package net.siisise.json2.jsonp;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.io.StringWriter;
 import java.nio.charset.Charset;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.json.JsonReader;
 import javax.json.JsonReaderFactory;
-import net.siisise.io.FileIO;
-import net.siisise.json2.JSON2;
-import net.siisise.json2.JSON2Value;
+import net.siisise.io.FrontPacket;
+import net.siisise.io.StreamFrontPacket;
 
 /**
  *
  */
 public class JSONPReaderFactory implements JsonReaderFactory {
 
-
-
     @Override
     public JsonReader createReader(Reader reader) {
-        try {
-            StringWriter out = new StringWriter();
-            FileIO.io(reader, out);
-            JSON2Value json = JSON2.parseWrap(out.toString());
-            return new JSONPReader(reader,json);
-        } catch (IOException ex) {
-            Logger.getLogger(JSONPReaderFactory.class.getName()).log(Level.SEVERE, null, ex);
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
+        FrontPacket fp = new StreamFrontPacket(reader);
+        return new JSONPReader(fp);
     }
-
+    
     @Override
     public JsonReader createReader(InputStream in) {
-        return createReader(in, Charset.forName("utf-8"));
+        FrontPacket fp = new StreamFrontPacket(in);
+        return new JSONPReader(fp);
     }
 
     @Override

@@ -1,7 +1,6 @@
 package net.siisise.json2.jsonp;
 
 import java.io.IOException;
-import java.io.Reader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.json.JsonArray;
@@ -9,45 +8,44 @@ import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.json.JsonStructure;
 import javax.json.JsonValue;
-import net.siisise.json2.JSON2Value;
+import net.siisise.io.FrontPacket;
+import net.siisise.json2.JSON2;
 
 /**
  * リーダー
  */
 public class JSONPReader implements JsonReader {
 
-    private final Reader rd;
-    private final JSON2Value json;
+    private final FrontPacket fp;
 
-    JSONPReader(Reader reader, JSON2Value json) {
-        rd = reader;
-        this.json = json;
+    JSONPReader(FrontPacket front) {
+        fp = front;
     }
 
     @Override
     public JsonStructure read() {
-        return (JsonStructure) json.toJson();
+        return (JsonStructure) JSON2.parseWrap(fp).toJson();
     }
 
     @Override
     public JsonValue readValue() {
-        return json.toJson();
+        return JSON2.parseWrap(fp).toJson();
     }
 
     @Override
     public JsonObject readObject() {
-        return (JsonObject) json.toJson();
+        return (JsonObject) JSON2.parseWrap(fp).toJson();
     }
 
     @Override
     public JsonArray readArray() {
-        return (JsonArray) json.toJson();
+        return (JsonArray) JSON2.parseWrap(fp).toJson();
     }
 
     @Override
     public void close() {
         try {
-            rd.close();
+            fp.getInputStream().close();
         } catch (IOException ex) {
             Logger.getLogger(JSONPReader.class.getName()).log(Level.SEVERE, null, ex);
         }

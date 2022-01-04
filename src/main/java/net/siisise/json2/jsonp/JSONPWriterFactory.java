@@ -4,6 +4,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import javax.json.JsonWriter;
 import javax.json.JsonWriterFactory;
@@ -20,7 +21,7 @@ public class JSONPWriterFactory implements JsonWriterFactory {
 
     @Override
     public JsonWriter createWriter(OutputStream out) {
-        return createWriter(out,Charset.forName("utf-8"));
+        return createWriter(out,StandardCharsets.UTF_8);
     }
 
     @Override

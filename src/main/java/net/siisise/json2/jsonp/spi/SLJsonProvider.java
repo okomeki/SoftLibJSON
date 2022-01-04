@@ -22,7 +22,6 @@ import net.siisise.json2.jsonp.JSONPBuilderFactory;
 import net.siisise.json2.jsonp.JSONPGeneratorFactory;
 import net.siisise.json2.jsonp.JSONPReaderFactory;
 import net.siisise.json2.jsonp.JSONPWriterFactory;
-import net.siisise.json2.jsonp.stream.SLJsonParser;
 import net.siisise.json2.jsonp.stream.SLJsonParserFactory;
 import net.siisise.json.pointer.JSONPointer;
 
@@ -40,8 +39,8 @@ public class SLJsonProvider extends JsonProvider {
 
     @Override
     public JsonParser createParser(Reader reader) {
-        pf.createParser(reader);
-        return new SLJsonParser(reader);
+        if ( pf == null ) { createParserFactory(null); }
+        return pf.createParser(reader);
     }
 
     @Override
