@@ -22,7 +22,7 @@ public class JSONPObjectBuilder implements JsonObjectBuilder {
 
     JSONPObjectBuilder(JsonObject src) {
         obj = new JSONPObject();
-        src.keySet().forEach(name -> obj.put(name, src.get(name)));
+        src.forEach((key,val) -> obj.put(key, val));
     }
 
     @Override
@@ -94,8 +94,8 @@ public class JSONPObjectBuilder implements JsonObjectBuilder {
     @Override
     public JsonObjectBuilder addAll(JsonObjectBuilder builder) {
         JsonObject src = builder.build();
-        src.keySet().forEach(key -> {
-            obj.put(key, src.get(key));
+        src.forEach((key,val) -> {
+            obj.put(key, val);
         });
         return this;
     }

@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
@@ -35,14 +36,12 @@ import net.siisise.json2.JSON2Value;
 public class SLJsonParser implements JsonParser {
 
     static class Next {
-        JSON2Value json;
+        Object json;
         Event state;
-        int index;
-        
-        Next(JSON2Value json, Event state) {
+
+        Next(Object json, Event state) {
             this.json = json;
             this.state = state;
-            index = 0;
         }
     }
 
@@ -58,24 +57,24 @@ public class SLJsonParser implements JsonParser {
         stream = new StreamFrontPacket(reader);
     }
     
-    public SLJsonParser(JSON2Value json) {
+    public SLJsonParser(Object json) {
         nexts = nexts(json);
     }
     
-    static List<Next> nexts(JSON2Value json) {
+    static List<Next> nexts(Object src) {
+        JSON2Value json = JSON2.valueOf(src);
         List<Next> nexts = new ArrayList<>();
         if ( json instanceof JSON2Object ) {
-            nexts.add(new Next(json, Event.START_OBJECT));
+            nexts.add(new Next(null, Event.START_OBJECT));
             for ( String key : ((JSON2Object<?>) json).keySet() ) {
-                nexts.add(new Next(new JSON2String(key), Event.KEY_NAME));
-                nexts.addAll(nexts(((JSON2Object)json).getJSON(key)));
+                nexts.add(new Next(key, Event.KEY_NAME));
+                nexts.addAll(nexts(((JSON2Object)json).get(key)));
             }
             nexts.add(new Next(json, Event.END_OBJECT));
         } else if ( json instanceof JSON2Array ) {
-            nexts.add(new Next(json, Event.START_ARRAY));
+            nexts.add(new Next(null, Event.START_ARRAY));
             for ( Object val : ((JSON2Array<?>) json)) {
-                JSON2Value v = JSON2.valueOf(val);
-                nexts.addAll(nexts(v));
+                nexts.addAll(nexts(val));
             }
             nexts.add(new Next(json, Event.END_ARRAY));
         } else if ( json instanceof JSON2String ) {
@@ -95,26 +94,24 @@ public class SLJsonParser implements JsonParser {
      * @param step nexts 
      * @return 
      */
-    JSON2Value parseValue(List<Next> step) {
-        current = step.get(0);
-        step.remove(0);
+    JSON2Value parseValue() {
         JSON2Value val = null;
         switch (current.state) {
             case START_OBJECT:
-                val = parseObject(step);
+                val = parseObject();
                 break;
             case START_ARRAY:
-                val = parseArray(step);
+                val = parseArray();
                 break;
             case VALUE_STRING:
             case VALUE_NUMBER:
             case VALUE_TRUE:
             case VALUE_FALSE:
             case VALUE_NULL:
-                val = current.json;
+                val = (JSON2Value) current.json;
                 break;
             default:
-                break;
+                throw new IllegalStateException();
         }
         return val;
     }
@@ -124,43 +121,43 @@ public class SLJsonParser implements JsonParser {
      * @param step nexts START_OBJECT の次から
      * @return 
      */
-    JSON2Object parseObject(List<Next> step) {
+    JSON2Object parseObject() {
         JSON2Object obj = new JSON2Object();
-        current = step.get(0);
-        step.remove(0);
+        next();
         while ( current.state != Event.END_OBJECT ) {
             if ( current.state == Event.KEY_NAME ) {
-                String name = ((JSON2String)current.json).getString();
-                JSON2Value val = parseValue(step);
+                String name = ((String)current.json);
+                next();
+                JSON2Value val = parseValue();
                 obj.addJSON(name, val);
+            } else {
+                throw new IllegalStateException();
             }
-            current = step.get(0);
-            step.remove(0);
+            next();
         }
         return obj;
     }
 
     /**
      * 
-     * @param step START_ARRAYの次から
      * @return 
      */
-    JSON2Array parseArray(List<Next> step) {
+    JSON2Array parseArray() {
         JSON2Array obj = new JSON2Array();
-        current = step.get(0);
+        next();
         while ( current.state != Event.END_ARRAY ) {
-            JSON2Value val = parseValue(step);
+            JSON2Value val = parseValue();
             obj.addJSON("-",val);
-            current = step.get(0);
+            next();
         }
         return obj;
     }
 
     @Override
     public boolean hasNext() throws JsonParsingException {
-        Packet p;
-        Next nextb;
         if (nexts.isEmpty() && stream.size() > 0) {
+            Packet p;
+            Next nextb;
             //nexts = nexts(JSON2.parseWrap(stream));
             if ( JSON28259Reg.value_separator.is(stream) != null ) {
                 if ( current == null || current.state == Event.START_ARRAY || current.state == Event.START_OBJECT || current.state == Event.KEY_NAME ) {
@@ -179,7 +176,7 @@ public class SLJsonParser implements JsonParser {
             } else if ( JSON28259Reg.end_object.is(stream) != null ) {
                 nextb = new Next(null, Event.END_OBJECT);
             } else if ( (p = JSON28259Reg.string.pl(JSON28259Reg.name_separator).is(stream)) != null ) {
-                nextb = new Next(JSON2.valueOf(JSON28259Reg.parse("string", p)), Event.KEY_NAME);
+                nextb = new Next(JSON28259Reg.parse("string", p), Event.KEY_NAME);
             } else if ( JSON28259Reg.FALSE.is(stream) != null ) {
                 nextb = new Next(JSON2Boolean.FALSE, Event.VALUE_FALSE);
             } else if ( JSON28259Reg.TRUE.is(stream) != null ) {
@@ -203,7 +200,8 @@ public class SLJsonParser implements JsonParser {
     @Override
     public Event next() {
         if (!hasNext()) {
-            return null;
+            current = null;
+            throw new NoSuchElementException();
         }
         current = nexts.get(0);
         nexts.remove(0);
@@ -226,7 +224,7 @@ public class SLJsonParser implements JsonParser {
     @Override
     public int getInt() {
         if ( current.state == Event.VALUE_NUMBER ) {
-            return current.json.typeMap(Integer.class);
+            return ((JSON2Number)current.json).intValue();
         }
         throw new IllegalStateException();
 //        return Integer.parseInt(current.json.toString());
@@ -235,7 +233,7 @@ public class SLJsonParser implements JsonParser {
     @Override
     public long getLong() {
         if ( current.state == Event.VALUE_NUMBER ) {
-            return current.json.typeMap(Long.class);
+            return ((JSON2Number)current.json).longValue();
         }
         throw new IllegalStateException();
 //        return Long.parseLong(current.json.toString());
@@ -244,7 +242,7 @@ public class SLJsonParser implements JsonParser {
     @Override
     public BigDecimal getBigDecimal() {
         if ( current.state == Event.VALUE_NUMBER ) {
-            return current.json.typeMap(BigDecimal.class);
+            return ((JSON2Number)current.json).bigDecimalValue();
         }
         throw new IllegalStateException();
 //        return new BigDecimal(current.json.toString());
@@ -273,31 +271,22 @@ public class SLJsonParser implements JsonParser {
     @Override
     public JsonObject getObject() {
         if ( current.state == Event.START_OBJECT ) {
-            return parseObject(nexts).toJson();
+            return parseObject().toJson();
         }
-/*        
-        if ( current.json instanceof JSON2Object ) {
-            return current.json.typeMap(JsonObject.class);
-        }
-*/
         throw new IllegalStateException();
-//        return null;
     }
 
     @Override
     public JsonArray getArray() {
         if ( current.state == Event.START_ARRAY ) {
-            return parseArray(nexts).toJson();
+            return parseArray().toJson();
         }
         throw new IllegalStateException();
-//        return current.json.typeMap(JsonArray.class);
     }
     
     @Override
     public JsonValue getValue() {
-        nexts.add(0, current);
-        return parseValue(nexts).toJson();
-//        return current.json.typeMap(JsonValue.class);
+        return parseValue().toJson();
     }
     
     @Override
@@ -317,18 +306,11 @@ public class SLJsonParser implements JsonParser {
     @Override
     public Stream<JsonValue> getValueStream() {
         List<JsonValue> values = new ArrayList<>();
-        if ( current != null ) {
-            values.add(current.json.toJson());
+        values.add(getValue());
+        while ( hasNext() ) {
+            next();
+            values.add(getValue());
         }
-        if (nexts.isEmpty()) {
-            JSON2Value val = JSON2.parseWrap(stream);
-            while ( val != null ) {
-                values.add(val.toJson());
-                val = JSON2.parseWrap(stream);
-            }
-            nexts.addAll(nexts(val));
-        }
-
         return values.stream();
     }
 
