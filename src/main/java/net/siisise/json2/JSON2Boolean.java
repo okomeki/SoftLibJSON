@@ -17,6 +17,10 @@ public class JSON2Boolean implements JSON2Value,JsonValue {
     public JSON2Boolean(boolean b) {
         bool = b;
     }
+    
+    public static JSON2Boolean valieOf(boolean b) {
+        return b ? TRUE : FALSE;
+    }
 
     @Override
     public <T> T typeMap(Type type) {
@@ -48,6 +52,7 @@ public class JSON2Boolean implements JSON2Value,JsonValue {
         return bool ? JsonValue.ValueType.TRUE : JsonValue.ValueType.FALSE;
     }
     
+    @Override
     public boolean equals(Object obj) {
         if ( obj instanceof JSON2Boolean) {
             return bool == (Boolean)((JSON2Boolean) obj).map();

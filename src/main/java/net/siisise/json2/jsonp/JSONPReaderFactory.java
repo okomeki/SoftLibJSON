@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.Charset;
+import java.util.HashMap;
 import java.util.Map;
 import javax.json.JsonReader;
 import javax.json.JsonReaderFactory;
@@ -34,7 +35,7 @@ public class JSONPReaderFactory implements JsonReaderFactory {
 
     @Override
     public Map<String, ?> getConfigInUse() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return new HashMap<>();
     }
     
 }

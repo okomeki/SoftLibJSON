@@ -18,7 +18,6 @@ public class JSONPWriter implements JsonWriter {
 
     private final Writer writer;
 
-    
     public JSONPWriter(Writer writer) {
         this.writer = writer;
     }

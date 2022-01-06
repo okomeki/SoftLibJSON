@@ -23,12 +23,9 @@ import net.siisise.io.StreamFrontPacket;
 import net.siisise.json2.JSON2;
 import net.siisise.json2.JSON28259Reg;
 import net.siisise.json2.JSON2Array;
-import net.siisise.json2.JSON2Boolean;
-import net.siisise.json2.JSON2NULL;
 import net.siisise.json2.JSON2Number;
 import net.siisise.json2.JSON2Object;
-import net.siisise.json2.JSON2String;
-import net.siisise.json2.JSON2Value;
+import net.siisise.omap.OMAP;
 
 /**
  * ABNF Parserを使っているのでこちらは軽く実装.
@@ -62,29 +59,29 @@ public class SLJsonParser implements JsonParser {
     }
     
     static List<Next> nexts(Object src) {
-        JSON2Value json = JSON2.valueOf(src);
+        Object obj = JSON2.valueMap(src);
         List<Next> nexts = new ArrayList<>();
-        if ( json instanceof JSON2Object ) {
+        if ( obj == null ) {
+            nexts.add(new Next(obj, Event.VALUE_NULL));
+        } else if ( obj instanceof Map ) {
             nexts.add(new Next(null, Event.START_OBJECT));
-            for ( String key : ((JSON2Object<?>) json).keySet() ) {
+            for ( String key : ((Map<String,?>) obj).keySet() ) {
                 nexts.add(new Next(key, Event.KEY_NAME));
-                nexts.addAll(nexts(((JSON2Object)json).get(key)));
+                nexts.addAll(nexts(((Map)obj).get(key)));
             }
-            nexts.add(new Next(json, Event.END_OBJECT));
-        } else if ( json instanceof JSON2Array ) {
+            nexts.add(new Next(obj, Event.END_OBJECT));
+        } else if ( obj instanceof List ) {
             nexts.add(new Next(null, Event.START_ARRAY));
-            for ( Object val : ((JSON2Array<?>) json)) {
+            for ( Object val : ((List<?>) obj)) {
                 nexts.addAll(nexts(val));
             }
-            nexts.add(new Next(json, Event.END_ARRAY));
-        } else if ( json instanceof JSON2String ) {
-            nexts.add(new Next(json, Event.VALUE_STRING));
-        } else if ( json instanceof JSON2Number ) {
-            nexts.add(new Next(json, Event.VALUE_NUMBER));
-        } else if ( json instanceof JSON2Boolean ) {
-            nexts.add(new Next(json, ((boolean)(((JSON2Boolean)json).map())) ? Event.VALUE_TRUE : Event.VALUE_FALSE ));
-        } else if ( json instanceof JSON2NULL ) {
-            nexts.add(new Next(json, Event.VALUE_NULL));
+            nexts.add(new Next(obj, Event.END_ARRAY));
+        } else if ( obj instanceof String ) {
+            nexts.add(new Next(obj, Event.VALUE_STRING));
+        } else if ( obj instanceof Number ) {
+            nexts.add(new Next(obj, Event.VALUE_NUMBER));
+        } else if ( obj instanceof Boolean ) {
+            nexts.add(new Next(obj, ((Boolean)obj) ? Event.VALUE_TRUE : Event.VALUE_FALSE ));
         }
         return nexts;
     }
@@ -94,8 +91,8 @@ public class SLJsonParser implements JsonParser {
      * @param step nexts 
      * @return 
      */
-    JSON2Value parseValue() {
-        JSON2Value val = null;
+    Object parseValue() {
+        Object val = null;
         switch (current.state) {
             case START_OBJECT:
                 val = parseObject();
@@ -108,7 +105,7 @@ public class SLJsonParser implements JsonParser {
             case VALUE_TRUE:
             case VALUE_FALSE:
             case VALUE_NULL:
-                val = (JSON2Value) current.json;
+                val = current.json;
                 break;
             default:
                 throw new IllegalStateException();
@@ -121,15 +118,15 @@ public class SLJsonParser implements JsonParser {
      * @param step nexts START_OBJECT の次から
      * @return 
      */
-    JSON2Object parseObject() {
+    Map parseObject() {
         JSON2Object obj = new JSON2Object();
         next();
         while ( current.state != Event.END_OBJECT ) {
             if ( current.state == Event.KEY_NAME ) {
                 String name = ((String)current.json);
                 next();
-                JSON2Value val = parseValue();
-                obj.addJSON(name, val);
+                Object val = parseValue();
+                obj.put(name, val);
             } else {
                 throw new IllegalStateException();
             }
@@ -142,12 +139,12 @@ public class SLJsonParser implements JsonParser {
      * 
      * @return 
      */
-    JSON2Array parseArray() {
+    List parseArray() {
         JSON2Array obj = new JSON2Array();
         next();
         while ( current.state != Event.END_ARRAY ) {
-            JSON2Value val = parseValue();
-            obj.addJSON("-",val);
+            Object val = parseValue();
+            obj.add(val);
             next();
         }
         return obj;
@@ -178,17 +175,17 @@ public class SLJsonParser implements JsonParser {
             } else if ( (p = JSON28259Reg.string.pl(JSON28259Reg.name_separator).is(stream)) != null ) {
                 nextb = new Next(JSON28259Reg.parse("string", p), Event.KEY_NAME);
             } else if ( JSON28259Reg.FALSE.is(stream) != null ) {
-                nextb = new Next(JSON2Boolean.FALSE, Event.VALUE_FALSE);
+                nextb = new Next(false, Event.VALUE_FALSE);
             } else if ( JSON28259Reg.TRUE.is(stream) != null ) {
-                nextb = new Next(JSON2Boolean.TRUE, Event.VALUE_TRUE);
+                nextb = new Next(true, Event.VALUE_TRUE);
             } else if ( JSON28259Reg.NULL.is(stream) != null ) {
-                nextb = new Next(JSON2NULL.NULL, Event.VALUE_NULL);
+                nextb = new Next(null, Event.VALUE_NULL);
             } else if ( (p = JSON28259Reg.number.is(stream)) != null ) {
-                nextb = new Next(new JSON2Number(JSON28259Reg.parse("number", p)), Event.VALUE_NUMBER);
+                nextb = new Next(JSON28259Reg.parse("number", p), Event.VALUE_NUMBER);
             } else if ( (p = JSON28259Reg.string.is(stream)) != null ) {
-                nextb = new Next(new JSON2String(JSON28259Reg.parse("string", p)), Event.VALUE_STRING);
+                nextb = new Next(JSON28259Reg.parse("string", p), Event.VALUE_STRING);
             } else {
-                throw new JsonParsingException("不明な構文", getLocation());
+                return false;
             }
             nexts.add(nextb);
         }
@@ -215,8 +212,8 @@ public class SLJsonParser implements JsonParser {
 
     @Override
     public boolean isIntegralNumber() {
-        if ( current.json instanceof JSON2Number ) {
-            return ((JSON2Number)current.json).isIntegral();
+        if ( current.json instanceof Number ) {
+            return new JSON2Number((Number)current.json).isIntegral();
         }
         return false;
     }
@@ -224,7 +221,7 @@ public class SLJsonParser implements JsonParser {
     @Override
     public int getInt() {
         if ( current.state == Event.VALUE_NUMBER ) {
-            return ((JSON2Number)current.json).intValue();
+            return ((Number)current.json).intValue();
         }
         throw new IllegalStateException();
 //        return Integer.parseInt(current.json.toString());
@@ -233,7 +230,7 @@ public class SLJsonParser implements JsonParser {
     @Override
     public long getLong() {
         if ( current.state == Event.VALUE_NUMBER ) {
-            return ((JSON2Number)current.json).longValue();
+            return ((Number)current.json).longValue();
         }
         throw new IllegalStateException();
 //        return Long.parseLong(current.json.toString());
@@ -242,7 +239,7 @@ public class SLJsonParser implements JsonParser {
     @Override
     public BigDecimal getBigDecimal() {
         if ( current.state == Event.VALUE_NUMBER ) {
-            return ((JSON2Number)current.json).bigDecimalValue();
+            return new JSON2Number((Number)current.json).bigDecimalValue();
         }
         throw new IllegalStateException();
 //        return new BigDecimal(current.json.toString());
@@ -271,7 +268,7 @@ public class SLJsonParser implements JsonParser {
     @Override
     public JsonObject getObject() {
         if ( current.state == Event.START_OBJECT ) {
-            return parseObject().toJson();
+            return OMAP.valueOf(parseObject(), JsonValue.class);
         }
         throw new IllegalStateException();
     }
@@ -279,14 +276,14 @@ public class SLJsonParser implements JsonParser {
     @Override
     public JsonArray getArray() {
         if ( current.state == Event.START_ARRAY ) {
-            return parseArray().toJson();
+            return OMAP.valueOf(parseArray(), JsonArray.class);
         }
         throw new IllegalStateException();
     }
     
     @Override
     public JsonValue getValue() {
-        return parseValue().toJson();
+        return OMAP.valueOf(parseValue(), JsonValue.class);
     }
     
     @Override
@@ -301,6 +298,7 @@ public class SLJsonParser implements JsonParser {
 
     /**
      * なにをするもの?
+     * 外側が複数ある場合とArrayの中でも使えるっぽくしておく
      * @return 
      */
     @Override
@@ -308,7 +306,12 @@ public class SLJsonParser implements JsonParser {
         List<JsonValue> values = new ArrayList<>();
         values.add(getValue());
         while ( hasNext() ) {
-            next();
+            Event ev = next();
+            if ( ev == Event.END_ARRAY ||
+                    ev == Event.END_OBJECT ||
+                    ev == Event.KEY_NAME ) {
+                break;
+            }
             values.add(getValue());
         }
         return values.stream();

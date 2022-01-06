@@ -1,11 +1,11 @@
 package net.siisise.json2;
 
 public class JSON2Member {
-    public final String str;
+    public final String key;
     public final Object value;
     
-    public JSON2Member(String str, Object val) {
-        this.str = str;
+    public JSON2Member(String key, Object val) {
+        this.key = key;
         this.value = val;
     }
     

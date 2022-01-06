@@ -5,6 +5,7 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.Map;
 import javax.json.JsonWriter;
 import javax.json.JsonWriterFactory;
@@ -31,7 +32,7 @@ public class JSONPWriterFactory implements JsonWriterFactory {
 
     @Override
     public Map<String, ?> getConfigInUse() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return new HashMap<>();
     }
     
 }

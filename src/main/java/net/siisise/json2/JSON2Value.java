@@ -6,15 +6,15 @@ import javax.json.JsonValue;
 /**
  * 要素的なJSON。
  * 
- * JSON2Object implements Map
- * JSON2Array implements List
- * JSON2Number implements Number
- * JSON2String 互換なし
- * JSON2Boolean 互換なし
- * JSON2NULL 互換なし
+ * JSON2Object implements Map 可変
+ * JSON2Array implements List 可変
+ * JSON2Number implements Number 不変
+ * JSON2String 互換なし 不変
+ * JSON2Boolean 互換なし 不変
+ * JSON2NULL 互換なし 不変
  *
  * toString() をJSON出力にすること
- * 
+ * JSON2ObjectとJSON2ArrayはMapとListとして内容の変更が可能
  * JSON2を継承する必要はなくなったのでどこかで外す。
  */
 public interface JSON2Value extends JSON2 {
