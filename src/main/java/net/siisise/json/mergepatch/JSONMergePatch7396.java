@@ -1,5 +1,8 @@
 package net.siisise.json.mergepatch;
 
+import javax.json.JsonMergePatch;
+import javax.json.JsonValue;
+import net.siisise.json2.JSON2;
 import net.siisise.json2.JSON2NULL;
 import net.siisise.json2.JSON2Object;
 import net.siisise.json2.JSON2Value;
@@ -13,11 +16,16 @@ import net.siisise.json2.JSON2Value;
  * RFC 5789 PATCH Method for HTTP
  * @see https://tools.ietf.org/html/rfc7396
  */
-public class JSONMergePatch7396 {
+public class JSONMergePatch7396 implements JsonMergePatch {
     
     // 4.IANA Considerations
     public static final String typeName = "application"; 
     public static final String subtypeName = "merge-patch+json";
+    private final JSON2Value patch;
+    
+    public JSONMergePatch7396(JSON2Value patch) {
+        this.patch = patch;
+    }
     
     /**
      * おりじなるとぱっちから更新結果を返す
@@ -60,5 +68,15 @@ public class JSONMergePatch7396 {
             return result;
         }
         throw new java.lang.UnsupportedOperationException("yet.");
+    }
+
+    @Override
+    public JsonValue apply(JsonValue target) {
+        return mergePatch(JSON2.valueOf(target), patch).toJson();
+    }
+
+    @Override
+    public JsonValue toJsonValue() {
+        return patch.toJson();
     }
 }

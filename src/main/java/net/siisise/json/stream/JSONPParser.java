@@ -155,13 +155,18 @@ public class JSONPParser implements JsonParser {
         return obj;
     }
 
+    /**
+     * streamからはそれっぽくパースするがステートレスなので全体的な正しさは保証しない。
+     * @return
+     * @throws JsonParsingException 
+     */
     @Override
     public boolean hasNext() throws JsonParsingException {
         if (nexts.isEmpty() && stream != null && stream.size() > 0) {
             Packet p;
             Next nextb;
             //nexts = nexts(JSON2.parseWrap(stream));
-            if ( JSON28259Reg.value_separator.is(stream) != null ) {
+            if ( JSON28259Reg.value_separator.is(stream) != null ) { // JsonParserでは扱っていないので変な位置にでてこないようチェック
                 if ( current == null || current.state == Event.START_ARRAY || current.state == Event.START_OBJECT || current.state == Event.KEY_NAME ) {
                     // エラーにするといい
                     throw new JsonParsingException("カンマな位置が", getLocation());

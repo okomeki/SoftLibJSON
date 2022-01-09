@@ -4,14 +4,25 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.Collection;
 import java.util.Map;
+import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonBuilderFactory;
+import javax.json.JsonMergePatch;
+import javax.json.JsonNumber;
+import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
+import javax.json.JsonPatch;
 import javax.json.JsonPatchBuilder;
 import javax.json.JsonPointer;
 import javax.json.JsonReader;
 import javax.json.JsonReaderFactory;
+import javax.json.JsonString;
+import javax.json.JsonStructure;
+import javax.json.JsonValue;
 import javax.json.JsonWriter;
 import javax.json.JsonWriterFactory;
 import javax.json.spi.JsonProvider;
@@ -19,6 +30,7 @@ import javax.json.stream.JsonGenerator;
 import javax.json.stream.JsonGeneratorFactory;
 import javax.json.stream.JsonParser;
 import javax.json.stream.JsonParserFactory;
+import net.siisise.json.mergepatch.JSONMergePatch7396;
 import net.siisise.json.pointer.JSONPatchBuilder;
 import net.siisise.json.pointer.JSONPointer;
 import net.siisise.json2.jsonp.JSONPBuilderFactory;
@@ -26,17 +38,21 @@ import net.siisise.json2.jsonp.JSONPReaderFactory;
 import net.siisise.json2.jsonp.JSONPWriterFactory;
 import net.siisise.json.stream.JSONPGeneratorFactory;
 import net.siisise.json.stream.JSONPParserFactory;
+import net.siisise.json2.JSON2;
+import net.siisise.json2.JSON2Array;
+import net.siisise.json2.JSON2Number;
+import net.siisise.json2.JSON2String;
 
 /**
  * JSR 374 Java API for JSON Processing (JSON-P)
  */
 public class JSONPProvider extends JsonProvider {
 
-    JsonParserFactory pf;
-    JsonGeneratorFactory gf;
-    JsonWriterFactory wf;
-    JsonReaderFactory rf;
-    JsonBuilderFactory bf;
+    private JsonParserFactory pf;
+    private JsonGeneratorFactory gf;
+    private JsonWriterFactory wf;
+    private JsonReaderFactory rf;
+    private JsonBuilderFactory bf;
 
     @Override
     public JsonParser createParser(Reader reader) {
@@ -97,13 +113,13 @@ public class JSONPProvider extends JsonProvider {
     }
     
     @Override
-    public JsonWriterFactory createWriterFactory(Map<String, ?> map) {
-        return wf = new JSONPWriterFactory(map);
+    public JsonWriterFactory createWriterFactory(Map<String, ?> config) {
+        return wf = new JSONPWriterFactory(config);
     }
 
     @Override
-    public JsonReaderFactory createReaderFactory(Map<String, ?> map) {
-        return rf = new JSONPReaderFactory(map);
+    public JsonReaderFactory createReaderFactory(Map<String, ?> config) {
+        return rf = new JSONPReaderFactory(config);
     }
 
     @Override
@@ -113,26 +129,125 @@ public class JSONPProvider extends JsonProvider {
     }
 
     @Override
+    public JsonObjectBuilder createObjectBuilder(JsonObject object) {
+        if ( bf == null ) { createBuilderFactory(null); }
+        return bf.createObjectBuilder(object);
+    }
+
+    /**
+     *
+     * @param object
+     * @return
+     */
+    @Override
+    public JsonObjectBuilder createObjectBuilder(Map<String, Object> object) {
+        if ( bf == null ) { createBuilderFactory(null); }
+        return bf.createObjectBuilder(object);
+    }
+
+    @Override
     public JsonArrayBuilder createArrayBuilder() {
         if ( bf == null ) { createBuilderFactory(null); }
         return bf.createArrayBuilder();
     }
     
     @Override
-    public JsonBuilderFactory createBuilderFactory(Map<String, ?> map) {
-        return bf = new JSONPBuilderFactory();
+    public JsonArrayBuilder createArrayBuilder(JsonArray array) {
+        if ( bf == null ) { createBuilderFactory(null); }
+        return bf.createArrayBuilder(array);
     }
 
     @Override
     public JsonPointer createPointer(String jsonPointer) {
         return new JSONPointer(jsonPointer);
     }
-    
+
     /**
      * JSON Patch
      */
     @Override
     public JsonPatchBuilder createPatchBuilder() {
         return new JSONPatchBuilder();
+    }
+
+    /**
+     * JSON Patch
+     */
+    @Override
+    public JsonPatchBuilder createPatchBuilder(JsonArray array) {
+        return new JSONPatchBuilder((JSON2Array) JSON2.valueOf(array));
+    }
+    
+    /**
+     * RFC 6902
+     * @param array
+     * @return 
+     */
+    @Override
+    public JsonPatch createPatch(JsonArray array) {
+//        return new JSONPatch(array);
+        return createPatchBuilder(array).build();
+    }
+    
+    /**
+     * RFC 6902
+     * @param source
+     * @param target
+     * @return 
+     */
+    @Override
+    public JsonPatch createDiff(JsonStructure source, JsonStructure target) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public JsonMergePatch createMergePatch(JsonValue patch) {
+        return new JSONMergePatch7396(JSON2.valueOf(patch));
+    }
+
+    @Override
+    public JsonMergePatch createMergeDiff(JsonValue source, JsonValue target) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public JsonArrayBuilder createArrayBuilder(Collection<?> collection) {
+        if ( bf == null ) { createBuilderFactory(null); }
+        return bf.createArrayBuilder(collection);
+    }
+
+    @Override
+    public JsonBuilderFactory createBuilderFactory(Map<String, ?> config) {
+        return bf = new JSONPBuilderFactory(config);
+    }
+
+    @Override
+    public JsonString createValue(String value) {
+        return new JSON2String(value);
+    }
+
+    @Override
+    public JsonNumber createValue(int value) {
+        return new JSON2Number(value);
+    }
+
+    @Override
+    public JsonNumber createValue(long value) {
+        return new JSON2Number(value);
+    }
+
+    @Override
+    public JsonNumber createValue(double value) {
+        return new JSON2Number(value);
+    }
+
+    @Override
+    public JsonNumber createValue(BigDecimal value) {
+        return new JSON2Number(value);
+    }
+
+    @Override
+    public JsonNumber createValue(BigInteger value) {
+        return new JSON2Number(value);
     }
 }

@@ -26,12 +26,14 @@ import net.siisise.json2.JSON2Array;
  */
 public class JSONPatchBuilder implements JsonPatchBuilder {
     
-    JSON2Array patchs;
     JSONPatch patch;
     
     public JSONPatchBuilder() {
-        patchs = new JSON2Array();
         patch = new JSONPatch();
+    }
+    
+    public JSONPatchBuilder(JSON2Array array) {
+        patch = new JSONPatch(array);
     }
 
     @Override

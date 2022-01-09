@@ -8,13 +8,16 @@ import javax.json.JsonArrayBuilder;
 import javax.json.JsonBuilderFactory;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
-import javax.json.JsonValue;
 import net.siisise.json2.JSON2;
 
 /**
  *
  */
 public class JSONPBuilderFactory implements JsonBuilderFactory {
+
+    public JSONPBuilderFactory(Map<String, ?> map) {
+//        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 
     @Override
     public JsonObjectBuilder createObjectBuilder() {
@@ -24,18 +27,14 @@ public class JSONPBuilderFactory implements JsonBuilderFactory {
     @Override
     public JsonObjectBuilder createObjectBuilder(JsonObject object) {
         JsonObjectBuilder ob = createObjectBuilder();
-        object.keySet().forEach(name -> {
-            ob.add(name, JSON2.valueOf(object.get(name)).toJson());
-        });
+        object.forEach((k,v) -> {ob.add(k, JSON2.valueOf(v).toJson());});
         return ob;
     }
 
     @Override
     public JsonObjectBuilder createObjectBuilder(Map<String, Object> object) {
         JsonObjectBuilder ob = createObjectBuilder();
-        for (String name : object.keySet()) {
-            ob.add(name, JSON2.valueOf(object.get(name)).toJson());
-        }
+        object.forEach((k,v) -> {ob.add(k, JSON2.valueOf(v).toJson());});
         return ob;
     }
 
@@ -47,18 +46,14 @@ public class JSONPBuilderFactory implements JsonBuilderFactory {
     @Override
     public JsonArrayBuilder createArrayBuilder(JsonArray array) {
         JsonArrayBuilder ab = createArrayBuilder();
-        for (JsonValue v : array) {
-            ab.add(JSON2.valueOf(v).toJson());
-        }
+        array.forEach(v -> ab.add(JSON2.valueOf(v).toJson()));
         return ab;
     }
 
     @Override
     public JsonArrayBuilder createArrayBuilder(Collection<?> collection) {
         JsonArrayBuilder ab = createArrayBuilder();
-        for (Object o : collection) {
-            ab.add(JSON2.valueOf(o).toJson());
-        }
+        collection.forEach(o -> ab.add(JSON2.valueOf(o).toJson()));
         return ab;
     }
 
