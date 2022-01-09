@@ -1,4 +1,4 @@
-package net.siisise.json2.jsonp;
+package net.siisise.json.stream;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -24,10 +24,11 @@ public class JSONPGenerator implements JsonGenerator {
 
     private final Writer out;
 
-    JSONPGenerator up;
     boolean first = true;
 
     String CRLF = "\r\n";
+    String TAB = "    ";
+    int tabsize = 0;
 
     List<String> closeCode = new ArrayList();
 
@@ -35,19 +36,12 @@ public class JSONPGenerator implements JsonGenerator {
         out = writer;
     }
 
-    JSONPGenerator(JSONPGenerator g, Writer w) {
-        up = g;
-        out = w;
-    }
-
     @Override
     public JsonGenerator writeStartObject() {
         try {
             writeSeparator();
-            out.write("{");
-            closeCode.add("}");
-            out.write(CRLF);
-            return new JSONPGenerator(this, out);
+            tabin("{","}");
+            return this;
         } catch (IOException ex) {
             Logger.getLogger(JSONPGenerator.class.getName()).log(Level.SEVERE, null, ex);
             throw new UnsupportedOperationException();
@@ -59,9 +53,8 @@ public class JSONPGenerator implements JsonGenerator {
         try {
             writeSeparator();
             writeKey(name);
-            out.write("{");
-            out.write(CRLF);
-            return new JSONPGenerator(this, out);
+            tabin("{","}");
+            return this;
         } catch (IOException ex) {
             Logger.getLogger(JSONPGenerator.class.getName()).log(Level.SEVERE, null, ex);
             throw new UnsupportedOperationException();
@@ -81,7 +74,7 @@ public class JSONPGenerator implements JsonGenerator {
     public JsonGenerator writeKey(String name) {
         try {
             JSON2String jname = new JSON2String(name);
-            out.write(jname.toString());
+            tab(jname.toString());
             out.write(": ");
             return this;
         } catch (IOException ex) {
@@ -94,9 +87,8 @@ public class JSONPGenerator implements JsonGenerator {
     public JsonGenerator writeStartArray() {
         try {
             writeSeparator();
-            out.write("[");
-            closeCode.add("]");
-            return new JSONPGenerator(this, out);
+            tabin("[","]");
+            return this;
         } catch (IOException ex) {
             Logger.getLogger(JSONPGenerator.class.getName()).log(Level.SEVERE, null, ex);
             throw new UnsupportedOperationException();
@@ -108,9 +100,8 @@ public class JSONPGenerator implements JsonGenerator {
         try {
             writeSeparator();
             writeKey(name);
-            out.write("[");
-            closeCode.add("]");
-            return new JSONPGenerator(this, out);
+            tabin("[","]");
+            return this;
         } catch (IOException ex) {
             Logger.getLogger(JSONPGenerator.class.getName()).log(Level.SEVERE, null, ex);
             throw new UnsupportedOperationException();
@@ -171,7 +162,7 @@ public class JSONPGenerator implements JsonGenerator {
 
     @Override
     public JsonGenerator write(String name, boolean value) {
-        write(name, (JSON2Value) (value ? JSON2Boolean.TRUE : JSON2Boolean.FALSE));
+        write(name, (JSON2Value) JSON2Boolean.valieOf(value));
         return this;
     }
 
@@ -181,12 +172,36 @@ public class JSONPGenerator implements JsonGenerator {
         return this;
     }
 
+    private void tab(String txt) throws IOException {
+        String src = TAB + txt.replace("\r\n", "\r\n" + TAB);
+        out.write(src);
+        
+    }
+    
+    private void tabln(String txt) throws IOException {
+        tab(txt);
+        out.write(CRLF);
+    }
+    
+    private void tabin(String start, String end) throws IOException {
+        tabln(start);
+        tabsize++;
+        closeCode.add(0,end);
+        first = true;
+    }
+    
+    private void tabout() throws IOException {
+        String end = closeCode.get(0);
+        closeCode.remove(0);
+        tabsize--;
+        tabln(end);
+    }
+
     @Override
     public JsonGenerator writeEnd() {
         try {
-            String end = up.closeCode.get(0);
-            out.write(end);
-            return up;
+            tabout();
+            return this;
         } catch (IOException ex) {
             Logger.getLogger(JSONPGenerator.class.getName()).log(Level.SEVERE, null, ex);
             throw new UnsupportedOperationException();
@@ -201,7 +216,7 @@ public class JSONPGenerator implements JsonGenerator {
 
     void write(JSON2Value value) {
         try {
-            out.write(value.toString());
+            tab(value.toString());
         } catch (IOException ex) {
             Logger.getLogger(JSONPGenerator.class.getName()).log(Level.SEVERE, null, ex);
             throw new UnsupportedOperationException();
@@ -246,7 +261,7 @@ public class JSONPGenerator implements JsonGenerator {
 
     @Override
     public JsonGenerator write(boolean value) {
-        write((JSON2Value) (value ? JSON2Boolean.TRUE : JSON2Boolean.FALSE));
+        write((JSON2Value) JSON2Boolean.valieOf(value));
         return this;
     }
 

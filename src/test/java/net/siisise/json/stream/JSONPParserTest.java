@@ -1,5 +1,6 @@
-package net.siisise.json2.jsonp.stream;
+package net.siisise.json.stream;
 
+import net.siisise.json.stream.JSONPParserFactory;
 import java.io.StringReader;
 import java.math.BigDecimal;
 import java.util.Map;
@@ -15,9 +16,9 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  *
  */
-public class SLJsonParserTest {
+public class JSONPParserTest {
     
-    public SLJsonParserTest() {
+    public JSONPParserTest() {
     }
 
     /**
@@ -27,7 +28,7 @@ public class SLJsonParserTest {
     public void testHasNext() {
         System.out.println("hasNext");
         String json = "{\"a\": 123, \"b\": [2,\"s\"]}";
-        JsonParser instance = new SLJsonParserFactory().createParser(new StringReader(json));
+        JsonParser instance = new JSONPParserFactory().createParser(new StringReader(json));
         boolean expResult = true;
         boolean result = instance.hasNext();
         assertEquals(expResult, result);
@@ -40,7 +41,7 @@ public class SLJsonParserTest {
     public void testNext() {
         System.out.println("next");
         String json = "{\"a\": 123, \"b\": [2,\"s\"]}";
-        JsonParser instance = new SLJsonParserFactory().createParser(new StringReader(json));
+        JsonParser instance = new JSONPParserFactory().createParser(new StringReader(json));
         JsonParser.Event expResult = JsonParser.Event.START_OBJECT;
         JsonParser.Event result = instance.next();
         assertEquals(expResult, result);
@@ -57,7 +58,7 @@ public class SLJsonParserTest {
     public void testGetString() {
         System.out.println("getString");
         String json = "{\"a\": \"123\", \"b\": [2,\"s\"]}";
-        JsonParser instance = new SLJsonParserFactory().createParser(new StringReader(json));
+        JsonParser instance = new JSONPParserFactory().createParser(new StringReader(json));
         String expResult = "123";
         instance.next();
         instance.next();
@@ -73,7 +74,7 @@ public class SLJsonParserTest {
     public void testIsIntegralNumber() {
         System.out.println("isIntegralNumber");
         String json = "{\"a\": \"123\", \"b\": [2,\"s\"]}";
-        JsonParser instance = new SLJsonParserFactory().createParser(new StringReader(json));
+        JsonParser instance = new JSONPParserFactory().createParser(new StringReader(json));
         instance.next();
         instance.next();
         instance.next();
@@ -89,7 +90,7 @@ public class SLJsonParserTest {
     public void testGetInt() {
         System.out.println("getInt");
         String json = "{\"a\": \"123\", \"b\": [2,\"s\"]}";
-        JsonParser instance = new SLJsonParserFactory().createParser(new StringReader(json));
+        JsonParser instance = new JSONPParserFactory().createParser(new StringReader(json));
         instance.next();
         instance.next();
         instance.next();
@@ -108,7 +109,7 @@ public class SLJsonParserTest {
     public void testGetLong() {
         System.out.println("getLong");
         String json = "{\"a\": \"123\", \"b\": [2,\"s\"]}";
-        JsonParser instance = new SLJsonParserFactory().createParser(new StringReader(json));
+        JsonParser instance = new JSONPParserFactory().createParser(new StringReader(json));
         instance.next();
         instance.next();
         instance.next();
@@ -127,7 +128,7 @@ public class SLJsonParserTest {
     public void testGetBigDecimal() {
         System.out.println("getBigDecimal");
         String json = "{\"a\": \"123\", \"b\": [2,\"s\"]}";
-        JsonParser instance = new SLJsonParserFactory().createParser(new StringReader(json));
+        JsonParser instance = new JSONPParserFactory().createParser(new StringReader(json));
         instance.next();
         instance.next();
         instance.next();
@@ -146,7 +147,7 @@ public class SLJsonParserTest {
     public void testGetLocation() {
         System.out.println("getLocation");
         String json = "{\"a\": \"123\", \"b\": [2,\"s\"]}";
-        JsonParser instance = new SLJsonParserFactory().createParser(new StringReader(json));
+        JsonParser instance = new JSONPParserFactory().createParser(new StringReader(json));
         JsonLocation expResult = null;
         JsonLocation result = instance.getLocation();
 //        assertEquals(expResult, result);
@@ -161,7 +162,7 @@ public class SLJsonParserTest {
     public void testGetObject() {
         System.out.println("getObject");
         String json = "{\"a\": \"123\", \"b\": [2,\"s\"]}";
-        JsonParser instance = new SLJsonParserFactory().createParser(new StringReader(json));
+        JsonParser instance = new JSONPParserFactory().createParser(new StringReader(json));
         instance.next();
         JsonObject result = instance.getObject();
         assertNotNull(result);
@@ -176,7 +177,7 @@ public class SLJsonParserTest {
     public void testGetValue() {
         System.out.println("getValue");
         String json = "{\"a\": \"123\", \"b\": [2,\"s\"]}";
-        JsonParser instance = new SLJsonParserFactory().createParser(new StringReader(json));
+        JsonParser instance = new JSONPParserFactory().createParser(new StringReader(json));
         String expResult = "123";
         instance.next();
         JsonObject result = (JsonObject) instance.getValue();
@@ -190,7 +191,7 @@ public class SLJsonParserTest {
     public void testGetArray() {
         System.out.println("getArray");
         String json = "[{\"a\": \"123\", \"b\": [2,\"s\"]},3,5]";
-        JsonParser instance = new SLJsonParserFactory().createParser(new StringReader(json));
+        JsonParser instance = new JSONPParserFactory().createParser(new StringReader(json));
         JsonArray expResult = null;
         instance.next();
         JsonArray result = instance.getArray();
@@ -204,7 +205,7 @@ public class SLJsonParserTest {
     public void testGetArrayStream() {
         System.out.println("getArrayStream");
         String json = "[[1,2,3],[4,6,7,8]]";
-        JsonParser instance = new SLJsonParserFactory().createParser(new StringReader(json));
+        JsonParser instance = new JSONPParserFactory().createParser(new StringReader(json));
         int expResult = 3;
         instance.next();
         instance.next();
@@ -219,7 +220,7 @@ public class SLJsonParserTest {
     public void testGetObjectStream() {
         System.out.println("getObjectStream");
         String json = "{\"a\": \"123\", \"b\": [2,\"s\"]}";
-        JsonParser instance = new SLJsonParserFactory().createParser(new StringReader(json));
+        JsonParser instance = new JSONPParserFactory().createParser(new StringReader(json));
         int expResult = 2;
         instance.next();
         Stream<Map.Entry<String, JsonValue>> result = instance.getObjectStream();
@@ -233,7 +234,7 @@ public class SLJsonParserTest {
     public void testGetValueStream() {
         System.out.println("getValueStream");
         String json = "{\"a\": \"123\", \"b\": [2,\"s\"]}[4,5]{}4";
-        JsonParser instance = new SLJsonParserFactory().createParser(new StringReader(json));
+        JsonParser instance = new JSONPParserFactory().createParser(new StringReader(json));
         int expResult = 4;
         instance.next();
         Stream<JsonValue> result = instance.getValueStream();
@@ -248,7 +249,7 @@ public class SLJsonParserTest {
     public void testClose() {
         System.out.println("close");
         String json = "{\"a\": \"123\", \"b\": [2,\"s\"]}";
-        JsonParser instance = new SLJsonParserFactory().createParser(new StringReader(json));
+        JsonParser instance = new JSONPParserFactory().createParser(new StringReader(json));
         instance.next();
         instance.close();
     }

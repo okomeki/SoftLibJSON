@@ -1,4 +1,4 @@
-package net.siisise.json2.jsonp.spi;
+package net.siisise.json.spi;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -8,6 +8,7 @@ import java.util.Map;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonBuilderFactory;
 import javax.json.JsonObjectBuilder;
+import javax.json.JsonPatchBuilder;
 import javax.json.JsonPointer;
 import javax.json.JsonReader;
 import javax.json.JsonReaderFactory;
@@ -18,18 +19,18 @@ import javax.json.stream.JsonGenerator;
 import javax.json.stream.JsonGeneratorFactory;
 import javax.json.stream.JsonParser;
 import javax.json.stream.JsonParserFactory;
+import net.siisise.json.pointer.JSONPatchBuilder;
+import net.siisise.json.pointer.JSONPointer;
 import net.siisise.json2.jsonp.JSONPBuilderFactory;
-import net.siisise.json2.jsonp.JSONPGeneratorFactory;
 import net.siisise.json2.jsonp.JSONPReaderFactory;
 import net.siisise.json2.jsonp.JSONPWriterFactory;
-import net.siisise.json2.jsonp.stream.SLJsonParserFactory;
-import net.siisise.json.pointer.JSONPointer;
+import net.siisise.json.stream.JSONPGeneratorFactory;
+import net.siisise.json.stream.JSONPParserFactory;
 
 /**
- *
- * 
+ * JSR 374 Java API for JSON Processing (JSON-P)
  */
-public class SLJsonProvider extends JsonProvider {
+public class JSONPProvider extends JsonProvider {
 
     JsonParserFactory pf;
     JsonGeneratorFactory gf;
@@ -51,7 +52,7 @@ public class SLJsonProvider extends JsonProvider {
 
     @Override
     public JsonParserFactory createParserFactory(Map<String, ?> map) {
-        return pf = new SLJsonParserFactory();
+        return pf = new JSONPParserFactory();
     }
 
     @Override
@@ -97,12 +98,12 @@ public class SLJsonProvider extends JsonProvider {
     
     @Override
     public JsonWriterFactory createWriterFactory(Map<String, ?> map) {
-        return wf = new JSONPWriterFactory();
+        return wf = new JSONPWriterFactory(map);
     }
 
     @Override
     public JsonReaderFactory createReaderFactory(Map<String, ?> map) {
-        return rf = new JSONPReaderFactory();
+        return rf = new JSONPReaderFactory(map);
     }
 
     @Override
@@ -125,5 +126,13 @@ public class SLJsonProvider extends JsonProvider {
     @Override
     public JsonPointer createPointer(String jsonPointer) {
         return new JSONPointer(jsonPointer);
-    }    
+    }
+    
+    /**
+     * JSON Patch
+     */
+    @Override
+    public JsonPatchBuilder createPatchBuilder() {
+        return new JSONPatchBuilder();
+    }
 }

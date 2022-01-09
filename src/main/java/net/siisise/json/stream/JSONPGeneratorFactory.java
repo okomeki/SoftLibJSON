@@ -1,9 +1,10 @@
-package net.siisise.json2.jsonp;
+package net.siisise.json.stream;
 
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import javax.json.stream.JsonGenerator;
@@ -21,7 +22,7 @@ public class JSONPGeneratorFactory implements JsonGeneratorFactory {
 
     @Override
     public JsonGenerator createGenerator(OutputStream out) {
-        return createGenerator(out, Charset.forName("utf-8"));
+        return createGenerator(out, StandardCharsets.UTF_8);
     }
 
     @Override

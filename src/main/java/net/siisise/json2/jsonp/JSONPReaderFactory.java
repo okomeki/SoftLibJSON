@@ -16,6 +16,12 @@ import net.siisise.io.StreamFrontPacket;
  */
 public class JSONPReaderFactory implements JsonReaderFactory {
 
+    private final Map<String, ?> config;
+
+    public JSONPReaderFactory(Map<String, ?> map) {
+        config = map;
+    }
+
     @Override
     public JsonReader createReader(Reader reader) {
         FrontPacket fp = new StreamFrontPacket(reader);
@@ -35,7 +41,7 @@ public class JSONPReaderFactory implements JsonReaderFactory {
 
     @Override
     public Map<String, ?> getConfigInUse() {
-        return new HashMap<>();
+        return new HashMap<>(config);
     }
     
 }

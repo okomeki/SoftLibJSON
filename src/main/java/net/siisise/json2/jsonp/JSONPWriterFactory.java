@@ -15,6 +15,12 @@ import javax.json.JsonWriterFactory;
  */
 public class JSONPWriterFactory implements JsonWriterFactory {
 
+    private final Map<String, ?> config;
+
+    public JSONPWriterFactory(Map<String, ?> map) {
+        config = map;
+    }
+
     @Override
     public JsonWriter createWriter(Writer writer) {
         return new JSONPWriter(writer);
@@ -32,7 +38,7 @@ public class JSONPWriterFactory implements JsonWriterFactory {
 
     @Override
     public Map<String, ?> getConfigInUse() {
-        return new HashMap<>();
+        return new HashMap<>(config);
     }
     
 }

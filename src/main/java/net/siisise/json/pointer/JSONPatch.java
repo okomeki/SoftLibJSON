@@ -1,5 +1,8 @@
 package net.siisise.json.pointer;
 
+import javax.json.JsonArray;
+import javax.json.JsonPatch;
+import javax.json.JsonStructure;
 import net.siisise.json2.JSON2;
 import net.siisise.json2.JSON2Array;
 import net.siisise.json2.JSON2Collection;
@@ -10,99 +13,180 @@ import net.siisise.json2.JSON2Value;
  * RFC 6902 JavaScript Object Notation (JSON) Patch.
  * https://tools.ietf.org/html/rfc6902
  */
-public class JSONPatch {
+public class JSONPatch implements JsonPatch {
 
-    public String op;
-    public JSONPointer path;
-    public JSONPointer from;
-    // StringではなくJSONValueがいい
-    public String value;
+    public static class Patch {
+        public String op;
+        public JSONPointer path;
+        public JSONPointer from;
+        // StringではなくJSONValueがいい
+        public JSON2Value value;
+        
+        public JSON2Collection apply(JSON2Collection target) { return target; }
+        
+        public JSON2Value toJSON() {
+            op = getClass().getName().substring(3).toLowerCase();
+            JSON2Object p = new JSON2Object();
+            if ( op != null ) {
+                p.putJSON("op",JSON2.valueOf(op));
+                throw new UnsupportedOperationException(op);
+            }
+            if ( path != null ) {
+                p.putJSON("path",JSON2.valueOf(path));
+            }
+            if ( from != null ) {
+                p.putJSON("from",JSON2.valueOf(from));
+            }
+            if ( path != null ) {
+                p.putJSON("value",value);
+            }
+            return p;
+        }
+    }
+    
+    public static class CmdAdd extends Patch {
+        
+        public CmdAdd() { op ="add"; }
+        
+        @Override
+        public JSON2Collection apply(JSON2Collection target) {
+            path.add(target, value);
+            return target;
+        }
+    }
 
+    public static class CmdRemove extends Patch {
+        
+        public CmdRemove() { op = "remove"; }
+        
+        @Override
+        public JSON2Collection apply(JSON2Collection target) {
+            path.remove(target);
+            return target;
+        }
+    }
+    
+    public static class CmdReplace extends Patch {
+        
+        public CmdReplace() { op = "replace"; }
+        
+        @Override
+        public JSON2Collection apply(JSON2Collection target) {
+            path.remove(target);
+            path.add(target, value);
+            return target;
+        }
+        
+    }
+
+    public static class CmdMove extends Patch {
+        
+        public CmdMove() { op = "move"; }
+        
+        @Override
+        public JSON2Collection apply(JSON2Collection target) {
+            JSON2Value v = from.get(target);
+            v = JSON2.parseWrap(v.toString());
+            from.remove(target);
+            path.add(target, v);
+            return target;
+        }
+        
+    }
+
+    public static class CmdCopy extends Patch {
+        
+        public CmdCopy() { op = "copy"; }
+
+        @Override
+        public JSON2Collection apply(JSON2Collection target) {
+            JSON2Value v = from.get(target);
+            v = JSON2.parseWrap(v.toString());
+            path.add(target, v);
+            return target;
+        }
+    }
+
+    public static class CmdTest extends Patch {
+        
+        public CmdTest() { op = "test"; }
+
+        @Override
+        public JSON2Collection apply(JSON2Collection target) {
+            JSON2Value val1 = path.get(target);
+            if (!val1.equals(value)) {
+                return null;
+            }
+            return target;
+        }
+    }
+
+    JSON2Array<Patch> cmds = new JSON2Array();
+
+    public JSONPatch() {
+    }
+
+    public JSONPatch(JSON2Array patchList) {
+    
+        for (Object patch : patchList) {
+            cmds.add(cmd((JSON2Object) JSON2.valueOf(patch)));
+        }
+    }
+    
     /**
      * エラー未実装
      *
-     * @param obj
-     * @param patchList
+     * @param target
      * @return エラーっぽいときはnull
      */
-    public static JSON2Collection run(JSON2Collection obj, JSON2Array patchList) {
-        JSON2Collection cp = (JSON2Collection) JSON2.parse(obj.toString());
-
-        for (Object patch : patchList) {
-            JSONPatch p = (JSONPatch) ((JSON2Object)patch).typeMap(JSONPatch.class);
-            cp = p.cmd(cp);
+    public JSON2Collection run(JSON2Collection target) {
+        JSON2Collection cp = (JSON2Collection) JSON2.parse(target.toString()); // 複製してみたり
+        for ( Patch cmd : cmds ) {
+            cp = cmd.apply(cp);
         }
         return cp;
     }
-
+    
+    public static JSON2Collection run(JSON2Collection target, JSON2Array patchs) {
+        JSONPatch p = new JSONPatch(patchs);
+        return p.run(target);
+    }
+    
     /**
-     *
-     * @param obj
-     * @return エラーはnull (エラー未実装あり)
+     * JSONPatchBuilderっぽい機能
+     * @param patch
+     * @return 
      */
-    public JSON2Collection cmd(JSON2Collection obj) {
-        if ("add".equals(op)) {
-            return add(obj);
-        } else if ("remove".equals(op)) {
-            return remove(obj);
-        } else if ("replace".equals(op)) {
-            return replace(obj);
-        } else if ("move".equals(op)) {
-            return move(obj);
-        } else if ("copy".equals(op)) {
-            return copy(obj);
-        } else if ("test".equals(op)) {
-            return test(obj);
+    static Patch cmd(JSON2Object patch) {
+        
+        String op = (String) patch.get("op");
+        Class<?> cls;
+        if ( op.equals("add") ) {
+            cls = CmdAdd.class;
+        } else if ( op.equals("remove")) {
+            cls = CmdRemove.class;
+        } else if ( op.equals("replace")) {
+            cls = CmdReplace.class;
+        } else if ( op.equals("move")) {
+            cls = CmdMove.class;
+        } else if ( op.equals("copy")) {
+            cls = CmdCopy.class;
+        } else if ( op.equals("test")) {
+            cls = CmdTest.class;
+        } else {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return (Patch)patch.typeMap(cls);
+    }
+    
+    @Override
+    public <T extends JsonStructure> T apply(T target) {
+        return run((JSON2Collection) JSON2.valueOf(target)).typeMap(JsonStructure.class);
     }
 
-    /** ToDo: wrapいらないかも */
-    private JSON2Collection add(JSON2Collection obj) {
-        path.add(obj, JSON2.valueWrap(JSON2.parse(value)));
-        return obj;
-    }
+    @Override
+    public JsonArray toJsonArray() {
+        return cmds.toJson();
 
-    private JSON2Collection remove(JSON2Collection obj) {
-        path.remove(obj);
-        return obj;
-    }
-
-    private JSON2Collection replace(JSON2Collection obj) {
-        path.remove(obj);
-        path.add(obj, JSON2.valueWrap(JSON2.parse(value)));
-        return obj;
-    }
-
-    private JSON2Collection move(JSON2Collection obj) {
-        JSON2Value v = from.get(obj);
-        v = JSON2.valueWrap(JSON2.parse(v.toString()));
-        from.remove(obj);
-        path.add(obj, v);
-        return obj;
-    }
-
-    private JSON2Collection copy(JSON2Collection obj) {
-        JSON2Value v = from.get(obj);
-        v = JSON2.valueWrap(JSON2.parse(v.toString()));
-        path.add(obj, v);
-        return obj;
-    }
-
-    /**
-     * まだ
-     *
-     * @param obj
-     * @return 成功すればobj 失敗すればnull 未実装なのでExceptionも返る
-     */
-    private JSON2Collection test(JSON2Collection obj) {
-        JSON2Value val1 = path.get(obj);
-        //String txt1 = val1.toString(); // 正規化?
-        JSON2Value val2 = JSON2.valueWrap(JSON2.parse(value));
-        //String txt2 = val2.toString();
-        if (!val1.equals(val2)) {
-            return null;
-        }
-        return obj;
     }
 }

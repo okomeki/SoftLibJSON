@@ -16,6 +16,8 @@ import net.siisise.omap.OMAP;
  * 配列、Listの他ObjectのコンストラクタにもtypeMap可能。
  * JSONP準拠のものはEをJsonValueにするといい。
  * 
+ * j2Stream() を使うとJSON2Valueとして容易に扱える
+ * 
  * JsonArray,JsonArrayBuilder,JsonStructure ではない
  * @param <E> 内部で保持する型。JSONではなくていい。
  */
@@ -42,12 +44,12 @@ public class JSON2Array<E> extends ArrayList<E> implements JSON2Collection<E> {
 
     @Override
     public JSON2Value getJSON(String key) {
-        return JSON2.valueOf(get(Integer.parseInt(key)));
+        return getJSON(Integer.parseInt(key));
     }
 
-//    JSON2Value getJSON(int index) {
-//        return JSON2.valueOf(get(index));
-//    }
+    public JSON2Value getJSON(int index) {
+        return JSON2.valueOf(get(index));
+    }
 
     @Override
     public void setJSON(String key, JSON2Value obj) {
@@ -58,6 +60,11 @@ public class JSON2Array<E> extends ArrayList<E> implements JSON2Collection<E> {
             set(Integer.parseInt(key), val);
         }
     }
+    
+    public void setJSON(int index, JSON2Value obj) {
+        E val = def == null ? obj.map() : obj.typeMap(def);
+        set(index, val);
+    }
 
     @Override
     public void addJSON(String key, JSON2Value obj) {
@@ -67,6 +74,12 @@ public class JSON2Array<E> extends ArrayList<E> implements JSON2Collection<E> {
         } else {
             add(Integer.parseInt(key), val);
         }
+    }
+
+    public void addJSON(int index, JSON2Value obj) {
+        E val = def == null ? obj.map() : obj.typeMap(def);
+        add(index, val);
+        
     }
 
     /**

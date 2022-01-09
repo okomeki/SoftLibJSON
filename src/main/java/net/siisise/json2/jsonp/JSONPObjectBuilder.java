@@ -106,6 +106,10 @@ public class JSONPObjectBuilder implements JsonObjectBuilder {
         return this;
     }
 
+    /**
+     * クローン? クリア?
+     * @return 
+     */
     @Override
     public JsonObject build() {
         return obj;

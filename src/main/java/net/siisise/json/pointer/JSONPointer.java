@@ -57,6 +57,13 @@ public class JSONPointer implements JsonPointer {
         vp.coll.addJSON(vp.key, value);
     }
 
+    /**
+     * 追加する JsonValueは不変らしいがどうするのが正解か
+     * @param <T> targetの型
+     * @param target
+     * @param value
+     * @return target の複製の方がいい? 
+     */
     @Override
     public <T extends JsonStructure> T add(T target, JsonValue value) {
         ColKey<JsonStructure> vp = step(target);
@@ -69,7 +76,7 @@ public class JSONPointer implements JsonPointer {
     }
 
     /**
-     *
+     * 消した値を返す のでJSON Pointerとは別
      * @param target
      * @return 値?
      */
@@ -79,11 +86,12 @@ public class JSONPointer implements JsonPointer {
     }
 
     /**
+     * JSON Pointerの動作に準拠
      * なにかちがう?
      *
      * @param <T>
      * @param target
-     * @return ??
+     * @return 対象が削除された target 同じかもしれないし複製かもしれないし
      */
     @Override
     public <T extends JsonStructure> T remove(T target) {
@@ -96,6 +104,11 @@ public class JSONPointer implements JsonPointer {
         return target;
     }
 
+    /**
+     * JsonPointerのgetValueがいいのかも
+     * @param target
+     * @return 
+     */
     public JSON2Value get(JSON2Collection target) {
         return step((JSON2Value) target, false).val;
     }
@@ -138,6 +151,10 @@ public class JSONPointer implements JsonPointer {
             sb.append(path[i]);
         }
         return sb.toString();
+    }
+    
+    public JSON2Value toJSON() {
+        return JSON2.valueOf(toString());
     }
 
     public String[] toDecodeString() {

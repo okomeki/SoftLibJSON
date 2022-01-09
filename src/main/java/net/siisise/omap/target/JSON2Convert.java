@@ -60,8 +60,8 @@ public class JSON2Convert extends OBJConvert<JSON2Value> {
     @Override
     public JSON2Object mapValue(Map map) {
         JSON2Object obj = new JSON2Object();
-        ((Map<Object,Object>)map).entrySet().forEach(e -> {
-            obj.put(e.getKey().toString(), e.getValue());
+        ((Map<Object,Object>)map).forEach((k,v) -> {
+            obj.put(k.toString(), v);
         });
         return obj;
     }

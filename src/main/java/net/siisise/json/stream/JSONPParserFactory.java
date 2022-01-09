@@ -1,9 +1,10 @@
-package net.siisise.json2.jsonp.stream;
+package net.siisise.json.stream;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.Charset;
+import java.util.HashMap;
 import java.util.Map;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
@@ -13,36 +14,36 @@ import javax.json.stream.JsonParserFactory;
 /**
  *
  */
-public class SLJsonParserFactory implements JsonParserFactory {
+public class JSONPParserFactory implements JsonParserFactory {
 
     @Override
     public JsonParser createParser(Reader reader) {
-        return new SLJsonParser(reader);
+        return new JSONPParser(reader);
     }
 
     @Override
     public JsonParser createParser(InputStream in) {
-        return new SLJsonParser(in);
+        return new JSONPParser(in);
     }
 
     @Override
     public JsonParser createParser(InputStream in, Charset chrst) {
-        return new SLJsonParser(new InputStreamReader(in,chrst));
+        return new JSONPParser(new InputStreamReader(in,chrst));
     }
 
     @Override
     public JsonParser createParser(JsonObject json) {
-        return new SLJsonParser(json);
+        return new JSONPParser(json);
     }
 
     @Override
     public JsonParser createParser(JsonArray jsonarray) {
-        return new SLJsonParser(jsonarray);
+        return new JSONPParser(jsonarray);
     }
 
     @Override
     public Map<String, ?> getConfigInUse() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return new HashMap();
     }
     
 }

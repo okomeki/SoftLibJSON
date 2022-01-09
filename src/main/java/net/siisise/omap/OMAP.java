@@ -89,12 +89,22 @@ public class OMAP {
     /**
      * ToDo: 拡張可能にする
      *
-     * @param type
+     * @param type 親クラスだとはやい
      * @return 出力先変換器
      */
     static MtoConvert convert(Type type) {
         MtoConvert pjc = CONVS.get(type);
         if (pjc == null) {
+            for ( Map.Entry<Type, MtoConvert> e : CONVS.entrySet() ) {
+                Type key = e.getKey();
+                if ( key instanceof Class && type instanceof Class && key != Object.class ) { // 何もしないJavaConvertだけ除外
+                    Class<?> cnvClass = (Class<?>)key;
+                    Class<?> typeClass = (Class<?>)type;
+                    if ( cnvClass.isAssignableFrom(typeClass) ) {
+                        return e.getValue();
+                    }
+                }
+            }
             pjc = new OMAPConvert(type);
         }
         return pjc;

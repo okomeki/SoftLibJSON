@@ -86,9 +86,12 @@ public class JSONPatchTest {
     @org.junit.jupiter.api.Test
     public void testRunA4() {
         System.out.println("A.4.");
-        JSON2Object obj = (JSON2Object) JSON28259Reg.parse("{ \"foo\": [ \"bar\", \"qux\", \"baz\" ] }");
+        JSON2Object<?> obj = (JSON2Object) JSON28259Reg.parse("{ \"foo\": [ \"bar\", \"qux\", \"baz\" ] }");
         JSON2Array patchList = (JSON2Array) JSON28259Reg.parse("[  { \"op\": \"remove\", \"path\": \"/foo/1\" }]");
         JSONPatch.run(obj, patchList);
+        
+        JSONPatch p = new JSONPatch(patchList);
+        obj = (JSON2Object)p.run(obj);
         System.out.println("A.4...." + obj);
         // TODO review the generated test code and remove the default call to fail.
         //fail("The test case is a prototype.");

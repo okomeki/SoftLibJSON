@@ -1,4 +1,4 @@
-package net.siisise.json2.jsonp.stream;
+package net.siisise.json.stream;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,9 +30,9 @@ import net.siisise.omap.OMAP;
 /**
  * ABNF Parserを使っているのでこちらは軽く実装.
  */
-public class SLJsonParser implements JsonParser {
+public class JSONPParser implements JsonParser {
 
-    static class Next {
+    static private class Next {
         Object json;
         Event state;
 
@@ -42,22 +42,27 @@ public class SLJsonParser implements JsonParser {
         }
     }
 
-    FrontPacket stream;
+    private FrontPacket stream;
     
-    List<Next> nexts = new ArrayList<>();
+    private List<Next> nexts = new ArrayList<>();
     
-    public SLJsonParser(Reader reader) {
+    public JSONPParser(Reader reader) {
         stream = new StreamFrontPacket(reader);
     }
 
-    public SLJsonParser(InputStream reader) {
+    public JSONPParser(InputStream reader) {
         stream = new StreamFrontPacket(reader);
     }
     
-    public SLJsonParser(Object json) {
+    public JSONPParser(Object json) {
         nexts = nexts(json);
     }
     
+    /**
+     * object の分解
+     * @param src
+     * @return 
+     */
     static List<Next> nexts(Object src) {
         Object obj = JSON2.valueMap(src);
         List<Next> nexts = new ArrayList<>();
@@ -91,7 +96,7 @@ public class SLJsonParser implements JsonParser {
      * @param step nexts 
      * @return 
      */
-    Object parseValue() {
+    private Object parseValue() {
         Object val = null;
         switch (current.state) {
             case START_OBJECT:
@@ -118,7 +123,7 @@ public class SLJsonParser implements JsonParser {
      * @param step nexts START_OBJECT の次から
      * @return 
      */
-    Map parseObject() {
+    private Map parseObject() {
         JSON2Object obj = new JSON2Object();
         next();
         while ( current.state != Event.END_OBJECT ) {
@@ -139,7 +144,7 @@ public class SLJsonParser implements JsonParser {
      * 
      * @return 
      */
-    List parseArray() {
+    private List parseArray() {
         JSON2Array obj = new JSON2Array();
         next();
         while ( current.state != Event.END_ARRAY ) {
@@ -152,7 +157,7 @@ public class SLJsonParser implements JsonParser {
 
     @Override
     public boolean hasNext() throws JsonParsingException {
-        if (nexts.isEmpty() && stream.size() > 0) {
+        if (nexts.isEmpty() && stream != null && stream.size() > 0) {
             Packet p;
             Next nextb;
             //nexts = nexts(JSON2.parseWrap(stream));
@@ -192,7 +197,7 @@ public class SLJsonParser implements JsonParser {
         return !nexts.isEmpty();
     }
     
-    Next current;
+    private Next current;
 
     @Override
     public Event next() {
@@ -322,8 +327,9 @@ public class SLJsonParser implements JsonParser {
         if ( stream != null ) {
             try {
                 stream.getInputStream().close();
+                stream = null;
             } catch (IOException ex) {
-                Logger.getLogger(SLJsonParser.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(JSONPParser.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
