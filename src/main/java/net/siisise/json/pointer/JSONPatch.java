@@ -22,7 +22,7 @@ public class JSONPatch implements JsonPatch {
         // StringではなくJSONValueがいい
         public JSON2Value value;
         
-        public JSON2Collection apply(JSON2Collection target) { return target; }
+        public <T extends JSON2Collection> T apply(T target) { return target; }
         
         public JSON2Value toJSON() {
             op = getClass().getName().substring(3).toLowerCase();
@@ -49,7 +49,7 @@ public class JSONPatch implements JsonPatch {
         public CmdAdd() { op ="add"; }
         
         @Override
-        public JSON2Collection apply(JSON2Collection target) {
+        public <T extends JSON2Collection> T apply(T target) {
             path.add(target, value);
             return target;
         }
@@ -60,7 +60,7 @@ public class JSONPatch implements JsonPatch {
         public CmdRemove() { op = "remove"; }
         
         @Override
-        public JSON2Collection apply(JSON2Collection target) {
+        public <T extends JSON2Collection> T apply(T target) {
             path.remove(target);
             return target;
         }
@@ -71,7 +71,7 @@ public class JSONPatch implements JsonPatch {
         public CmdReplace() { op = "replace"; }
         
         @Override
-        public JSON2Collection apply(JSON2Collection target) {
+        public <T extends JSON2Collection> T apply(T target) {
             path.remove(target);
             path.add(target, value);
             return target;
@@ -84,7 +84,7 @@ public class JSONPatch implements JsonPatch {
         public CmdMove() { op = "move"; }
         
         @Override
-        public JSON2Collection apply(JSON2Collection target) {
+        public <T extends JSON2Collection> T apply(T target) {
             JSON2Value v = from.get(target);
             v = JSON2.parseWrap(v.toString());
             from.remove(target);
@@ -99,7 +99,7 @@ public class JSONPatch implements JsonPatch {
         public CmdCopy() { op = "copy"; }
 
         @Override
-        public JSON2Collection apply(JSON2Collection target) {
+        public <T extends JSON2Collection> T apply(T target) {
             JSON2Value v = from.get(target);
             v = JSON2.parseWrap(v.toString());
             path.add(target, v);
@@ -112,7 +112,7 @@ public class JSONPatch implements JsonPatch {
         public CmdTest() { op = "test"; }
 
         @Override
-        public JSON2Collection apply(JSON2Collection target) {
+        public <T extends JSON2Collection> T apply(T target) {
             JSON2Value val1 = path.get(target);
             if (!val1.equals(value)) {
                 return null;
@@ -127,7 +127,7 @@ public class JSONPatch implements JsonPatch {
     }
 
     public JSONPatch(JSON2Array patchList) {
-    
+
         for (Object patch : patchList) {
             cmds.add(cmd((JSON2Object) JSON2.valueOf(patch)));
         }
@@ -139,7 +139,7 @@ public class JSONPatch implements JsonPatch {
      * @param target
      * @return エラーっぽいときはnull
      */
-    public JSON2Collection run(JSON2Collection target) {
+    public JSON2Collection apply(JSON2Collection target) {
         JSON2Collection cp = (JSON2Collection) JSON2.parse(target.toString()); // 複製してみたり
         for ( Patch cmd : cmds ) {
             cp = cmd.apply(cp);
@@ -149,7 +149,7 @@ public class JSONPatch implements JsonPatch {
     
     public static JSON2Collection run(JSON2Collection target, JSON2Array patchs) {
         JSONPatch p = new JSONPatch(patchs);
-        return p.run(target);
+        return p.apply(target);
     }
     
     /**
@@ -181,7 +181,12 @@ public class JSONPatch implements JsonPatch {
     
     @Override
     public <T extends JsonStructure> T apply(T target) {
-        return run((JSON2Collection) JSON2.valueOf(target)).typeMap(JsonStructure.class);
+        Class c = target.getClass();
+        JSON2Collection cp = (JSON2Collection) JSON2.valueOf(target);
+        for ( Patch cmd : cmds ) {
+            cp = cmd.apply(cp);
+        }
+        return cp.typeMap(c);
     }
 
     @Override
