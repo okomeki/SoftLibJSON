@@ -1,6 +1,7 @@
 package net.siisise.json2;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -106,5 +107,26 @@ public class JSON2Object<V> extends LinkedHashMap<String, V> implements JSON2Col
             return format.crlf + format.tab + new JSON2String(key).toString(format) + ":"
                     + tab(getJSON(key).toString(format));
         }).collect(Collectors.joining(",", "{", format.crlf + "}"));
+    }
+
+    /**
+     * 雑な複製対応。
+     * 可変なので複製する。
+     * @return 中まで複製したもの
+     */
+    @Override
+    public JSON2Object<V> clone() {
+        JSON2Object<V> clone = (JSON2Object<V>) super.clone();
+        clone.clear();
+        for ( Map.Entry<String, V> e : entrySet() ) {
+            V v = e.getValue();
+            if ( v instanceof ArrayList ) { // JSON2Array の素
+                v = (V)((ArrayList)v).clone();
+            } else if ( v instanceof HashMap ) { // JSON2Object の素
+                v = (V)((HashMap)v).clone();
+            }
+            clone.put(e.getKey(), v);
+        }
+        return clone;
     }
 }

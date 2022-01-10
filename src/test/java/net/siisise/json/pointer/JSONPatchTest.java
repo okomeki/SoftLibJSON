@@ -66,7 +66,9 @@ public class JSONPatchTest {
         System.out.println("A.2.");
         JSON2Object obj = (JSON2Object) JSON28259Reg.parse("{ \"foo\": [ \"bar\", \"baz\" ] }");
         JSON2Array patchList = (JSON2Array) JSON28259Reg.parse("[\r\n { \"op\": \"add\", \"path\": \"/foo/1\", \"value\": \"qux\" }\r\n]");
-        JSONPatch.run(obj, patchList);
+//        JSONPatch.run(obj, patchList);
+        JSONPatch p = new JSONPatch(patchList);
+        obj = p.apply(obj);
         System.out.println("A.2...." + obj);
         // TODO review the generated test code and remove the default call to fail.
         //fail("The test case is a prototype.");
@@ -77,10 +79,9 @@ public class JSONPatchTest {
         System.out.println("A.3.");
         JSON2Object obj = (JSON2Object) JSON28259Reg.parse("{  \"baz\": \"qux\",\n  \"foo\": \"bar\" }");
         JSON2Array patchList = (JSON2Array) JSON28259Reg.parse("[  { \"op\": \"remove\", \"path\": \"/baz\" }]");
+//        JSONPatch.run(obj, patchList);
         JSONPatch p = new JSONPatch(patchList);
         obj = p.apply(obj);
-        p.toJsonArray();
-//        JSONPatch.run(obj, patchList);
         System.out.println("A.3...." + obj);
         // TODO review the generated test code and remove the default call to fail.
         //fail("The test case is a prototype.");
@@ -91,8 +92,6 @@ public class JSONPatchTest {
         System.out.println("A.4.");
         JSON2Object<?> obj = (JSON2Object) JSON28259Reg.parse("{ \"foo\": [ \"bar\", \"qux\", \"baz\" ] }");
         JSON2Array patchList = (JSON2Array) JSON28259Reg.parse("[  { \"op\": \"remove\", \"path\": \"/foo/1\" }]");
-        JSONPatch.run(obj, patchList);
-        
         JSONPatch p = new JSONPatch(patchList);
         obj = p.apply(obj);
         System.out.println("A.4...." + obj);
@@ -134,7 +133,9 @@ public class JSONPatchTest {
 //        Object string = JSON8259Reg.REG.parse("string", "\"op\"");
 //        JSONValue v1 = JSON8259Reg.REG.parse("object",pa);
         JSON2Array patchList = (JSON2Array) JSON28259Reg.parse(patch);
-        JSONPatch.run(obj, patchList);
+        JSONPatch p = new JSONPatch(patchList);
+        obj = p.apply(obj);
+//        JSONPatch.run(obj, patchList);
         System.out.println("A.6...." + obj);
         // TODO review the generated test code and remove the default call to fail.
         //fail("The test case is a prototype.");

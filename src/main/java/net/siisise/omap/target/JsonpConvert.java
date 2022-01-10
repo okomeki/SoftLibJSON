@@ -7,10 +7,10 @@ import javax.json.JsonNumber;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
 import net.siisise.json2.jsonp.JSONPArray;
-import net.siisise.json2.JSON2;
 import net.siisise.json2.JSON2Number;
 import net.siisise.json2.JSON2Object;
 import net.siisise.json2.JSON2String;
+import net.siisise.json2.JSON2Value;
 import net.siisise.omap.OMAP;
 
 /**
@@ -67,9 +67,9 @@ public class JsonpConvert extends OBJConvert<JsonValue> {
     @Override
     public JsonValue objectValue(Object obj) {
         // toJSON メソッドで変換
-        String json = OMAP.toJSON(obj);
+        JSON2Value json = OMAP.toJSON(obj);
         if ( json != null ) {
-            return JSON2.parseWrap(json).toJson();
+            return json.toJson();
         }
         return super.objectValue(obj);
     }

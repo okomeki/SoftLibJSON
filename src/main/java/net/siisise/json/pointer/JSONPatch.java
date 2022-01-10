@@ -121,7 +121,7 @@ public class JSONPatch implements JsonPatch {
         }
     }
 
-    JSON2Array<Patch> cmds = new JSON2Array();
+    final JSON2Array<Patch> cmds = new JSON2Array();
 
     public JSONPatch() {
     }
@@ -132,7 +132,7 @@ public class JSONPatch implements JsonPatch {
             cmds.add(cmd((JSON2Object) JSON2.valueOf(patch)));
         }
     }
-    
+
     /**
      * JSONPatchBuilderっぽい機能
      * @param patch
@@ -163,6 +163,7 @@ public class JSONPatch implements JsonPatch {
     /**
      * エラー未実装
      *
+     * @param <T> 型変換対策
      * @param target
      * @return エラーっぽいときはnull
      */

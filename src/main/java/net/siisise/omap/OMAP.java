@@ -16,6 +16,7 @@ import java.util.logging.Logger;
 import javax.json.JsonValue;
 import net.siisise.json.map.JSONDateM;
 import net.siisise.json.map.JSONUUIDM;
+import net.siisise.json2.JSON2;
 import net.siisise.json2.JSON2Value;
 import net.siisise.omap.source.JSON2ArrayM;
 import net.siisise.omap.source.JSON2NumberM;
@@ -28,7 +29,7 @@ import net.siisise.omap.target.OMAPConvert;
 import net.siisise.omap.target.StringConvert;
 
 /**
- * SoftLibJSON から Object Mapping を分離する。
+ * JSON-B相当のObject Mapping。
  * PoJoとか言われているらしいもの?
  * REST準拠なデータを持つList(JSONArrayだったもの), Map(JSONObjectだったもの) から各種変換をする便利機能。
  *
@@ -224,20 +225,21 @@ public class OMAP {
 
     /**
      * toJSONメソッドがあればJSONに変換し、なければその他の方法で変換する
+     * String のほか JSON2Value, JsonValue でも可
      * @param obj null不可
      * @return 
      */
-    public static String toJSON(Object obj) {
+    public static JSON2Value toJSON(Object obj) {
         Class<? extends Object> cls = obj.getClass();
         try {
             Method toj = cls.getMethod("toJSON");
             Class retType = toj.getReturnType();
             if ( JSON2Value.class.isAssignableFrom(retType) ) {
-                return ((JSON2Value)toj.invoke(obj)).toString();
+                return ((JSON2Value)toj.invoke(obj));
             } else if ( JsonValue.class.isAssignableFrom(retType) ) {
-                return ((JsonValue)toj.invoke(obj)).toString();
+                return JSON2.valueOf((JsonValue)toj.invoke(obj));
             }
-            return (String) toj.invoke(obj);
+            return JSON2.parseWrap((String) toj.invoke(obj));
         } catch (NoSuchMethodException ex) {
             // 特にないので標準の変換へ
         } catch (SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {

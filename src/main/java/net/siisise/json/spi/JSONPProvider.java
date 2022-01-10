@@ -42,6 +42,7 @@ import net.siisise.json2.JSON2;
 import net.siisise.json2.JSON2Array;
 import net.siisise.json2.JSON2Number;
 import net.siisise.json2.JSON2String;
+import net.siisise.json2.JSON2Value;
 
 /**
  * JSR 374 Java API for JSON Processing (JSON-P)
@@ -207,7 +208,9 @@ public class JSONPProvider extends JsonProvider {
 
     @Override
     public JsonMergePatch createMergeDiff(JsonValue source, JsonValue target) {
-        throw new UnsupportedOperationException();
+        JSON2Value s = JSON2.valueOf(source);
+        JSON2Value t = JSON2.valueOf(target);
+        return new JSONMergePatch7396(JSONMergePatch7396.diff(s, t));
     }
 
     @Override

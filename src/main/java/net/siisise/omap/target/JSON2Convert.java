@@ -2,7 +2,6 @@ package net.siisise.omap.target;
 
 import java.util.Collection;
 import java.util.Map;
-import net.siisise.json2.JSON2;
 import net.siisise.json2.JSON2Array;
 import net.siisise.json2.JSON2Boolean;
 import net.siisise.json2.JSON2NULL;
@@ -74,9 +73,9 @@ public class JSON2Convert extends OBJConvert<JSON2Value> {
     @Override
     public JSON2Value objectValue(Object obj) {
         // toJSON メソッドで変換
-        String json = OMAP.toJSON(obj);
+        JSON2Value json = OMAP.toJSON(obj);
         if ( json != null ) {
-            return JSON2.parseWrap(json);
+            return json;
         }
         return super.objectValue(obj);
     }

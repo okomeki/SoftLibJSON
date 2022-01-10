@@ -3,6 +3,7 @@ package net.siisise.json2;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.json.JsonArray;
@@ -21,7 +22,7 @@ import net.siisise.omap.OMAP;
  * JsonArray,JsonArrayBuilder,JsonStructure ではない
  * @param <E> 内部で保持する型。JSONではなくていい。
  */
-public class JSON2Array<E> extends ArrayList<E> implements JSON2Collection<E> {
+public class JSON2Array<E> extends ArrayList<E> implements JSON2Collection<E>,Cloneable {
 
     /**
      * Eを参照したいので持っておく型
@@ -171,5 +172,25 @@ public class JSON2Array<E> extends ArrayList<E> implements JSON2Collection<E> {
     @Override
     public <T> T map() {
         return (T)new JSON2Array(this);
+    }
+
+    /**
+     * 雑な複製対応。
+     * 可変なので複製する
+     * @return 配列、オブジェクトは中まで複製したもの
+     */
+    @Override
+    public JSON2Array<E> clone() {
+        JSON2Array<E> array = (JSON2Array<E>) super.clone();
+        array.clear();
+        for ( E e : this ) {
+            if ( e instanceof ArrayList ) { // JSON2Array っぽいもの
+                e = (E)((ArrayList)e).clone();
+            } else if ( e instanceof HashMap ) { // JSON2Object っぽいもの
+                e = (E)((HashMap)e).clone();
+            }
+            array.add((E)e);
+        }
+        return array;
     }
 }

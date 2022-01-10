@@ -224,7 +224,7 @@ public class OMAPConvert<T> extends OBJConvert<T> {
         if (cls == String.class || cls == CharSequence.class) {
             return (T) src.toString();
         } else if (cls.isAssignableFrom(src.getClass())) {
-            return (T) src;
+            return (T) src; // ToDo: 複製?
         } else if (!cls.isAssignableFrom(List.class) && cls.isAssignableFrom(JsonArray.class)) { // List を除く
             if ( src.isEmpty() ) {
                 return (T)JsonValue.EMPTY_JSON_ARRAY;

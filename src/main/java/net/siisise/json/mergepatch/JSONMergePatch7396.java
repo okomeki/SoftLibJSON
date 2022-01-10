@@ -1,5 +1,7 @@
 package net.siisise.json.mergepatch;
 
+import java.util.HashSet;
+import java.util.Set;
 import javax.json.JsonMergePatch;
 import javax.json.JsonValue;
 import net.siisise.json2.JSON2;
@@ -10,10 +12,12 @@ import net.siisise.json2.JSON2Value;
 /**
  * RFC 7396 JSON Merge Patch.
  * 
- * diff相当もほしいかも
+ * JSON Object の差分を当てる JSON Merge Patch
+ * とそれを作るdiff
  * 
  * RFC 7159 JSON
  * RFC 5789 PATCH Method for HTTP
+ * RFC 7396 JSON Merge Patch
  * @see https://tools.ietf.org/html/rfc7396
  */
 public class JSONMergePatch7396 implements JsonMergePatch {
@@ -29,13 +33,13 @@ public class JSONMergePatch7396 implements JsonMergePatch {
     
     /**
      * おりじなるとぱっちから更新結果を返す
-     * @param target
+     * @param target Object 相当
      * @param patch
      * @return result
      */
     public static JSON2Value mergePatch(JSON2Value target, JSON2Value patch) {
         if ( patch instanceof JSON2Object ) {
-            if ( !(target instanceof JSON2Object) ) {
+            if ( target == null || !(target instanceof JSON2Object) ) {
                 target = new JSON2Object();
             }
             for ( String name : ((JSON2Object<?>)patch).keySet() ) {
@@ -49,7 +53,7 @@ public class JSONMergePatch7396 implements JsonMergePatch {
                 }
             }
             return target;
-        } else {
+        } else { // array string number boolean null
             return patch;
         }
     }
@@ -57,17 +61,35 @@ public class JSONMergePatch7396 implements JsonMergePatch {
     /**
      * JSONMergePatchをつくろう
      * 差分の自動生成がなかったので作ってみるか
-     * @param original
-     * @param result
-     * @return patch
+     * @param original 変更もと
+     * @param target 変更先
+     * @return JSON MergePatch形式 差分
      */
-    public static JSON2Value diff(JSON2Value original, JSON2Value result) {
-        if ( (result instanceof JSON2Object)) {
-            
-        } else {
-            return result;
+    public static JSON2Value diff(JSON2Value original, JSON2Value target) {
+        JSON2Object diff = new JSON2Object();
+        if ( (original instanceof JSON2Object) && (target instanceof JSON2Object)) {
+            Set<String> skeyset = new HashSet<>(((JSON2Object)original).keySet());
+            Set<String> tkeyset = ((JSON2Object) target).keySet();
+            for ( String tkey : tkeyset ) {
+                JSON2Value s = ((JSON2Object)original).getJSON(tkey);
+                JSON2Value t = ((JSON2Object)target).getJSON(tkey);
+                if ( s == null ) {
+                    // 追加
+                    diff.putJSON(tkey, JSON2.copy(t));
+                } else if ( !s.equals(t)) {
+                    // object なら差分を作る
+                    JSON2Value d = diff(s, t);
+                    diff.putJSON(tkey, d);
+                }
+                skeyset.remove(tkey);
+            }
+            for ( String skey : skeyset ) {
+                diff.putJSON(skey, JSON2NULL.NULL);
+            }
+            return diff;
+        } else { // targetがObjectではなかった
+            return JSON2.copy(target);
         }
-        throw new java.lang.UnsupportedOperationException("yet.");
     }
 
     @Override

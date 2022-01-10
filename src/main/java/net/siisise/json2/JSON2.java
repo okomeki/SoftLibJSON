@@ -154,4 +154,18 @@ public interface JSON2 {
                 Collector.Characteristics.IDENTITY_FINISH
         );
     }
+    
+    /**
+     * Object と Arrayだけ複製が必要なのでそうする
+     * @param v 元
+     * @return 複製
+     */
+    public static JSON2Value copy(JSON2Value v) {
+        if ( v instanceof JSON2Array ) {
+            return ((JSON2Array) v).clone();
+        } else if ( v instanceof JSON2Object ) {
+            return ((JSON2Object) v).clone();
+        }
+        return v;
+    }
 }

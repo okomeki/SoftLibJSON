@@ -30,7 +30,7 @@ import net.siisise.json2.JSON2;
 import net.siisise.omap.OMAP;
 
 /**
- *
+ * OMAPの該当機能を割り当てるだけ
  */
 public class JSONB implements Jsonb {
     
