@@ -13,8 +13,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.json.JsonValue;
 import net.siisise.json.map.JSONDateM;
 import net.siisise.json.map.JSONUUIDM;
+import net.siisise.json2.JSON2Value;
 import net.siisise.omap.source.JSON2ArrayM;
 import net.siisise.omap.source.JSON2NumberM;
 import net.siisise.omap.source.JSON2ObjectM;
@@ -136,7 +138,6 @@ public class OMAP {
             }
         }
         // ヒットしないので一から探すすもしれない
-        System.out.println("OMAP.valueOf" + src.getClass());
         for (OMConvert ps : OMDS) {
             T val = ps.valueOf(src, pjc);
             if (val != ps) {
@@ -230,6 +231,12 @@ public class OMAP {
         Class<? extends Object> cls = obj.getClass();
         try {
             Method toj = cls.getMethod("toJSON");
+            Class retType = toj.getReturnType();
+            if ( JSON2Value.class.isAssignableFrom(retType) ) {
+                return ((JSON2Value)toj.invoke(obj)).toString();
+            } else if ( JsonValue.class.isAssignableFrom(retType) ) {
+                return ((JsonValue)toj.invoke(obj)).toString();
+            }
             return (String) toj.invoke(obj);
         } catch (NoSuchMethodException ex) {
             // 特にないので標準の変換へ
