@@ -136,6 +136,7 @@ public class OMAP {
             }
         }
         // ヒットしないので一から探すすもしれない
+        System.out.println("OMAP.valueOf" + src.getClass());
         for (OMConvert ps : OMDS) {
             T val = ps.valueOf(src, pjc);
             if (val != ps) {

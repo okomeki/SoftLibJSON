@@ -24,7 +24,7 @@ public class JSONPatch implements JsonPatch {
         
         public <T extends JSON2Collection> T apply(T target) { return target; }
         
-        public JSON2Value toJSON() {
+        public String toJSON() {
             op = getClass().getName().substring(3).toLowerCase();
             JSON2Object p = new JSON2Object();
             if ( op != null ) {
@@ -40,7 +40,7 @@ public class JSONPatch implements JsonPatch {
             if ( path != null ) {
                 p.putJSON("value",value);
             }
-            return p;
+            return p.toString();
         }
     }
     
@@ -134,25 +134,6 @@ public class JSONPatch implements JsonPatch {
     }
     
     /**
-     * エラー未実装
-     *
-     * @param target
-     * @return エラーっぽいときはnull
-     */
-    public JSON2Collection apply(JSON2Collection target) {
-        JSON2Collection cp = (JSON2Collection) JSON2.parse(target.toString()); // 複製してみたり
-        for ( Patch cmd : cmds ) {
-            cp = cmd.apply(cp);
-        }
-        return cp;
-    }
-    
-    public static JSON2Collection run(JSON2Collection target, JSON2Array patchs) {
-        JSONPatch p = new JSONPatch(patchs);
-        return p.apply(target);
-    }
-    
-    /**
      * JSONPatchBuilderっぽい機能
      * @param patch
      * @return 
@@ -177,6 +158,24 @@ public class JSONPatch implements JsonPatch {
             throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
         return (Patch)patch.typeMap(cls);
+    }
+    
+    /**
+     * エラー未実装
+     *
+     * @param target
+     * @return エラーっぽいときはnull
+     */
+    public <T extends JSON2Collection> T apply(T target) {
+        for ( Patch cmd : cmds ) {
+            target = cmd.apply(target);
+        }
+        return target;
+    }
+    
+    public static JSON2Collection run(JSON2Collection target, JSON2Array patchs) {
+        JSONPatch p = new JSONPatch(patchs);
+        return p.apply(target);
     }
     
     @Override

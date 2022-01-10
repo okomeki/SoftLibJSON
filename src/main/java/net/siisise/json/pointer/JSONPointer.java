@@ -153,8 +153,8 @@ public class JSONPointer implements JsonPointer {
         return sb.toString();
     }
     
-    public JSON2Value toJSON() {
-        return JSON2.valueOf(toString());
+    public String toJSON() {
+        return JSON2.valueOf(toString()).toString();
     }
 
     public String[] toDecodeString() {
