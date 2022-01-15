@@ -31,6 +31,7 @@ import javax.json.stream.JsonGeneratorFactory;
 import javax.json.stream.JsonParser;
 import javax.json.stream.JsonParserFactory;
 import net.siisise.json.mergepatch.JSONMergePatch7396;
+import net.siisise.json.pointer.JSONPatch;
 import net.siisise.json.pointer.JSONPatchBuilder;
 import net.siisise.json.pointer.JSONPointer;
 import net.siisise.json2.jsonp.JSONPBuilderFactory;
@@ -85,8 +86,8 @@ public class JSONPProvider extends JsonProvider {
     }
 
     @Override
-    public JsonGeneratorFactory createGeneratorFactory(Map<String, ?> map) {
-        return gf = new JSONPGeneratorFactory();
+    public JsonGeneratorFactory createGeneratorFactory(Map<String, ?> config) {
+        return gf = new JSONPGeneratorFactory(config);
     }
 
     @Override
@@ -198,7 +199,9 @@ public class JSONPProvider extends JsonProvider {
      */
     @Override
     public JsonPatch createDiff(JsonStructure source, JsonStructure target) {
-        throw new UnsupportedOperationException();
+        JSON2Value s = JSON2.valueOf(source);
+        JSON2Value t = JSON2.valueOf(target);
+        return JSONPatch.diff(s, t);
     }
 
     @Override

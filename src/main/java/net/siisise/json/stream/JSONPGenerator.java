@@ -12,28 +12,29 @@ import javax.json.JsonValue;
 import javax.json.stream.JsonGenerator;
 import net.siisise.json2.JSON2;
 import net.siisise.json2.JSON2Boolean;
+import net.siisise.json2.JSON2Format;
 import net.siisise.json2.JSON2NULL;
 import net.siisise.json2.JSON2Number;
 import net.siisise.json2.JSON2String;
 import net.siisise.json2.JSON2Value;
 
 /**
- * タブ未対応
+ * タブ暫定対応
  */
 public class JSONPGenerator implements JsonGenerator {
 
     private final Writer out;
+    private final JSON2Format format;
 
     boolean first = true;
 
-    String CRLF = "\r\n";
-    String TAB = "    ";
     int tabsize = 0;
 
     List<String> closeCode = new ArrayList();
 
-    JSONPGenerator(Writer writer) {
+    JSONPGenerator(Writer writer, JSON2Format f) {
         out = writer;
+        format = f;
     }
 
     @Override
@@ -66,7 +67,7 @@ public class JSONPGenerator implements JsonGenerator {
             first = false;
         } else {
             out.write(",");
-            out.write(CRLF);
+            out.write(format.crlf);
         }
     }
 
@@ -118,7 +119,7 @@ public class JSONPGenerator implements JsonGenerator {
         try {
             writeSeparator();
             writeKey(name);
-            out.write(value.toString());
+            tab(value.toString(format));
         } catch (IOException ex) {
             Logger.getLogger(JSONPGenerator.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -173,14 +174,18 @@ public class JSONPGenerator implements JsonGenerator {
     }
 
     private void tab(String txt) throws IOException {
-        String src = TAB + txt.replace("\r\n", "\r\n" + TAB);
+        StringBuilder tabs = new StringBuilder(100);
+        for ( int i = 0; i < tabsize; i++ ) {
+            tabs.append(format.tab);
+        }
+        String src = tabs.toString() + txt.replace("\r\n", format.crlf + tabs.toString());
         out.write(src);
         
     }
     
     private void tabln(String txt) throws IOException {
         tab(txt);
-        out.write(CRLF);
+        out.write(format.crlf);
     }
     
     private void tabin(String start, String end) throws IOException {
@@ -216,7 +221,7 @@ public class JSONPGenerator implements JsonGenerator {
 
     void write(JSON2Value value) {
         try {
-            tab(value.toString());
+            tab(value.toString(format));
         } catch (IOException ex) {
             Logger.getLogger(JSONPGenerator.class.getName()).log(Level.SEVERE, null, ex);
             throw new UnsupportedOperationException();

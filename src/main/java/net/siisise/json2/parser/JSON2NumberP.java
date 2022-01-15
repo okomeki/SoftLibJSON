@@ -16,7 +16,7 @@ import net.siisise.io.Packet;
 public class JSON2NumberP extends ABNFBuildParser<Number, Packet> {
 
     public JSON2NumberP(ABNF rule, ABNFReg base) {
-        super(rule, null, base, "frac", "exp");
+        super(rule, base, "frac", "exp");
     }
 
     @Override

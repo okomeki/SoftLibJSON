@@ -9,15 +9,23 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.json.stream.JsonGenerator;
 import javax.json.stream.JsonGeneratorFactory;
+import net.siisise.json2.JSON2;
+import net.siisise.json2.JSON2Format;
 
 /**
  *
  */
 public class JSONPGeneratorFactory implements JsonGeneratorFactory {
+    
+    final JSON2Format format;
+
+    public JSONPGeneratorFactory(Map<String, ?> config) {
+        format = (config != null && config.containsKey(JsonGenerator.PRETTY_PRINTING)) ? JSON2.TAB : JSON2.NOBR;
+    }
 
     @Override
     public JsonGenerator createGenerator(Writer writer) {
-        return new JSONPGenerator(writer);
+        return new JSONPGenerator(writer, format);
     }
 
     @Override
@@ -27,12 +35,16 @@ public class JSONPGeneratorFactory implements JsonGeneratorFactory {
 
     @Override
     public JsonGenerator createGenerator(OutputStream out, Charset charset) {
-        return new JSONPGenerator(new OutputStreamWriter(out, charset));
+        return new JSONPGenerator(new OutputStreamWriter(out, charset), format);
     }
 
     @Override
     public Map<String, ?> getConfigInUse() {
-        return new HashMap<>();
+        Map config = new HashMap<>();
+        if ( format == JSON2.TAB ) {
+            config.put(JsonGenerator.PRETTY_PRINTING, true);
+        }
+        return config;
     }
 
 }

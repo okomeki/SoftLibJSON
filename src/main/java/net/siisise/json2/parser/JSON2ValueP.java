@@ -9,7 +9,7 @@ import net.siisise.json2.JSON28259Reg;
 public class JSON2ValueP extends ABNFSelect<Object> {
     
     public JSON2ValueP(ABNF rule, ABNFReg base) {
-        super(rule, null, base, "object", "array", "number", "string");
+        super(rule, base, "object", "array", "number", "string");
     }
     
     @Override

@@ -101,4 +101,8 @@ public class JSONMergePatch7396 implements JsonMergePatch {
     public JsonValue toJsonValue() {
         return patch.toJson();
     }
+    
+    public JSON2Value toJSON() {
+        return JSON2.copy(patch);
+    }
 }

@@ -106,6 +106,8 @@ public class JSONPatchTest {
         JSON2Array patchList = (JSON2Array) JSON28259Reg.parse("[  { \"op\": \"replace\", \"path\": \"/baz\", \"value\": \"boo\" }]");
         
         JSONPatch p = new JSONPatch(patchList);
+        p.toJsonArray();
+        
         obj = (JSON2Object)p.apply(obj);
         //JSONPatch.run(obj, patchList);
         System.out.println("A.5...." + obj);

@@ -24,12 +24,11 @@ public class JSONPatch implements JsonPatch {
         
         public <T extends JSON2Collection> T apply(T target) { return target; }
         
-        public String toJSON() {
+        public JSON2Object toJSON() { // ない項目を省略するだけ
             op = getClass().getName().substring(3).toLowerCase();
             JSON2Object p = new JSON2Object();
             if ( op != null ) {
                 p.putJSON("op",JSON2.valueOf(op));
-                throw new UnsupportedOperationException(op);
             }
             if ( path != null ) {
                 p.putJSON("path",JSON2.valueOf(path));
@@ -40,7 +39,7 @@ public class JSONPatch implements JsonPatch {
             if ( path != null ) {
                 p.putJSON("value",value);
             }
-            return p.toString();
+            return p;
         }
     }
     
@@ -192,6 +191,11 @@ public class JSONPatch implements JsonPatch {
     @Override
     public JsonArray toJsonArray() {
         return cmds.toJson();
+    }
 
+    public static JSONPatch diff(JSON2Value source, JSON2Value target) {
+        JSON2Value patch = new JSON2Object();
+        
+        throw new java.lang.UnsupportedOperationException();
     }
 }
