@@ -2,7 +2,6 @@ package net.siisise.json;
 
 import net.siisise.abnf.ABNF;
 import net.siisise.abnf.ABNFReg;
-import net.siisise.json2.JSON28259Reg;
 
 /**
  * JavaScript Object Notation (JSON) Text Sequences.

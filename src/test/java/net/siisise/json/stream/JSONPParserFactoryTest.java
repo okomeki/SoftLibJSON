@@ -27,7 +27,7 @@ import javax.json.JsonObject;
 import javax.json.stream.JsonParser;
 import net.siisise.json.stream.JSONPParserFactory;
 import net.siisise.json.stream.JSONPParser;
-import net.siisise.json2.JSON2;
+import net.siisise.json.JSON2;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;

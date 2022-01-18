@@ -20,12 +20,12 @@ import javax.json.stream.JsonParsingException;
 import net.siisise.io.FrontPacket;
 import net.siisise.io.Packet;
 import net.siisise.io.StreamFrontPacket;
-import net.siisise.json2.JSON2;
-import net.siisise.json2.JSON28259Reg;
-import net.siisise.json2.JSON2Array;
-import net.siisise.json2.JSON2Number;
-import net.siisise.json2.JSON2Object;
-import net.siisise.omap.OMAP;
+import net.siisise.json.JSON2;
+import net.siisise.json.JSON28259Reg;
+import net.siisise.json.JSON2Array;
+import net.siisise.json.JSON2Number;
+import net.siisise.json.JSON2Object;
+import net.siisise.json.bind.OMAP;
 
 /**
  * ABNF Parserを使っているのでこちらは軽く実装.

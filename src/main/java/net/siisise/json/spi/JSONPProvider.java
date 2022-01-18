@@ -30,20 +30,20 @@ import javax.json.stream.JsonGenerator;
 import javax.json.stream.JsonGeneratorFactory;
 import javax.json.stream.JsonParser;
 import javax.json.stream.JsonParserFactory;
-import net.siisise.json.mergepatch.JSONMergePatch7396;
-import net.siisise.json.pointer.JSONPatch;
-import net.siisise.json.pointer.JSONPatchBuilder;
-import net.siisise.json.pointer.JSONPointer;
-import net.siisise.json2.jsonp.JSONPBuilderFactory;
-import net.siisise.json2.jsonp.JSONPReaderFactory;
-import net.siisise.json2.jsonp.JSONPWriterFactory;
+import net.siisise.json.JSONMergePatch7396;
+import net.siisise.json.JSONPatch;
+import net.siisise.json.JSONPatchBuilder;
+import net.siisise.json.JSONPointer;
+import net.siisise.json.jsonp.JSONPBuilderFactory;
+import net.siisise.json.jsonp.JSONPReaderFactory;
+import net.siisise.json.jsonp.JSONPWriterFactory;
 import net.siisise.json.stream.JSONPGeneratorFactory;
 import net.siisise.json.stream.JSONPParserFactory;
-import net.siisise.json2.JSON2;
-import net.siisise.json2.JSON2Array;
-import net.siisise.json2.JSON2Number;
-import net.siisise.json2.JSON2String;
-import net.siisise.json2.JSON2Value;
+import net.siisise.json.JSON2;
+import net.siisise.json.JSON2Array;
+import net.siisise.json.JSON2Number;
+import net.siisise.json.JSON2String;
+import net.siisise.json.JSON2Value;
 
 /**
  * JSR 374 Java API for JSON Processing (JSON-P)

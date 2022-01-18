@@ -1,8 +1,8 @@
 package net.siisise.json.map;
 
 import java.util.UUID;
-import net.siisise.omap.MtoConvert;
-import net.siisise.omap.OMConvert;
+import net.siisise.json.bind.MtoConvert;
+import net.siisise.json.bind.OMConvert;
 
 /**
  *

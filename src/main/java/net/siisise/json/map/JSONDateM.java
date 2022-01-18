@@ -2,8 +2,8 @@ package net.siisise.json.map;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import net.siisise.omap.MtoConvert;
-import net.siisise.omap.OMConvert;
+import net.siisise.json.bind.MtoConvert;
+import net.siisise.json.bind.OMConvert;
 
 public class JSONDateM implements OMConvert {
 

@@ -10,13 +10,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.json.JsonValue;
 import javax.json.stream.JsonGenerator;
-import net.siisise.json2.JSON2;
-import net.siisise.json2.JSON2Boolean;
-import net.siisise.json2.JSON2Format;
-import net.siisise.json2.JSON2NULL;
-import net.siisise.json2.JSON2Number;
-import net.siisise.json2.JSON2String;
-import net.siisise.json2.JSON2Value;
+import net.siisise.json.JSON2;
+import net.siisise.json.JSON2Boolean;
+import net.siisise.json.JSON2Format;
+import net.siisise.json.JSON2NULL;
+import net.siisise.json.JSON2Number;
+import net.siisise.json.JSON2String;
+import net.siisise.json.JSON2Value;
 
 /**
  * タブ暫定対応

@@ -28,9 +28,8 @@ import javax.json.bind.JsonbConfig;
 import javax.json.bind.JsonbException;
 import net.siisise.io.FrontPacket;
 import net.siisise.io.StreamFrontPacket;
-import net.siisise.json2.JSON2;
-import net.siisise.json2.JSON2Value;
-import net.siisise.omap.OMAP;
+import net.siisise.json.JSON2;
+import net.siisise.json.JSON2Value;
 
 /**
  * OMAPの該当機能を割り当てるだけ

@@ -2,8 +2,6 @@ package net.siisise.json;
 
 import java.util.ArrayList;
 import java.util.List;
-import net.siisise.json2.JSON2;
-import net.siisise.json2.JSON2Value;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;

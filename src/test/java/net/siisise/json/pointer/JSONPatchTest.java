@@ -1,11 +1,12 @@
 package net.siisise.json.pointer;
 
-import net.siisise.json2.JSON2;
-import net.siisise.json2.JSON28259Reg;
-import net.siisise.json2.JSON2Array;
-import net.siisise.json2.JSON2Collection;
-import net.siisise.json2.JSON2Object;
-import net.siisise.json2.JSON2Value;
+import net.siisise.json.JSONPatch;
+import net.siisise.json.JSON2;
+import net.siisise.json.JSON28259Reg;
+import net.siisise.json.JSON2Array;
+import net.siisise.json.JSON2Collection;
+import net.siisise.json.JSON2Object;
+import net.siisise.json.JSON2Value;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
