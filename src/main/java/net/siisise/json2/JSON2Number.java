@@ -112,4 +112,14 @@ public class JSON2Number extends Number implements JSON2Value,JsonNumber {
         return ValueType.NUMBER;
     }
     
+    @Override
+    public boolean equals(Object o) {
+        if ( o instanceof JSON2Number ) {
+            return toString().equals(o.toString());
+        } else if ( o instanceof Number ) {
+            return number.equals(o);
+        }
+        return false;
+    }
+    
 }

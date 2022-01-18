@@ -91,6 +91,7 @@ public interface JSON2 {
 
     /**
      * valueOf で結果が単体(primitive型)のときラップしてから返す
+     * srcがJSON2Valueのとき透過がいい
      *
      * @param src
      * @return JSON2Valueな値

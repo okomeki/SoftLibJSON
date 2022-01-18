@@ -23,12 +23,20 @@ import javax.json.spi.JsonProvider;
  *
  */
 public class JSONBBuilder implements JsonbBuilder {
+    
+    private JsonbConfig conf;
 
     @Override
     public JsonbBuilder withConfig(JsonbConfig config) {
+        conf = config;
         return this;
     }
 
+    /**
+     * JSON P はSoftLibJSON 専用なので未対応
+     * @param jsonpProvider 無効
+     * @return 
+     */
     @Override
     public JsonbBuilder withProvider(JsonProvider jsonpProvider) {
         return this;

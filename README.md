@@ -1,16 +1,21 @@
-# JSON
+# SoftLibJSON
 
 ABNFで RFC 8259 JSONとRFC 6901 JSON Pointer, RFC 6902 JSON Patch, RFC 7396 JSON Merge Patchを実装してみたもの
-
-## リリース?
-
-1.0.1 GitHubで使えるパッケージ名になおした。
+Java API for JSON Processing (JSR-374)にも対応
+Object Mappingは適度に実装 (Java API for JSON Bindingもかぶせたが互換性は不明)
 
 ## なにができる?
 
-JSONのパース、オブジェクトマッピング、JSON Pointer, JSON Patch などがつかえるよ?
+ABNFを利用したJSONのパース
+ストリーム系のJSONパース
+オブジェクトマッピング JavaオブジェクトとJSON,JSON P(JSR-374)の適度な相互変換
+JSON Pointer
+JSON Patch と diff
+JSON Merge Patch と diff
+JSON Binding
+などがつかえるよ?
 
-JavaのJSONPに準拠した実装もしてみたり。
+JavaのJSONP,JSONBに準拠した実装もしてみたり。
 
 実装はjsonとjson2 という名前で分かれているので主要な機能はjson2の方をつかってください。
 
@@ -33,20 +38,31 @@ pakage net.siisise.json2
     - JSON2Number : Number, BigInteger, BigDecimal
     - JSON2String : String, CharSequence
     - JSON2Collcetion
-        - JSON2Array : List
-        - JSON2Object : Map
+        - JSON2Array : List, 配列, コンストラクタ
+        - JSON2Object : Map, Object
+    - JsonStructure
+        - JSONPArray : JSONP用Array
+        - JSONPObject : JSONP用Object
+
+JSON2Value がJSONとしての元になる型です。
+JSON2は、変換機能などを設けています。
+
 
 JSON2の配列JSON2ArrayはJavaの配列、Listとして扱うことができ、JSON2ObjectはJavaのMapとして扱えます。内部はJavaの値でBoolean,Number,String,List,Mapなどの形式で保存されています。
 
 JSON2.valueOf()でJSON2Valueに変換できそうなものはそのまま格納して問題ありません。
 
-getJSON(), setJSON(), addJSON() などのメソッドでJSON2Value形式の値を扱うことができます。
+JSON2Collection は、getJSON(), setJSON(), addJSON() などのメソッドでJSON2Value形式の値を扱うことができます。
 
 JSON2Array<E> は List&lt;E&gt; として扱うことができ、JSONに変換可能なものを格納できます。
 
 JSON2Object<E> は Map&lt;String,E&gt; として扱うことができ、JSONに変換可能なものを格納できます。
 
 &lt;E&gt;は、Javaの型として扱いたい型を指定します。コンストラクタで型を指定することでJSONからの変換も適度に処理してくれます。
+
+streamでは、JSON2Arrayがj2stream()でJSON2Valueな値のparallelStream().map(JSON2::valueOf)相当を作れます。
+
+JSON2Objectのj2forEachで(String,JSON2Value)なkey,valueのforEach(k,v)が使えます。JSON2Arrayはj2stream().forEach(e)で作れます。
 
 JSON2NumberはJSONからの変換ではmap()で取り出せる内部型にBigInteger型またはBigDecimal型を持っています。また、JSON2NumberもNumberを継承しています。いずれもNumber型として扱えるのでIntegerなど適切な型に変換してから使います。
 
@@ -56,7 +72,7 @@ Objectはfield(内部の変数)を変換します。beanなどにも対応は予
 
 ということで、ほとんど何も気にせずJavaとJSONの変換をこなしてくれます。
 
-変換関連はnet.siissie.omap.OMAP などにまとめています。
+JSON B 相当の変換関連はnet.siissie.omap.OMAP などにまとめています。
 OMAP.valueOf(ソース,型) がJSON2Value.typeMap(型) の実体です。
 
 公開や更新したくない要素などセキュリティには注意してください。

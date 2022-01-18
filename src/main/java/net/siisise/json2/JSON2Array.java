@@ -1,5 +1,22 @@
+/*
+ * Copyright 2022 okome.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package net.siisise.json2;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -22,7 +39,7 @@ import net.siisise.omap.OMAP;
  * JsonArray,JsonArrayBuilder,JsonStructure ではない
  * @param <E> 内部で保持する型。JSONではなくていい。
  */
-public class JSON2Array<E> extends ArrayList<E> implements JSON2Collection<E>,Cloneable {
+public class JSON2Array<E> extends ArrayList<E> implements JSON2Collection<E> {
 
     /**
      * Eを参照したいので持っておく型
@@ -80,7 +97,6 @@ public class JSON2Array<E> extends ArrayList<E> implements JSON2Collection<E>,Cl
     public void addJSON(int index, JSON2Value obj) {
         E val = def == null ? obj.map() : obj.typeMap(def);
         add(index, val);
-        
     }
 
     /**
@@ -119,13 +135,22 @@ public class JSON2Array<E> extends ArrayList<E> implements JSON2Collection<E>,Cl
         return OMAP.typeList(this, type);
     }
 
+    /**
+     * forEachもここから
+     * @return 
+     */
     Stream<JSON2Value> j2Stream() {
         return parallelStream().map(JSON2::valueOf);
     }
+
+    /* まだ不要
+    void j2forEach(java.util.function.Consumer<? super JSON2Value> action) {
+        j2Stream().forEach(action);
+    } */
     
     /**
      * データを適当な型に変換して納めるので変換可能な配列ならなんでもいい。
-     * @param <T>
+     * @param <T> aと互換性があればいい
      * @param a 抽出したい型の配列 0または必要数
      * @return
      */
@@ -135,7 +160,7 @@ public class JSON2Array<E> extends ArrayList<E> implements JSON2Collection<E>,Cl
         if (def != null && contentType == def) {
             return (T[]) toArray();
         }
-        return j2Stream().map(v -> v.typeMap(contentType)).collect(Collectors.toList()).toArray(a);
+        return parallelStream().map(v -> OMAP.valueOf(v, contentType)).collect(Collectors.toList()).toArray(a);
     }
 
     /**
@@ -148,7 +173,8 @@ public class JSON2Array<E> extends ArrayList<E> implements JSON2Collection<E>,Cl
             return JsonValue.EMPTY_JSON_ARRAY;
         }
         JSONPArray ar = new JSONPArray();
-        j2Stream().map(v -> v.toJson()).forEach(ar::add);
+        parallelStream().map(v -> (JsonValue)OMAP.valueOf(v, JsonValue.class)).forEach(ar::add);
+        //j2Stream().map(v -> v.toJson()).forEach(ar::add);
         return ar;
     }
 
@@ -184,10 +210,20 @@ public class JSON2Array<E> extends ArrayList<E> implements JSON2Collection<E>,Cl
         JSON2Array<E> array = (JSON2Array<E>) super.clone();
         array.clear();
         for ( E e : this ) {
-            if ( e instanceof ArrayList ) { // JSON2Array っぽいもの
+            if ( e == null ) {
+            } else if ( e instanceof ArrayList ) { // JSON2Array っぽいもの
                 e = (E)((ArrayList)e).clone();
             } else if ( e instanceof HashMap ) { // JSON2Object っぽいもの
                 e = (E)((HashMap)e).clone();
+            } else if ( e instanceof JSON2Value || e instanceof JsonValue ) { // 複製しなくていい
+
+            } else if ( e instanceof Cloneable ) {
+                try {
+                    Method cl = e.getClass().getMethod("clone");
+                    e = (E) cl.invoke(e);
+                } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException ex) {
+//                    Logger.getLogger(JSON2Array.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
             array.add((E)e);
         }

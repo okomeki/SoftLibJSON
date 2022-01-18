@@ -3,11 +3,14 @@ package net.siisise.json.pointer;
 import net.siisise.json2.JSON2;
 import net.siisise.json2.JSON28259Reg;
 import net.siisise.json2.JSON2Array;
+import net.siisise.json2.JSON2Collection;
 import net.siisise.json2.JSON2Object;
+import net.siisise.json2.JSON2Value;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 /**
  *
@@ -131,14 +134,20 @@ public class JSONPatchTest {
         String patch = "[\r\n"
                 + "  { \"op\": \"move\", \"from\": \"/foo/waldo\", \"path\": \"/qux/thud\" }\r\n"
                 + "]";
-
+        System.out.println("src:");
+        System.out.println(obj.toString());
 //        Object string = JSON8259Reg.REG.parse("string", "\"op\"");
 //        JSONValue v1 = JSON8259Reg.REG.parse("object",pa);
         JSON2Array patchList = (JSON2Array) JSON28259Reg.parse(patch);
+        System.out.println("JSON patch:");
+        System.out.println(patchList.toString());
         JSONPatch p = new JSONPatch(patchList);
-        obj = p.apply(obj);
+        JSON2Value obj2 = p.apply(obj);
 //        JSONPatch.run(obj, patchList);
-        System.out.println("A.6...." + obj);
+        System.out.println("A.6...." + obj2.toString());
+        p = JSONPatch.diff(obj, obj2);
+        System.out.println("diff");
+        System.out.println(p.toJSON().toString());
         // TODO review the generated test code and remove the default call to fail.
         //fail("The test case is a prototype.");
     }

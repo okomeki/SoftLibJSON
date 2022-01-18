@@ -1,3 +1,18 @@
+/*
+ * Copyright 2022 okome.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package net.siisise.omap;
 
 import net.siisise.omap.target.JavaConvert;
@@ -5,6 +20,7 @@ import net.siisise.omap.target.JSON2Convert;
 import net.siisise.omap.target.JsonpConvert;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -88,6 +104,14 @@ public class OMAP {
             CONVS.put(cn.targetClass(), cn);
         }
     }
+    
+    public static Type toClass(Type type) {
+        if ( type instanceof ParameterizedType ) {
+            return ((ParameterizedType) type).getRawType();
+        }
+        // いろいろあるけど略
+        return type;
+    }
 
     /**
      * ToDo: 拡張可能にする
@@ -97,14 +121,19 @@ public class OMAP {
      */
     static MtoConvert convert(Type type) {
         MtoConvert pjc = CONVS.get(type);
-        if (pjc == null) {
-            for ( Map.Entry<Type, MtoConvert> e : CONVS.entrySet() ) {
-                Type key = e.getKey();
-                if ( key instanceof Class && type instanceof Class && key != Object.class ) { // 何もしないJavaConvertだけ除外
-                    Class<?> cnvClass = (Class<?>)key;
-                    Class<?> typeClass = (Class<?>)type;
-                    if ( cnvClass.isAssignableFrom(typeClass) ) {
-                        return e.getValue();
+        if (pjc == null ) {
+            Type rawClass = toClass(type);
+            
+            if ( rawClass instanceof Class ) {
+                CONVS.entrySet().stream().filter(e -> (e.getKey() instanceof Class));
+                for ( Map.Entry<Type, MtoConvert> e : CONVS.entrySet() ) {
+                    Type key = e.getKey();
+                    if ( key instanceof Class && key != Object.class ) { // 何もしないJavaConvertだけ除外
+                        Class<?> cnvClass = (Class<?>)key;
+                        Class<?> typeClass = (Class<?>)rawClass;
+                        if ( cnvClass.isAssignableFrom(typeClass) ) {
+                            return e.getValue();
+                        }
                     }
                 }
             }

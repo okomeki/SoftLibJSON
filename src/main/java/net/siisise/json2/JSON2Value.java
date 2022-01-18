@@ -1,3 +1,18 @@
+/*
+ * Copyright 2022 okome.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package net.siisise.json2;
 
 import java.lang.reflect.Type;
@@ -9,7 +24,7 @@ import javax.json.JsonValue;
  * JSON2Object implements Map 可変
  * JSON2Array implements List 可変
  * JSON2Number implements Number 不変
- * JSON2String 互換なし 不変
+ * JSON2String CharSequence になれない 互換なし 不変
  * JSON2Boolean 互換なし 不変
  * JSON2NULL 互換なし 不変
  *
@@ -21,6 +36,7 @@ public interface JSON2Value extends JSON2 {
     
     /**
      * JSON (JavaのString)として出力する.
+     * toJSON() の方がいいのかも
      * @return JSON文字列
      */
     @Override
@@ -50,6 +66,8 @@ public interface JSON2Value extends JSON2 {
      * 可能な限り指定型に変換する。
      * Fieldから
      * List,Map,配列,Java Object, Genericなどまで可
+     * JSON-B では fromJson 相当
+     * 
      * @param <T>
      * @param type Classの他、Fieldから取得できる型情報ParameterizedTypeに対応する
      * @return 

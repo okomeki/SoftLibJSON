@@ -1,10 +1,28 @@
+/*
+ * Copyright 2022 okome.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package net.siisise.json2;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
@@ -34,8 +52,17 @@ public class JSON2Object<V> extends LinkedHashMap<String, V> implements JSON2Col
         });
     }
 
+    /**
+     * 値をJSON2Valueで返す
+     * キーがある場合の値nullはJSON2NULL
+     * @param key
+     * @return JSON2Value または該当キーがない場合 null 
+     */
     @Override
     public JSON2Value getJSON(String key) {
+        if ( !containsKey(key)) {
+            return null;
+        }
         return JSON2.valueOf(get(key));
     }
 
@@ -56,7 +83,7 @@ public class JSON2Object<V> extends LinkedHashMap<String, V> implements JSON2Col
 
     @Override
     public JSON2Value removeJSON(String key) {
-        if (keySet().contains(key)) {
+        if (containsKey(key)) {
             return JSON2.valueOf(remove(key));
         }
         return null;
@@ -120,13 +147,30 @@ public class JSON2Object<V> extends LinkedHashMap<String, V> implements JSON2Col
         clone.clear();
         for ( Map.Entry<String, V> e : entrySet() ) {
             V v = e.getValue();
-            if ( v instanceof ArrayList ) { // JSON2Array の素
+            if ( v == null ) {
+            } else if ( v instanceof ArrayList ) { // JSON2Array の素
                 v = (V)((ArrayList)v).clone();
             } else if ( v instanceof HashMap ) { // JSON2Object の素
                 v = (V)((HashMap)v).clone();
+            } else if ( v instanceof JSON2Value || v instanceof JsonValue ) { // 複製不要
+            } else if ( v instanceof Cloneable ) {
+                try {
+                Method cl = v.getClass().getMethod("clone");
+                    v = (V) cl.invoke(v);
+                } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+//                    Logger.getLogger(JSON2Object.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
             clone.put(e.getKey(), v);
         }
         return clone;
+    }
+    
+    /**
+     * value を JSON2Valueに変換したforEach
+     * @param action 
+     */
+    void j2forEach(BiConsumer<String,? super JSON2Value> action) {
+        forEach((k,v)->{ action.accept(k, JSON2.valueOf(v));});
     }
 }

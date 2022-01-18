@@ -48,6 +48,9 @@ public class JSON2Convert extends OBJConvert<JSON2Value> {
      */
     @Override
     public JSON2Array listValue(Collection list) {
+        if ( list instanceof JSON2Array ) {
+            return (JSON2Array) list;
+        }
         return new JSON2Array(list);
     }
 
@@ -58,6 +61,9 @@ public class JSON2Convert extends OBJConvert<JSON2Value> {
      */
     @Override
     public JSON2Object mapValue(Map map) {
+        if ( map instanceof JSON2Object ) {
+            return (JSON2Object) map;
+        }
         JSON2Object obj = new JSON2Object();
         ((Map<Object,Object>)map).forEach((k,v) -> {
             obj.put(k.toString(), v);

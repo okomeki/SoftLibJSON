@@ -1,3 +1,18 @@
+/*
+ * Copyright 2022 okome.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package net.siisise.json.pointer;
 
 import java.nio.charset.MalformedInputException;
@@ -58,21 +73,17 @@ public class JSONPointer implements JsonPointer {
     }
 
     /**
-     * 追加する JsonValueは不変らしいがどうするのが正解か
+     * 追加する
      * @param <T> targetの型
      * @param target
      * @param value
-     * @return target の複製の方がいい? 
+     * @return target に valueを追加した複製 
      */
     @Override
     public <T extends JsonStructure> T add(T target, JsonValue value) {
-        ColKey<JsonStructure> vp = step(target);
-        if (vp.coll instanceof JsonArray) {
-            ((JsonArray) vp.coll).add(Integer.parseInt(vp.key), value);
-        } else if (vp.coll instanceof JsonObject) {
-            ((JsonObject) vp.coll).put(vp.key, value);
-        }
-        return target;
+        JSON2Collection t2 = (JSON2Collection) JSON2.valueOf(target);
+        add(t2,JSON2.valueOf(value));
+        return (T) t2.toJson();
     }
 
     /**
@@ -87,21 +98,15 @@ public class JSONPointer implements JsonPointer {
 
     /**
      * JSON Pointerの動作に準拠
-     * なにかちがう?
-     *
      * @param <T>
-     * @param target
+     * @param target 元
      * @return 対象が削除された target 同じかもしれないし複製かもしれないし
      */
     @Override
     public <T extends JsonStructure> T remove(T target) {
-        ColKey<JsonStructure> vp = step(target);
-        if (vp.coll instanceof JsonArray) {
-            ((JsonArray) vp.coll).remove(Integer.parseInt(vp.key));
-        } else if (vp.coll instanceof JsonObject) {
-            ((JsonObject) vp.coll).remove(vp.key);
-        }
-        return target;
+        JSON2Collection t2 = (JSON2Collection) JSON2.valueOf(target);
+        remove(t2);
+        return (T) t2.toJson();
     }
 
     /**
@@ -127,6 +132,7 @@ public class JSONPointer implements JsonPointer {
     private static class ColKey<J> {
 
         private J coll;
+        /** デコード済み */
         private String key;
     }
 
@@ -141,6 +147,10 @@ public class JSONPointer implements JsonPointer {
         return new JSONPointer(lp);
     }
 
+    /**
+     * JSON ではない
+     * @return String escaped
+     */
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(100);
@@ -192,13 +202,13 @@ public class JSONPointer implements JsonPointer {
 
     /**
      * JSON Pointer escaped のデコード
-     * @param str
+     * @param encodedPath 符号化済みpath
      * @return
      * @throws MalformedInputException 
      */
-    static String decode(String str) throws MalformedInputException {
-        StringBuilder sb = new StringBuilder(100);
-        StringBuilder src = new StringBuilder(str);
+    static String decode(String encodedPath) throws MalformedInputException {
+        StringBuilder decoded = new StringBuilder(100);
+        StringBuilder src = new StringBuilder(encodedPath);
         char c;
         while (src.length() > 0) {
             c = src.charAt(0);
@@ -217,9 +227,33 @@ public class JSONPointer implements JsonPointer {
             } else {
                 src.deleteCharAt(0);
             }
-            sb.append(c);
+            decoded.append(c);
         }
-        return sb.toString();
+        return decoded.toString();
+    }
+
+    /**
+     * エスケープ(仮)
+     * @param path ASCII文字っぽい範囲で
+     * @return 
+     */
+    static String encode(String path) {
+        StringBuilder encoded = new StringBuilder(100);
+        StringBuilder src = new StringBuilder(path);
+        
+        while (src.length() > 0) {
+            char c = src.charAt(0);
+            if (c == '~') {
+                encoded.append('~');
+                c = '0';
+            } else if (c == '/') {
+                encoded.append('~');
+                c = '1';
+            }
+            encoded.append(c);
+            src.delete(0, 1);
+        }
+        return encoded.toString();
     }
 
     /**
@@ -308,7 +342,7 @@ public class JSONPointer implements JsonPointer {
      * JSON版
      *
      * @param obj
-     * @return
+     * @return 複製しない方がいい
      */
     private ColKey<JSON2Collection> step(JSON2Collection obj) {
         JSONPointer.ValuePointer<JSON2Value> vp = step((JSON2Value) obj, true);

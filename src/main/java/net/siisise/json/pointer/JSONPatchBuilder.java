@@ -36,6 +36,12 @@ public class JSONPatchBuilder implements JsonPatchBuilder {
         patch = new JSONPatch(array);
     }
 
+    /**
+     * 
+     * @param path escaped JSON Pointer
+     * @param value
+     * @return 
+     */
     @Override
     public JsonPatchBuilder add(String path, JsonValue value) {
         JSONPatch.CmdAdd cmd = new JSONPatch.CmdAdd();
@@ -45,6 +51,12 @@ public class JSONPatchBuilder implements JsonPatchBuilder {
         return this;
     }
 
+    /**
+     * 
+     * @param path escaped JSON Pointer
+     * @param value
+     * @return 
+     */
     @Override
     public JsonPatchBuilder add(String path, String value) {
         JSONPatch.CmdAdd cmd = new JSONPatch.CmdAdd();
@@ -54,6 +66,12 @@ public class JSONPatchBuilder implements JsonPatchBuilder {
         return this;
     }
 
+    /**
+     * 
+     * @param path escaped JSON Pointer
+     * @param value
+     * @return 
+     */
     @Override
     public JsonPatchBuilder add(String path, int value) {
         JSONPatch.CmdAdd cmd = new JSONPatch.CmdAdd();
@@ -63,6 +81,12 @@ public class JSONPatchBuilder implements JsonPatchBuilder {
         return this;
     }
 
+    /**
+     * 
+     * @param path escaped JSON Pointer
+     * @param value
+     * @return 
+     */
     @Override
     public JsonPatchBuilder add(String path, boolean value) {
         JSONPatch.CmdAdd cmd = new JSONPatch.CmdAdd();
@@ -72,6 +96,11 @@ public class JSONPatchBuilder implements JsonPatchBuilder {
         return this;
     }
 
+    /**
+     * 
+     * @param path escaped JSON Pointer
+     * @return 
+     */
     @Override
     public JsonPatchBuilder remove(String path) {
         JSONPatch.CmdRemove cmd = new JSONPatch.CmdRemove();
