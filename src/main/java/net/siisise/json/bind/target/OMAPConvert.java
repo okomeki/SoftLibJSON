@@ -45,7 +45,6 @@ import net.siisise.io.BASE64;
 import net.siisise.json.jsonp.JSONPArray;
 import net.siisise.json.JSON2Array;
 import net.siisise.json.JSON2Boolean;
-import net.siisise.json.JSON2NULL;
 import net.siisise.json.JSON2Object;
 import net.siisise.json.JSON2String;
 import net.siisise.json.JSON2Value;
@@ -71,15 +70,6 @@ public class OMAPConvert<T> extends OBJConvert<T> {
 
     @Override
     public Object nullValue() {
-        Type type = OMAP.toClass(this.type);
-
-        if ( type instanceof Class ) {
-            Class cls = (Class)type;
-            if ( cls.isAssignableFrom(JSON2NULL.class)) {
-                return JSON2NULL.NULL;
-            }
-        }
-        // String Integer Boolean などもnull
         return null;
     }
 

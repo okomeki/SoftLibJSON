@@ -21,7 +21,7 @@ import net.siisise.io.FrontPacket;
 import net.siisise.io.Packet;
 import net.siisise.io.StreamFrontPacket;
 import net.siisise.json.JSON2;
-import net.siisise.json.JSON28259Reg;
+import net.siisise.json.parser.JSON8259Reg;
 import net.siisise.json.JSON2Array;
 import net.siisise.json.JSON2Number;
 import net.siisise.json.JSON2Object;
@@ -166,7 +166,7 @@ public class JSONPParser implements JsonParser {
             Packet p;
             Next nextb;
             //nexts = nexts(JSON2.parseWrap(stream));
-            if ( JSON28259Reg.value_separator.is(stream) != null ) { // JsonParserでは扱っていないので変な位置にでてこないようチェック
+            if ( JSON8259Reg.value_separator.is(stream) != null ) { // JsonParserでは扱っていないので変な位置にでてこないようチェック
                 if ( current == null || current.state == Event.START_ARRAY || current.state == Event.START_OBJECT || current.state == Event.KEY_NAME ) {
                     // エラーにするといい
                     throw new JsonParsingException("カンマな位置が", getLocation());
@@ -174,26 +174,26 @@ public class JSONPParser implements JsonParser {
                     // 読み飛ばす
                 }
             }
-            if ( JSON28259Reg.begin_array.is(stream) != null ) {
+            if ( JSON8259Reg.begin_array.is(stream) != null ) {
                 nextb = new Next(null, Event.START_ARRAY);
-            } else if ( JSON28259Reg.begin_object.is(stream) != null ) {
+            } else if ( JSON8259Reg.begin_object.is(stream) != null ) {
                 nextb = new Next(null, Event.START_OBJECT);
-            } else if ( JSON28259Reg.end_array.is(stream) != null ) {
+            } else if ( JSON8259Reg.end_array.is(stream) != null ) {
                 nextb = new Next(null, Event.END_ARRAY);
-            } else if ( JSON28259Reg.end_object.is(stream) != null ) {
+            } else if ( JSON8259Reg.end_object.is(stream) != null ) {
                 nextb = new Next(null, Event.END_OBJECT);
-            } else if ( (p = JSON28259Reg.string.pl(JSON28259Reg.name_separator).is(stream)) != null ) {
-                nextb = new Next(JSON28259Reg.parse("string", p), Event.KEY_NAME);
-            } else if ( JSON28259Reg.FALSE.is(stream) != null ) {
+            } else if ( (p = JSON8259Reg.string.pl(JSON8259Reg.name_separator).is(stream)) != null ) {
+                nextb = new Next(JSON8259Reg.parse("string", p), Event.KEY_NAME);
+            } else if ( JSON8259Reg.FALSE.is(stream) != null ) {
                 nextb = new Next(false, Event.VALUE_FALSE);
-            } else if ( JSON28259Reg.TRUE.is(stream) != null ) {
+            } else if ( JSON8259Reg.TRUE.is(stream) != null ) {
                 nextb = new Next(true, Event.VALUE_TRUE);
-            } else if ( JSON28259Reg.NULL.is(stream) != null ) {
+            } else if ( JSON8259Reg.NULL.is(stream) != null ) {
                 nextb = new Next(null, Event.VALUE_NULL);
-            } else if ( (p = JSON28259Reg.number.is(stream)) != null ) {
-                nextb = new Next(JSON28259Reg.parse("number", p), Event.VALUE_NUMBER);
-            } else if ( (p = JSON28259Reg.string.is(stream)) != null ) {
-                nextb = new Next(JSON28259Reg.parse("string", p), Event.VALUE_STRING);
+            } else if ( (p = JSON8259Reg.number.is(stream)) != null ) {
+                nextb = new Next(JSON8259Reg.parse("number", p), Event.VALUE_NUMBER);
+            } else if ( (p = JSON8259Reg.string.is(stream)) != null ) {
+                nextb = new Next(JSON8259Reg.parse("string", p), Event.VALUE_STRING);
             } else {
                 return false;
             }

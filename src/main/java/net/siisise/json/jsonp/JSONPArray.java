@@ -107,7 +107,7 @@ public class JSONPArray extends JSON2Array<JsonValue> implements JsonArray {
     }
 
     /**
-     * JSONPArray互換の形式List<JsonValue>で格納する
+     * JSONPArray互換の形式List&lt;JsonValue&gt;で格納する
      * @param <T> だいたいなんでもいけるかもしれない。
      * @return JSONP JsonArray対応型データ
      */

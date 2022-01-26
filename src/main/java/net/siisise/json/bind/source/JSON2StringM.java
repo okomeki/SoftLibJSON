@@ -17,7 +17,7 @@ public class JSON2StringM implements OMConvert {
 
     @Override
     public Object valueOf(Object obj, MtoConvert outConvert) {
-        if ( obj instanceof JsonString ) { // JSONString. JSON2String も該当
+        if ( obj instanceof JsonString ) { // JSON2String も該当
             obj = ((JsonString)obj).getString();
 //        } else if ( obj instanceof UUID ) {
 //            obj = ((UUID)obj).toString();

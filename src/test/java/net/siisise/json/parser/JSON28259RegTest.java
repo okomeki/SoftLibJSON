@@ -1,12 +1,11 @@
-package net.siisise.json;
+package net.siisise.json.parser;
 
-import net.siisise.json.JSON2Value;
-import net.siisise.json.JSON28259Reg;
-import net.siisise.json.JSON2;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import net.siisise.json.JSON2;
+import net.siisise.json.JSON2Value;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -39,8 +38,8 @@ public class JSON28259RegTest {
 
     @Test
     public void testValues() {
-        JSON28259Reg reg = new JSON28259Reg();
-        JSON28259Reg.FALSE.is("false");
+        JSON8259Reg reg = new JSON8259Reg();
+        JSON8259Reg.FALSE.is("false");
         List a = new ArrayList();
         Map<String, List> k = new HashMap<>();
         a.add("ふ\"");
@@ -85,9 +84,9 @@ public class JSON28259RegTest {
                 + "]");
         System.out.println(r);
         System.out.println((Object)r.map());
-        System.out.println("伊豆" + JSON28259Reg.REG.href("JSON-text").is("{}"));
+        System.out.println("伊豆" + JSON8259Reg.REG.href("JSON-text").is("{}"));
 //        JSON8259Reg.REG.parse("false","{}");
-        JSON28259Reg.REG.parse("value","{}");
+        JSON8259Reg.REG.parse("value","{}");
     }
 
 }

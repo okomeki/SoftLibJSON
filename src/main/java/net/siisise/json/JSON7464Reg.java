@@ -1,11 +1,12 @@
 package net.siisise.json;
 
+import net.siisise.json.parser.JSON8259Reg;
 import net.siisise.abnf.ABNF;
 import net.siisise.abnf.ABNFReg;
 
 /**
  * JavaScript Object Notation (JSON) Text Sequences.
- * @see https://tools.ietf.org/html/rfc7464
+ * https://tools.ietf.org/html/rfc7464
  */
 public class JSON7464Reg {
     
@@ -22,7 +23,7 @@ public class JSON7464Reg {
 
     // 2.2. JSON Text Sequence Encoding
     static final ABNF LF = REG.rule("LF","%x0A");
-    static final ABNF JSONtext = REG.rule("JSON-text",JSON28259Reg.JSONtext); // RFC 7159 から RFC 8259に置換
+    static final ABNF JSONtext = REG.rule("JSON-text",JSON8259Reg.JSONtext); // RFC 7159 から RFC 8259に置換
 //    static ABNF RS = REG.rule("RS","%x1E");
     static final ABNF JSONsequence = REG.rule("JSON-sequence","*(RS JSON-text LF)");
 }

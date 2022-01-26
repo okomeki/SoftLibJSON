@@ -20,11 +20,11 @@ import javax.json.JsonPatchBuilder;
 import javax.json.JsonValue;
 
 /**
- *
+ * JSON Patch の Builder っぽいもの
  */
 public class JSONPatchBuilder implements JsonPatchBuilder {
     
-    JSONPatch patch;
+    private final JSONPatch patch;
     
     public JSONPatchBuilder() {
         patch = new JSONPatch();

@@ -19,10 +19,6 @@ import java.util.HashSet;
 import java.util.Set;
 import javax.json.JsonMergePatch;
 import javax.json.JsonValue;
-import net.siisise.json.JSON2;
-import net.siisise.json.JSON2NULL;
-import net.siisise.json.JSON2Object;
-import net.siisise.json.JSON2Value;
 
 /**
  * RFC 7396 JSON Merge Patch.
@@ -33,7 +29,7 @@ import net.siisise.json.JSON2Value;
  * RFC 7159 JSON
  * RFC 5789 PATCH Method for HTTP
  * RFC 7396 JSON Merge Patch
- * @see https://tools.ietf.org/html/rfc7396
+ * https://tools.ietf.org/html/rfc7396
  */
 public class JSONMergePatch7396 implements JsonMergePatch {
     

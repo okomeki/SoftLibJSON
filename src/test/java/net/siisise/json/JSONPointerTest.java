@@ -1,9 +1,5 @@
-package net.siisise.json.pointer;
+package net.siisise.json;
 
-import net.siisise.json.JSONPointer;
-import net.siisise.json.JSON2;
-import net.siisise.json.JSON2Collection;
-import net.siisise.json.JSON2Value;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

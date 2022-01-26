@@ -5,7 +5,6 @@ import net.siisise.abnf.ABNFReg;
 import net.siisise.abnf.parser.ABNFBaseParser;
 import net.siisise.abnf.parser5234.ABNF5234;
 import net.siisise.io.FrontPacket;
-import net.siisise.json.JSON28259Reg;
 import net.siisise.json.JSON2Value;
 import net.siisise.lang.CodePoint;
 
@@ -18,15 +17,15 @@ public class JSON2CharP extends ABNFBaseParser<Integer, JSON2Value> {
         super(rule);
     }
 
-    static ABNF utf16 = JSON28259Reg.escape.pl(ABNF.bin(0x75), ABNF5234.HEXDIG.x(4, 4));
+    static ABNF utf16 = JSON8259Reg.escape.pl(ABNF.bin(0x75), ABNF5234.HEXDIG.x(4, 4));
 
     @Override
     public Integer parse(FrontPacket pac) {
-        FrontPacket p = JSON28259Reg.unescaped.is(pac);
+        FrontPacket p = JSON8259Reg.unescaped.is(pac);
         if (p != null) {
             return CodePoint.utf8(p);
         }
-        p = JSON28259Reg.escape.is(pac);
+        p = JSON8259Reg.escape.is(pac);
         if (p != null) {
             int es = pac.read();
             switch (es) {

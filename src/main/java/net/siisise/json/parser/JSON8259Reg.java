@@ -1,23 +1,15 @@
-package net.siisise.json;
+package net.siisise.json.parser;
 
 import net.siisise.abnf.ABNF;
 import net.siisise.abnf.ABNFReg;
 import net.siisise.abnf.parser5234.ABNF5234;
 import net.siisise.io.FrontPacket;
-import net.siisise.json.parser.JSON2ArrayP;
-import net.siisise.json.parser.JSON2ObjectP;
-import net.siisise.json.parser.JSON2CharP;
-import net.siisise.json.parser.JSON2MemberP;
-import net.siisise.json.parser.JSON2NumberP;
-import net.siisise.json.parser.JSON2StringP;
-import net.siisise.json.parser.JSON2ValueP;
-import net.siisise.json.parser.JSON2textParser;
 
 /**
  * RFC 8259 JSON
  *
  */
-public class JSON28259Reg {
+public class JSON8259Reg {
 
     static final ABNFReg REG = new ABNFReg(ABNF5234.BASE, ABNF5234.REG);
 

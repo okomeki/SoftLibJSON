@@ -3,6 +3,7 @@ package net.siisise.json;
 import java.util.stream.Collector;
 import net.siisise.io.FrontPacket;
 import net.siisise.json.bind.OMAP;
+import net.siisise.json.parser.JSON8259Reg;
 
 /**
  * RFC 8259
@@ -22,7 +23,7 @@ public interface JSON2 {
      * @return Number, String, Boolean, List, Map, null などかな
      */
     static Object parse(String json) {
-        return JSON28259Reg.parse(json);
+        return JSON8259Reg.parse(json);
     }
 
     /**
@@ -33,7 +34,7 @@ public interface JSON2 {
      * @return JSON2Valueな値
      */
     public static JSON2Value parseWrap(String json) {
-        return valueWrap(JSON28259Reg.parse(json));
+        return valueWrap(JSON8259Reg.parse(json));
     }
 
     /**
@@ -43,7 +44,7 @@ public interface JSON2 {
      * @return
      */
     static Object parse(byte[] json) {
-        return JSON28259Reg.parse(json);
+        return JSON8259Reg.parse(json);
     }
 
     /**
@@ -53,7 +54,7 @@ public interface JSON2 {
      * @return JSON2Valueな値
      */
     public static JSON2Value parseWrap(byte[] json) {
-        return valueWrap(JSON28259Reg.parse(json));
+        return valueWrap(JSON8259Reg.parse(json));
     }
 
     /**
@@ -63,7 +64,7 @@ public interface JSON2 {
      * @return
      */
     static Object parse(FrontPacket json) {
-        return JSON28259Reg.parse(json);
+        return JSON8259Reg.parse(json);
     }
 
     /**
@@ -73,7 +74,7 @@ public interface JSON2 {
      * @return JSON2Valueな値
      */
     public static JSON2Value parseWrap(FrontPacket json) {
-        return valueWrap(JSON28259Reg.parse(json));
+        return valueWrap(JSON8259Reg.parse(json));
     }
 
     public static final JSON2Format NOBR = new JSON2Format("","");

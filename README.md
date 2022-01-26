@@ -1,4 +1,4 @@
-# SoftLibJSON
+# SoftLibJSON for Java
 
 ABNFで RFC 8259 JSON とRFC 6901 JSON Pointer, RFC 6902 JSON Patch, RFC 7396 JSON Merge Patchを実装してみたもの
 Java API for JSON Processing (JSR-374)にも対応
@@ -18,8 +18,6 @@ Object Mappingは適度に実装 (Java API for JSON Bindingもかぶせたが互
 
 JavaのJSONP,JSONBに準拠した実装もしてみたり。
 
-実装はjsonとjson2 という名前で分かれているので主要な機能はjson2の方をつかってください。
-
 storingifyはてきとーに実装しているのでまだ。
 
 ## 使用方法
@@ -30,7 +28,7 @@ SoftLibとSoftLibABNFとSoftLibJSONが必要です。
 
 JavaとJSONの変換をするに当たって該当オブジェクトの中間型をとりあえず設けています。
 
-pakage net.siisise.json2
+pakage net.siisise.json
 
 - JSON2
 - JSON2Value : Object

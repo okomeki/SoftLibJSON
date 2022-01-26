@@ -20,7 +20,7 @@ import javax.json.bind.JsonbConfig;
 import javax.json.spi.JsonProvider;
 
 /**
- *
+ * JsonbBuilder のなんとなくの実装
  */
 public class JSONBBuilder implements JsonbBuilder {
     
@@ -35,7 +35,7 @@ public class JSONBBuilder implements JsonbBuilder {
     /**
      * JSON P はSoftLibJSON 専用なので未対応
      * @param jsonpProvider 無効
-     * @return 
+     * @return JsonbのBuilder
      */
     @Override
     public JsonbBuilder withProvider(JsonProvider jsonpProvider) {

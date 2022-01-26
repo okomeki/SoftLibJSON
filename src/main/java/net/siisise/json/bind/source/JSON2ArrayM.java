@@ -70,16 +70,6 @@ public class JSON2ArrayM implements OMConvert {
             }
         }
         if (src instanceof Collection) {
-/*
-            if ( replacer != null ) {
-                List n = new JSON2Array();
-                for ( Object o : (Collection)src) {
-                    o = replacer.replacer(null, o);
-                    n.add(o);
-                }
-                src = n;
-            }
-*/
             return outConvert.listValue((Collection) src);
         }
         return this;
