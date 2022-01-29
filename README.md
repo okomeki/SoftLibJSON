@@ -24,6 +24,15 @@ storingifyはてきとーに実装しているのでまだ。
 
 SoftLibとSoftLibABNFとSoftLibJSONが必要です。
 
+## Maven
+~~~
+<dependency>
+  <groupId>net.siisise</groupId>
+  <artifactId>softlib-json</artifaceId>
+  <version>1.1.3</version>
+  <type>jar</type>
+</dependency>
+~~~
 ## 型情報
 
 JavaとJSONの変換をするに当たって該当オブジェクトの中間型をとりあえず設けています。
