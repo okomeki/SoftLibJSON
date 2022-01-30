@@ -2,10 +2,10 @@ package net.siisise.json.parser;
 
 import net.siisise.abnf.ABNF;
 import net.siisise.abnf.ABNFReg;
-import net.siisise.abnf.parser.ABNFSelect;
+import net.siisise.bnf.parser.BNFSelect;
 import net.siisise.io.FrontPacket;
 
-public class JSON2ValueP extends ABNFSelect<Object> {
+public class JSON2ValueP extends BNFSelect<Object> {
     
     public JSON2ValueP(ABNF rule, ABNFReg base) {
         super(rule, base, "object", "array", "number", "string");

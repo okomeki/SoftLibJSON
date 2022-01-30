@@ -3,13 +3,13 @@ package net.siisise.json.parser;
 import java.util.List;
 import net.siisise.abnf.ABNF;
 import net.siisise.abnf.ABNFReg;
-import net.siisise.abnf.parser.ABNFList;
+import net.siisise.bnf.parser.BNFList;
 import net.siisise.json.JSON2Member;
 
 /**
  * object内のmember. stringとvalueの仮の組
  */
-public class JSON2MemberP extends ABNFList<JSON2Member, Object> {
+public class JSON2MemberP extends BNFList<JSON2Member, Object> {
 
     public JSON2MemberP(ABNF rule, ABNFReg base) {
         super(rule, base, "string", "value");

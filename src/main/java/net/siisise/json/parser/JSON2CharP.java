@@ -5,13 +5,12 @@ import net.siisise.abnf.ABNFReg;
 import net.siisise.abnf.parser.ABNFBaseParser;
 import net.siisise.abnf.parser5234.ABNF5234;
 import net.siisise.io.FrontPacket;
-import net.siisise.json.JSON2Value;
 import net.siisise.lang.CodePoint;
 
 /**
  * 文字解析用
  */
-public class JSON2CharP extends ABNFBaseParser<Integer, JSON2Value> {
+public class JSON2CharP extends ABNFBaseParser<Integer> {
 
     public JSON2CharP(ABNF rule, ABNFReg base) {
         super(rule);

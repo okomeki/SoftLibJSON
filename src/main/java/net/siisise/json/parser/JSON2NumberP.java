@@ -5,7 +5,8 @@ import java.math.BigInteger;
 import java.util.List;
 import net.siisise.abnf.ABNF;
 import net.siisise.abnf.ABNFReg;
-import net.siisise.abnf.parser.ABNFBuildParser;
+import net.siisise.bnf.BNF;
+import net.siisise.bnf.parser.BNFBuildParser;
 import net.siisise.io.Packet;
 
 /**
@@ -13,14 +14,14 @@ import net.siisise.io.Packet;
  * 浮動小数点型は IEEE 754
  * Java の Number 型でまとめる
  */
-public class JSON2NumberP extends ABNFBuildParser<Number, Packet> {
+public class JSON2NumberP extends BNFBuildParser<Number, Packet> {
 
     public JSON2NumberP(ABNF rule, ABNFReg base) {
         super(rule, base, "frac", "exp");
     }
 
     @Override
-    protected Number build(ABNF.C<Packet> ret) {
+    protected Number build(BNF.C<Packet> ret) {
 
         List f = ret.get("frac"); // 小数点
         List e = ret.get("exp"); // 浮動小数点

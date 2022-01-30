@@ -3,13 +3,13 @@ package net.siisise.json.parser;
 import java.util.List;
 import net.siisise.abnf.ABNF;
 import net.siisise.abnf.ABNFReg;
-import net.siisise.abnf.parser.ABNFList;
+import net.siisise.bnf.parser.BNFList;
 
 /**
  * 文字列の組み立て
  * char を codepointとして扱う
  */
-public class JSON2StringP extends ABNFList<String, Integer> {
+public class JSON2StringP extends BNFList<String, Integer> {
 
     public JSON2StringP(ABNF rule, ABNFReg base) {
         super(rule, base, "char");

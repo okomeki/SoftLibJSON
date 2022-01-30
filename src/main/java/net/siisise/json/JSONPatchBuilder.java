@@ -38,7 +38,7 @@ public class JSONPatchBuilder implements JsonPatchBuilder {
      * 
      * @param path escaped JSON Pointer
      * @param value
-     * @return 
+     * @return 追加が反映されたBuilder
      */
     @Override
     public JsonPatchBuilder add(String path, JsonValue value) {
@@ -52,8 +52,8 @@ public class JSONPatchBuilder implements JsonPatchBuilder {
     /**
      * 
      * @param path escaped JSON Pointer
-     * @param value
-     * @return 
+     * @param value 文字列として扱う
+     * @return 追加が反映されたBuilder
      */
     @Override
     public JsonPatchBuilder add(String path, String value) {
@@ -67,8 +67,8 @@ public class JSONPatchBuilder implements JsonPatchBuilder {
     /**
      * 
      * @param path escaped JSON Pointer
-     * @param value
-     * @return 
+     * @param value 追加するint数値
+     * @return 追加が反映されたBuilder
      */
     @Override
     public JsonPatchBuilder add(String path, int value) {
@@ -82,8 +82,8 @@ public class JSONPatchBuilder implements JsonPatchBuilder {
     /**
      * 
      * @param path escaped JSON Pointer
-     * @param value
-     * @return 
+     * @param value 追加するboolean値
+     * @return 追加が反映されたBuilder
      */
     @Override
     public JsonPatchBuilder add(String path, boolean value) {
@@ -97,7 +97,7 @@ public class JSONPatchBuilder implements JsonPatchBuilder {
     /**
      * 
      * @param path escaped JSON Pointer
-     * @return 
+     * @return 反映されたBuilder
      */
     @Override
     public JsonPatchBuilder remove(String path) {
