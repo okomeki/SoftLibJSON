@@ -14,7 +14,7 @@ import net.siisise.json.bind.OMAP;
 /**
  * List,Mapは表面をJSON2系にラップするだけと、中もprimitive系に更新するのと2種類想定するかもしれない
  */
-public class JSON2Convert extends OBJConvert<JSON2Value> {
+public class JSONConvert extends OBJConvert<JSON2Value> {
 
     @Override
     public Class<JSON2Value> targetClass() {

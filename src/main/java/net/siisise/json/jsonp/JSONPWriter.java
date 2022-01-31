@@ -25,7 +25,7 @@ public class JSONPWriter implements JsonWriter {
     @Override
     public void writeArray(JsonArray array) {
         try {
-            writer.write(JSON2.valueOf(array).toString());
+            writer.write(JSON2.valueOf(array).toJSON());
             writer.flush();
         } catch (IOException ex) {
             Logger.getLogger(JSONPWriter.class.getName()).log(Level.SEVERE, null, ex);
@@ -36,7 +36,7 @@ public class JSONPWriter implements JsonWriter {
     @Override
     public void writeObject(JsonObject object) {
         try {
-            writer.write(JSON2.valueOf(object).toString());
+            writer.write(JSON2.valueOf(object).toJSON());
             writer.flush();
         } catch (IOException ex) {
             Logger.getLogger(JSONPWriter.class.getName()).log(Level.SEVERE, null, ex);
@@ -47,7 +47,7 @@ public class JSONPWriter implements JsonWriter {
     @Override
     public void write(JsonStructure value) {
         try {
-            writer.write(JSON2.valueOf(value).toString());
+            writer.write(JSON2.valueOf(value).toJSON());
             writer.flush();
         } catch (IOException ex) {
             Logger.getLogger(JSONPWriter.class.getName()).log(Level.SEVERE, null, ex);
@@ -58,7 +58,7 @@ public class JSONPWriter implements JsonWriter {
     @Override
     public void write(JsonValue value) {
         try {
-            writer.write(JSON2.valueOf(value).toString());
+            writer.write(JSON2.valueOf(value).toJSON());
             writer.flush();
         } catch (IOException ex) {
             Logger.getLogger(JSONPWriter.class.getName()).log(Level.SEVERE, null, ex);

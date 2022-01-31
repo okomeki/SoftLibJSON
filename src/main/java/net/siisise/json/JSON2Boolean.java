@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 okome.
+ * Copyright 2022 Siisise Net
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,8 @@ import javax.json.JsonValue;
 import net.siisise.json.bind.OMAP;
 
 /**
- *
+ * JSON boolean.
+ * JSON Pに定義があるので近いところにあわせておく。
  */
 public class JSON2Boolean implements JSON2Value,JsonValue {
     
@@ -49,11 +50,16 @@ public class JSON2Boolean implements JSON2Value,JsonValue {
     
     @Override
     public String toString() {
+        return toJSON();
+    }
+    
+    @Override
+    public String toJSON() {
         return Boolean.toString(bool);
     }
     
     @Override
-    public String toString(JSON2Format format) {
+    public String toJSON(JSON2Format format) {
         return Boolean.toString(bool);
     }
 

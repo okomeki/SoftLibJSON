@@ -161,7 +161,7 @@ public class JSONPointer implements JsonPointer {
     }
     
     public String toJSON() {
-        return JSON2.valueOf(toString()).toString();
+        return JSON2.valueOf(toString()).toJSON();
     }
 
     public String[] toDecodeString() {

@@ -10,9 +10,9 @@ import net.siisise.json.JSON2Object;
 /**
  * JSON Objectの組み立て
  */
-public class JSON2ObjectP extends BNFList<JSON2Object, JSON2Member> {
+public class JSONObjectP extends BNFList<JSON2Object, JSON2Member> {
 
-    public JSON2ObjectP(ABNF rule, ABNFReg base) {
+    public JSONObjectP(ABNF rule, ABNFReg base) {
         super(rule, base, "member");
     }
 

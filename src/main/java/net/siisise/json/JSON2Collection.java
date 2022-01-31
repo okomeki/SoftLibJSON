@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 okome.
+ * Copyright 2022 Siisise Net
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 package net.siisise.json;
 
 /**
- * Collection (List),Mapを統合したような操作をJSON Pointerでできるような感じのもの
+ * Collection (List),Mapを統合したような操作をJSON Pointerでできるような感じのもの。
  * Arrayではindexは文字列に変換して代用。挿入、削除すると配置は変わる。
  * @param <T> データ型
  */

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 okome.
+ * Copyright 2022 Siisise Net
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import net.siisise.json.jsonp.JSONPObject;
 import net.siisise.json.bind.OMAP;
 
 /**
+ * JSON Object.
  * JavaではMapに相当する中間型。
  * typeMapによりObjectとも対応する。
  * JsonValue以外の型でも持てるのでJSONPに適さない
@@ -125,14 +126,19 @@ public class JSON2Object<V> extends LinkedHashMap<String, V> implements JSON2Col
 
     @Override
     public String toString() {
-        return toString(NOBR);
+        return toJSON(NOBR);
+    }
+    
+    @Override
+    public String toJSON() {
+        return toJSON(NOBR);
     }
 
     @Override
-    public String toString(JSON2Format format) {
+    public String toJSON(JSON2Format format) {
         return keySet().stream().map(key -> {
-            return format.crlf + format.tab + new JSON2String(key).toString(format) + ":"
-                    + tab(getJSON(key).toString(format));
+            return format.crlf + format.tab + new JSON2String(key).toJSON(format) + ":"
+                    + tab(getJSON(key).toJSON(format));
         }).collect(Collectors.joining(",", "{", format.crlf + "}"));
     }
 

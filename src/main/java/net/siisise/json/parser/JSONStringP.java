@@ -9,9 +9,9 @@ import net.siisise.bnf.parser.BNFList;
  * 文字列の組み立て
  * char を codepointとして扱う
  */
-public class JSON2StringP extends BNFList<String, Integer> {
+public class JSONStringP extends BNFList<String, Integer> {
 
-    public JSON2StringP(ABNF rule, ABNFReg base) {
+    public JSONStringP(ABNF rule, ABNFReg base) {
         super(rule, base, "char");
     }
     

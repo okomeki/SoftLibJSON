@@ -215,9 +215,17 @@ public class JSONPParser implements JsonParser {
         return current.state;
     }
 
+    /**
+     * 
+     * @return 
+     */
     @Override
     public String getString() {
-        return current.json.toString();
+        if ( current.state == Event.KEY_NAME || current.state == Event.VALUE_STRING || current.state == Event.VALUE_NUMBER ) {
+            return current.json.toString();
+        } else {
+            throw new IllegalStateException();
+        }
     }
 
     @Override
@@ -234,7 +242,7 @@ public class JSONPParser implements JsonParser {
             return ((Number)current.json).intValue();
         }
         throw new IllegalStateException();
-//        return Integer.parseInt(current.json.toString());
+//        return Integer.parseInt(current.json.toJSON());
     }
 
     @Override
@@ -243,7 +251,7 @@ public class JSONPParser implements JsonParser {
             return ((Number)current.json).longValue();
         }
         throw new IllegalStateException();
-//        return Long.parseLong(current.json.toString());
+//        return Long.parseLong(current.json.toJSON());
     }
 
     @Override
@@ -252,7 +260,7 @@ public class JSONPParser implements JsonParser {
             return new JSON2Number((Number)current.json).bigDecimalValue();
         }
         throw new IllegalStateException();
-//        return new BigDecimal(current.json.toString());
+//        return new BigDecimal(current.json.toJSON());
     }
 
     @Override

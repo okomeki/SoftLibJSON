@@ -2,17 +2,17 @@ package net.siisise.json.parser;
 
 import net.siisise.abnf.ABNF;
 import net.siisise.abnf.ABNFReg;
-import net.siisise.abnf.parser.ABNFBaseParser;
 import net.siisise.abnf.parser5234.ABNF5234;
+import net.siisise.bnf.parser.BNFBaseParser;
 import net.siisise.io.FrontPacket;
 import net.siisise.lang.CodePoint;
 
 /**
  * 文字解析用
  */
-public class JSON2CharP extends ABNFBaseParser<Integer> {
+public class JSONCharP extends BNFBaseParser<Integer> {
 
-    public JSON2CharP(ABNF rule, ABNFReg base) {
+    public JSONCharP(ABNF rule, ABNFReg base) {
         super(rule);
     }
 

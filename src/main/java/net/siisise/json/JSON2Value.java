@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 okome.
+ * Copyright 2022 Siisise Net
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,27 +20,37 @@ import javax.json.JsonValue;
 
 /**
  * 要素的なJSON。
- * 
- * JSON2Object implements Map 可変
- * JSON2Array implements List 可変
- * JSON2Number implements Number 不変
- * JSON2String CharSequence になれない 互換なし 不変
- * JSON2Boolean 互換なし 不変
- * JSON2NULL 互換なし 不変
- *
- * toString() をJSON出力にすること
- * JSON2ObjectとJSON2ArrayはMapとListとして内容の変更が可能
- * JSON2を継承する必要はなくなったのでどこかで外す。
+ 
+ JSON2Object implements Map 可変
+ JSON2Array implements List 可変
+ JSON2Number implements Number 不変
+ JSON2String CharSequence になれない 互換なし 不変
+ JSON2Boolean 互換なし 不変
+ JSON2NULL 互換なし 不変
+
+ toJSON() をJSON出力にすること
+ JSON2ObjectとJSON2ArrayはMapとListとして内容の変更が可能
+ JSON2を継承する必要はなくなったのでどこかで外す。
  */
-public interface JSON2Value extends JSON2 {
+public interface JSON2Value {
     
     /**
      * JSON (JavaのString)として出力する.
-     * toJSON() の方がいいのかも
+     * 主な用途はデータ交換なので改行などは省略したい。
+     * 改行などつけたい場合はJSON2Formatをつける
+     * JsonValue系がtoJson() を利用するのと分けておく
      * @return JSON文字列
+     */
+    String toJSON();
+    
+    /**
+     * JSONではなくていいのでプリミティブ型に近い文字列として
+     * 特に指定の書式がなければJSONとして出力する
+     * @return 文字表現
      */
     @Override
     String toString();
+    
 
     public static final JSON2Format NOBR = new JSON2Format("","");
     public static final JSON2Format TAB = new JSON2Format("\r\n","  ");
@@ -51,7 +61,7 @@ public interface JSON2Value extends JSON2 {
      * @param format
      * @return
      */
-    String toString(JSON2Format format);
+    String toJSON(JSON2Format format);
 
     /**
      * 固定のJava寄りの型に変換する。

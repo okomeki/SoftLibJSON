@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 okome.
+ * Copyright 2022 Siisise Net
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -179,14 +179,18 @@ public class JSON2Array<E> extends ArrayList<E> implements JSON2Collection<E> {
     }
 
     @Override
+    public String toJSON() {
+        return toJSON(NOBR);
+    }
+    
     public String toString() {
-        return toString(NOBR);
+        return toJSON();
     }
 
     @Override
-    public String toString(JSON2Format format) {
+    public String toJSON(JSON2Format format) {
         return j2Stream().map(val -> 
-            format.crlf + format.tab + tab(val.toString(format)))
+            format.crlf + format.tab + tab(val.toJSON(format)))
                 .collect( Collectors.joining(",", "[", format.crlf +  "]"));
     }
 

@@ -9,7 +9,7 @@ import net.siisise.json.bind.OMConvert;
 /**
  *
  */
-public class JSON2ObjectM implements OMConvert {
+public class JSONObjectM implements OMConvert {
 
     @Override
     public Class[] getSrcClasses() {

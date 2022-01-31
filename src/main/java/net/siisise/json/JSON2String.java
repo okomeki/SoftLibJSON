@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 okome.
+ * Copyright 2022 Siisise Net
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package net.siisise.json;
 
 import java.lang.reflect.Type;
+import java.util.stream.IntStream;
 import javax.json.JsonString;
 import javax.json.JsonValue;
 import net.siisise.abnf.AbstractABNF;
@@ -24,9 +25,9 @@ import net.siisise.lang.CodePoint;
 import net.siisise.json.bind.OMAP;
 
 /**
- *
+ * JSON String.
  */
-public class JSON2String implements JSON2Value,JsonString {
+public class JSON2String implements JSON2Value,JsonString,CharSequence {
     
     private final String value;
 
@@ -58,11 +59,16 @@ public class JSON2String implements JSON2Value,JsonString {
     
     @Override
     public String toString() {
-        return toString(NOBR);
+        return value;
     }
 
     @Override
-    public String toString(JSON2Format format) {
+    public String toJSON() {
+        return toJSON(NOBR);
+    }
+
+    @Override
+    public String toJSON(JSON2Format format) {
         return "\"" + esc(value) + "\"";
     }
     
@@ -151,11 +157,23 @@ public class JSON2String implements JSON2Value,JsonString {
         return value.length();
     }
 
+    @Override
     public char charAt(int index) {
         return value.charAt(index);
     }
 
+    @Override
     public CharSequence subSequence(int start, int end) {
         return value.subSequence(start, end);
+    }
+    
+    @Override
+    public IntStream chars() {
+        return value.chars();
+    }
+    
+    @Override
+    public IntStream codePoints() {
+        return value.codePoints();
     }
 }

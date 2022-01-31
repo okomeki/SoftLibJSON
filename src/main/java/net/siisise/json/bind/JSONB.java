@@ -102,18 +102,18 @@ public class JSONB implements Jsonb {
 
     @Override
     public String toJson(Object object) throws JsonbException {
-        return OMAP.valueOf(object, JSON2Value.class).toString();
+        return ((JSON2Value)OMAP.valueOf(object, JSON2Value.class)).toJSON();
     }
 
     @Override
     public String toJson(Object object, Type runtimeType) throws JsonbException {
-        return OMAP.valueOf(object, JSON2Value.class).toString();
+        return ((JSON2Value)OMAP.valueOf(object, JSON2Value.class)).toJSON();
     }
 
     @Override
     public void toJson(Object object, Writer writer) throws JsonbException {
         try {
-            writer.write(JSON2.valueOf(object).toString());
+            writer.write(toJson(object));
             writer.flush();
             writers.add(writer);
         } catch (IOException ex) {
@@ -124,7 +124,7 @@ public class JSONB implements Jsonb {
     @Override
     public void toJson(Object object, Type runtimeType, Writer writer) throws JsonbException {
         try {
-            writer.write(JSON2.valueOf(object).toString());
+            writer.write(toJson(object));
             writer.flush();
             writers.add(writer);
         } catch (IOException ex) {
@@ -135,7 +135,7 @@ public class JSONB implements Jsonb {
     @Override
     public void toJson(Object object, OutputStream stream) throws JsonbException {
         try {
-            stream.write(JSON2.valueOf(object).toString().getBytes(StandardCharsets.UTF_8));
+            stream.write(toJson(object).getBytes(StandardCharsets.UTF_8));
             stream.flush();
             outs.add(stream);
         } catch (IOException ex) {
@@ -146,7 +146,7 @@ public class JSONB implements Jsonb {
     @Override
     public void toJson(Object object, Type runtimeType, OutputStream stream) throws JsonbException {
         try {
-            stream.write(JSON2.valueOf(object).toString().getBytes(StandardCharsets.UTF_8));
+            stream.write(toJson(object).getBytes(StandardCharsets.UTF_8));
             stream.flush();
             outs.add(stream);
         } catch (IOException ex) {

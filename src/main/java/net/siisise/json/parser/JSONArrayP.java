@@ -10,9 +10,9 @@ import net.siisise.json.JSON2Array;
  * JSON2Array の組み立て.
  * abnfでJSON のvalueを抽出して格納するだけ.
  */
-public class JSON2ArrayP extends BNFList<JSON2Array, Object> {
+public class JSONArrayP extends BNFList<JSON2Array, Object> {
     
-    public JSON2ArrayP(ABNF rule, ABNFReg base) {
+    public JSONArrayP(ABNF rule, ABNFReg base) {
         super(rule, base, "value");
     }
 

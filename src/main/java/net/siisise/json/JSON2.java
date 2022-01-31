@@ -1,3 +1,18 @@
+/*
+ * Copyright 2022 Siisise Net
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package net.siisise.json;
 
 import java.util.stream.Collector;
@@ -6,20 +21,21 @@ import net.siisise.json.bind.OMAP;
 import net.siisise.json.parser.JSON8259Reg;
 
 /**
- * RFC 8259
- * 中間形式をListとMap対応にして実質なくした版
- * JSON文字列 toString()
- * JSON2Object valueOf()
- * List/Mapプリミティブ列 map()
- * JavaObjectマップ typeMap()
- * JSONP toJson()
+ * JSONの操作盤.
+ * <a href="https://datatracker.ietf.org/doc/html/rfc8259">RFC 8259 The JavaScript Object Notation (JSON) Data Interchange Format</a>
+ 中間形式をListとMap対応にして実質なくした版
+ JSON文字列 toJSON()
+ JSON2Object valueOf()
+ List/Mapプリミティブ列 map()
+ JavaObjectマップ typeMap()
+ JSONP toJson()
  */
 public interface JSON2 {
 
     /**
      * JSON文字列からObjectにパースする.
      * Number, String, Boolean, List, Map, null なんかで返る。
-     * @param json
+     * @param json json stream
      * @return Number, String, Boolean, List, Map, null などかな
      */
     static Object parse(String json) {
@@ -40,8 +56,8 @@ public interface JSON2 {
     /**
      * JSONデータ列からObjectにパースする
      *
-     * @param json
-     * @return
+     * @param json json stream
+     * @return Java Objects
      */
     static Object parse(byte[] json) {
         return JSON8259Reg.parse(json);
@@ -50,7 +66,7 @@ public interface JSON2 {
     /**
      * JSONっぽくくるんで返す。
      * 中身はJavaっぽくなっているのかも。
-     * @param json
+     * @param json json stream
      * @return JSON2Valueな値
      */
     public static JSON2Value parseWrap(byte[] json) {
@@ -60,8 +76,8 @@ public interface JSON2 {
     /**
      * JSONデータ列からObjectにパースする
      *
-     * @param json
-     * @return
+     * @param json json stream
+     * @return java objects
      */
     static Object parse(FrontPacket json) {
         return JSON8259Reg.parse(json);
@@ -70,7 +86,7 @@ public interface JSON2 {
     /**
      * JSONっぽくくるんで返す。
      * 中身はJavaっぽくなっているのかも。
-     * @param json
+     * @param json json stream
      * @return JSON2Valueな値
      */
     public static JSON2Value parseWrap(FrontPacket json) {

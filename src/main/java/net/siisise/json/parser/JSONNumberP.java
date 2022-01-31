@@ -14,9 +14,9 @@ import net.siisise.io.Packet;
  * 浮動小数点型は IEEE 754
  * Java の Number 型でまとめる
  */
-public class JSON2NumberP extends BNFBuildParser<Number, Packet> {
+public class JSONNumberP extends BNFBuildParser<Number, Packet> {
 
-    public JSON2NumberP(ABNF rule, ABNFReg base) {
+    public JSONNumberP(ABNF rule, ABNFReg base) {
         super(rule, base, "frac", "exp");
     }
 

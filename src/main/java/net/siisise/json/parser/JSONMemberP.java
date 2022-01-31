@@ -9,9 +9,9 @@ import net.siisise.json.JSON2Member;
 /**
  * object内のmember. stringとvalueの仮の組
  */
-public class JSON2MemberP extends BNFList<JSON2Member, Object> {
+public class JSONMemberP extends BNFList<JSON2Member, Object> {
 
-    public JSON2MemberP(ABNF rule, ABNFReg base) {
+    public JSONMemberP(ABNF rule, ABNFReg base) {
         super(rule, base, "string", "value");
     }
 

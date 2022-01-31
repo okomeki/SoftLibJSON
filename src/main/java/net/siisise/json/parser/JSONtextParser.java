@@ -7,9 +7,9 @@ import net.siisise.bnf.parser.BNFSelect;
 /**
  *
  */
-public class JSON2textParser extends BNFSelect<Object> {
+public class JSONtextParser extends BNFSelect<Object> {
     
-    public JSON2textParser(ABNF rule, ABNFReg base) {
+    public JSONtextParser(ABNF rule, ABNFReg base) {
         super(rule, base, "value");
     }
 }

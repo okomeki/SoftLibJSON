@@ -16,7 +16,7 @@
 package net.siisise.json.bind;
 
 import net.siisise.json.bind.target.JavaConvert;
-import net.siisise.json.bind.target.JSON2Convert;
+import net.siisise.json.bind.target.JSONConvert;
 import net.siisise.json.bind.target.JsonpConvert;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -34,11 +34,11 @@ import net.siisise.json.map.JSONDateM;
 import net.siisise.json.map.JSONUUIDM;
 import net.siisise.json.JSON2;
 import net.siisise.json.JSON2Value;
-import net.siisise.json.bind.source.JSON2ArrayM;
-import net.siisise.json.bind.source.JSON2NumberM;
-import net.siisise.json.bind.source.JSON2ObjectM;
-import net.siisise.json.bind.source.JSON2StringM;
-import net.siisise.json.bind.source.JSON2ValueM;
+import net.siisise.json.bind.source.JSONArrayM;
+import net.siisise.json.bind.source.JSONNumberM;
+import net.siisise.json.bind.source.JSONObjectM;
+import net.siisise.json.bind.source.JSONStringM;
+import net.siisise.json.bind.source.JSONValueM;
 import net.siisise.json.bind.target.DateConvert;
 import net.siisise.json.bind.target.JsonValueTypeConvert;
 import net.siisise.json.bind.target.OMAPConvert;
@@ -49,8 +49,8 @@ import net.siisise.json.bind.target.StringConvert;
  * PoJoとか言われているらしいもの?
  * REST準拠なデータを持つList(JSONArrayだったもの), Map(JSONObjectだったもの) から各種変換をする便利機能。
  *
- * ToDo: JSON2Stringなどで Stringがデータのみの場合と書式込みの場合をどうにかして分ける
- *
+ * ToDo: JSON2Stringなどで Stringがデータのみの場合と書式込みの場合をどうにかして分ける。
+ * JSON 以外でも対応しているのでパッケージ位置は仮
  */
 public class OMAP {
 
@@ -58,13 +58,13 @@ public class OMAP {
      * 中間 Java/JSON型振り分け
      */
     static final OMConvert[] OMDS = {
-        new JSON2ValueM(),
-        new JSON2NumberM(),
+        new JSONValueM(),
+        new JSONNumberM(),
         new JSONUUIDM(),
         new JSONDateM(),
-        new JSON2StringM(),
-        new JSON2ArrayM(),
-        new JSON2ObjectM()
+        new JSONStringM(),
+        new JSONArrayM(),
+        new JSONObjectM()
     };
 
     /**
@@ -73,7 +73,7 @@ public class OMAP {
     static final MtoConvert[] OUTTYPES = {
         new JsonpConvert(),
         new JsonValueTypeConvert(),
-        new JSON2Convert(),
+        new JSONConvert(),
         new DateConvert(), // 別にしたい
         new StringConvert(),
         new JavaConvert() // なにもしない
@@ -97,7 +97,7 @@ public class OMAP {
             }
         }
         List<OMConvert> nulls = new ArrayList();
-        nulls.add(new JSON2ValueM());
+        nulls.add(new JSONValueM());
         OMMAP.put(null, nulls);
 
         for (MtoConvert cn : OUTTYPES) {
@@ -175,7 +175,7 @@ public class OMAP {
                 return val;
             }
         }
-        // JSON2ObjectM で必ず何か返す
+        // JSONObjectM で必ず何か返す
         throw new UnsupportedOperationException();
     }
 
@@ -272,7 +272,7 @@ public class OMAP {
         } catch (NoSuchMethodException ex) {
             // 特にないので標準の変換へ
         } catch (SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
-            Logger.getLogger(JSON2Convert.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(JSONConvert.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
     }

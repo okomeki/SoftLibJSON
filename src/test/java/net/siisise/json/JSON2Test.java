@@ -26,7 +26,7 @@ public class JSON2Test {
         Map obj = new HashMap();
         String abc = "[1,2,{\"a\":\"b\",\"c\":5}]";
         
-        System.out.println(JSON2.parseWrap(abc).toString(JSON2Value.NOBR));
+        System.out.println(JSON2.parseWrap(abc).toJSON(JSON2Value.NOBR));
         
         List o = (JSON2Array) JSON2.parse(abc);
         for ( Object v : o ) {

@@ -44,7 +44,7 @@ public class JSON28259RegTest {
         Map<String, List> k = new HashMap<>();
         a.add("ふ\"");
         k.put("ni", a);
-        String js = JSON2.valueOf(k).toString();
+        String js = JSON2.valueOf(k).toJSON();
         System.out.println(js);
 
         System.out.println(js);

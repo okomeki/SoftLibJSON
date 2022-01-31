@@ -83,7 +83,7 @@ public abstract class OBJConvert<T> implements MtoConvert<T> {
                 objmap = null;
         }
 //        if ( objmap.isEmpty() ) { // 仮
-//            return stringValue(obj.toString());
+//            return stringValue(obj.toJSON());
 //        }
 
         return mapValue(objmap);

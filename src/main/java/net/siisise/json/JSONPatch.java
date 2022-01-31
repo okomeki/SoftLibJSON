@@ -116,7 +116,7 @@ public class JSONPatch implements JsonPatch {
         @Override
         public <T extends JSON2Collection> T apply(T target) {
             JSON2Value v = from.get(target);
-            v = JSON2.parseWrap(v.toString());
+            v = JSON2.copy(v);
             from.remove(target);
             path.add(target, v);
             return target;
@@ -133,7 +133,7 @@ public class JSONPatch implements JsonPatch {
         @Override
         public <T extends JSON2Collection> T apply(T target) {
             JSON2Value v = from.get(target);
-            v = JSON2.parseWrap(v.toString());
+            v = JSON2.copy(v);
             path.add(target, v);
             return target;
         }
@@ -368,7 +368,7 @@ public class JSONPatch implements JsonPatch {
         JSON2Array src = source.clone();
 
         for (int t = 0; t < target.size(); t++) {
-//            System.out.println("S:" + src.toString() + " T:" + target.toString());
+//            System.out.println("S:" + src.toJSON() + " T:" + target.toJSON());
 //            System.out.println(t);
             Object newVal = target.get(t);
             // 変換先データの数

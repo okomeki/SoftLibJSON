@@ -29,7 +29,7 @@ import net.siisise.json.bind.OMConvert;
  * Array and List
  * 配列とリスト
  */
-public class JSON2ArrayM implements OMConvert {
+public class JSONArrayM implements OMConvert {
 
     @Override
     public Class[] getSrcClasses() {

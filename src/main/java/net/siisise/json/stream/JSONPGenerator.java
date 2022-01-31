@@ -75,7 +75,7 @@ public class JSONPGenerator implements JsonGenerator {
     public JsonGenerator writeKey(String name) {
         try {
             JSON2String jname = new JSON2String(name);
-            tab(jname.toString());
+            tab(jname.toJSON());
             out.write(": ");
             return this;
         } catch (IOException ex) {
@@ -119,7 +119,7 @@ public class JSONPGenerator implements JsonGenerator {
         try {
             writeSeparator();
             writeKey(name);
-            tab(value.toString(format));
+            tab(value.toJSON(format));
         } catch (IOException ex) {
             Logger.getLogger(JSONPGenerator.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -221,7 +221,7 @@ public class JSONPGenerator implements JsonGenerator {
 
     void write(JSON2Value value) {
         try {
-            tab(value.toString(format));
+            tab(value.toJSON(format));
         } catch (IOException ex) {
             Logger.getLogger(JSONPGenerator.class.getName()).log(Level.SEVERE, null, ex);
             throw new UnsupportedOperationException();

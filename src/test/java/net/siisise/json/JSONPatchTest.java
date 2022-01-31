@@ -57,12 +57,12 @@ public class JSONPatchTest {
         JSON2Value ex = JSON2.parseWrap("{\"foo\":\"bar\",\"baz\":\"qux\"}");
         JSONPatch p = new JSONPatch(patchList);
         JSON2Value val = p.apply(obj);
-        System.out.println("src: " + obj.toString());
-        System.out.println("diff: " + patchList.toString());
-        System.out.println("result: "  + val.toString());
+        System.out.println("src: " + obj.toJSON());
+        System.out.println("diff: " + patchList.toJSON());
+        System.out.println("result: "  + val.toJSON());
         assertEquals(val,ex);
         JSONPatch diff = JSONPatch.diff(obj, val);
-        System.out.println("A.1.diff " + diff.toJSON().toString());
+        System.out.println("A.1.diff " + diff.toJSON().toJSON());
     }
 
     @org.junit.jupiter.api.Test
@@ -75,11 +75,11 @@ public class JSONPatchTest {
         JSONPatch p = new JSONPatch(patchList);
         JSON2Value val = p.apply(obj);
         System.out.println("src: " + obj);
-        System.out.println("diff: " + patchList.toString());
+        System.out.println("diff: " + patchList.toJSON());
         System.out.println("result: " + val);
         assertEquals(val,ex);
         JSONPatch diff = JSONPatch.diff(obj, val);
-        System.out.println("A.2.diff " + diff.toJSON().toString());
+        System.out.println("A.2.diff " + diff.toJSON().toJSON());
     }
 
     @org.junit.jupiter.api.Test
@@ -92,11 +92,11 @@ public class JSONPatchTest {
         JSONPatch p = new JSONPatch(patchList);
         JSON2Value val = p.apply(obj);
         System.out.println("src: " + obj);
-        System.out.println("diff: " + patchList.toString());
+        System.out.println("diff: " + patchList.toJSON());
         System.out.println("result: " + val);
         assertEquals(val,ex);
         JSONPatch diff = JSONPatch.diff(obj, val);
-        System.out.println("A.3.diff " + diff.toJSON().toString());
+        System.out.println("A.3.diff " + diff.toJSON().toJSON());
     }
 
     @org.junit.jupiter.api.Test
@@ -108,11 +108,11 @@ public class JSONPatchTest {
         JSONPatch p = new JSONPatch(patchList);
         JSON2Value val = p.apply(obj);
         System.out.println("src: " + obj);
-        System.out.println("diff: " + patchList.toString());
+        System.out.println("diff: " + patchList.toJSON());
         System.out.println("result: " + val);
         assertEquals(val,ex);
         JSONPatch diff = JSONPatch.diff(obj, val);
-        System.out.println("A.4.diff " + diff.toJSON().toString());
+        System.out.println("A.4.diff " + diff.toJSON().toJSON());
     }
 
     @org.junit.jupiter.api.Test
@@ -124,11 +124,11 @@ public class JSONPatchTest {
         JSONPatch p = new JSONPatch(patchList);
         JSON2Value val = p.apply(obj);
         System.out.println("src: " + obj);
-        System.out.println("diff: " + patchList.toString());
+        System.out.println("diff: " + patchList.toJSON());
         System.out.println("result: " + val);
         assertEquals(val,ex);
         JSONPatch diff = JSONPatch.diff(obj, val);
-        System.out.println("A.5.diff " + diff.toJSON().toString());
+        System.out.println("A.5.diff " + diff.toJSON().toJSON());
     }
 
     @org.junit.jupiter.api.Test
@@ -152,10 +152,10 @@ public class JSONPatchTest {
         JSONPatch p = new JSONPatch(patchList);
         JSON2Value val = p.apply(obj);
         System.out.println("src: " + obj);
-        System.out.println("diff: " + patchList.toString());
+        System.out.println("diff: " + patchList.toJSON());
         System.out.println("result: " + val);
         assertEquals(val,ex);
         JSONPatch diff = JSONPatch.diff(obj, val);
-        System.out.println("A.6.diff " + diff.toJSON().toString());
+        System.out.println("A.6.diff " + diff.toJSON().toJSON());
     }
 }
