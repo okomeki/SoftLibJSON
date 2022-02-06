@@ -27,13 +27,13 @@ import javax.json.JsonObject;
 import javax.json.stream.JsonParser;
 import net.siisise.json.stream.JSONPParserFactory;
 import net.siisise.json.stream.JSONPParser;
-import net.siisise.json.JSON2;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
+import net.siisise.json.JSON;
 
 /**
  *
@@ -122,7 +122,7 @@ public class JSONPParserFactoryTest {
     public void testCreateParser_JsonObject() {
         System.out.println("createParser");
         
-        JsonObject jobj = (JsonObject) JSON2.parseWrap("{\"aa\": 123}").toJson();
+        JsonObject jobj = (JsonObject) JSON.parseWrap("{\"aa\": 123}").toJson();
         JSONPParserFactory instance = new JSONPParserFactory();
         JsonParser result = instance.createParser(jobj);
         assertNotNull(result);
@@ -149,7 +149,7 @@ public class JSONPParserFactoryTest {
     @Test
     public void testCreateParser_JsonArray() {
         System.out.println("createParser");
-        JsonArray jsonarray = (JsonArray) JSON2.parseWrap("[\"aa\", 123]").toJson();
+        JsonArray jsonarray = (JsonArray) JSON.parseWrap("[\"aa\", 123]").toJson();
         JSONPParserFactory instance = new JSONPParserFactory();
         JsonParser result = instance.createParser(jsonarray);
         assertNotNull(result);

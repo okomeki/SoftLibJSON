@@ -2,43 +2,43 @@ package net.siisise.json.bind.target;
 
 import java.util.Collection;
 import java.util.Map;
-import net.siisise.json.JSON2Array;
-import net.siisise.json.JSON2Boolean;
-import net.siisise.json.JSON2NULL;
-import net.siisise.json.JSON2Number;
-import net.siisise.json.JSON2Object;
-import net.siisise.json.JSON2String;
-import net.siisise.json.JSON2Value;
+import net.siisise.json.JSONArray;
+import net.siisise.json.JSONBoolean;
+import net.siisise.json.JSONNULL;
+import net.siisise.json.JSONNumber;
+import net.siisise.json.JSONObject;
+import net.siisise.json.JSONString;
 import net.siisise.json.bind.OMAP;
+import net.siisise.json.JSONValue;
 
 /**
  * List,Mapは表面をJSON2系にラップするだけと、中もprimitive系に更新するのと2種類想定するかもしれない
  */
-public class JSONConvert extends OBJConvert<JSON2Value> {
+public class JSONConvert extends OBJConvert<JSONValue> {
 
     @Override
-    public Class<JSON2Value> targetClass() {
-        return JSON2Value.class;
+    public Class<JSONValue> targetClass() {
+        return JSONValue.class;
     }
 
     @Override
-    public JSON2NULL nullValue() {
-        return JSON2NULL.NULL;
+    public JSONNULL nullValue() {
+        return JSONNULL.NULL;
     }
 
     @Override
-    public JSON2Boolean booleanValue(Boolean bool) {
-        return bool ? JSON2Boolean.TRUE : JSON2Boolean.FALSE;
+    public JSONBoolean booleanValue(Boolean bool) {
+        return bool ? JSONBoolean.TRUE : JSONBoolean.FALSE;
     }
 
     @Override
-    public JSON2Number numberValue(Number num) {
-        return new JSON2Number(num);
+    public JSONNumber numberValue(Number num) {
+        return new JSONNumber(num);
     }
 
     @Override
-    public JSON2String stringValue(CharSequence str) {
-        return new JSON2String(str);
+    public JSONString stringValue(CharSequence str) {
+        return new JSONString(str);
     }
 
     /**
@@ -47,11 +47,11 @@ public class JSONConvert extends OBJConvert<JSON2Value> {
      * @return 
      */
     @Override
-    public JSON2Array listValue(Collection list) {
-        if ( list instanceof JSON2Array ) {
-            return (JSON2Array) list;
+    public JSONArray listValue(Collection list) {
+        if ( list instanceof JSONArray ) {
+            return (JSONArray) list;
         }
-        return new JSON2Array(list);
+        return new JSONArray(list);
     }
 
     /**
@@ -60,11 +60,11 @@ public class JSONConvert extends OBJConvert<JSON2Value> {
      * @return 
      */
     @Override
-    public JSON2Object mapValue(Map map) {
-        if ( map instanceof JSON2Object ) {
-            return (JSON2Object) map;
+    public JSONObject mapValue(Map map) {
+        if ( map instanceof JSONObject ) {
+            return (JSONObject) map;
         }
-        JSON2Object obj = new JSON2Object();
+        JSONObject obj = new JSONObject();
         ((Map<Object,Object>)map).forEach((k,v) -> {
             obj.put(k.toString(), v);
         });
@@ -77,9 +77,9 @@ public class JSONConvert extends OBJConvert<JSON2Value> {
      * @return 
      */
     @Override
-    public JSON2Value objectValue(Object obj) {
+    public JSONValue objectValue(Object obj) {
         // toJSON メソッドで変換
-        JSON2Value json = OMAP.toJSON(obj);
+        JSONValue json = OMAP.toJSON(obj);
         if ( json != null ) {
             return json;
         }

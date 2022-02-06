@@ -66,8 +66,8 @@ public class JSONPointerTest {
     public void testOther() {
         int[] a = {1, 2, 3};
         int[][] b = {a};
-        JSON2Collection val = (JSON2Collection) JSON2.valueOf(b);
-        JSON2Value t = new JSONPointer("/0/2").get(val);
+        JSONCollection val = (JSONCollection) JSON.valueOf(b);
+        JSONValue t = new JSONPointer("/0/2").get(val);
         System.out.println(t);
     }
     

@@ -3,7 +3,7 @@ package net.siisise.json.bind.source;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import javax.json.JsonNumber;
-import net.siisise.json.JSON2Number;
+import net.siisise.json.JSONNumber;
 import net.siisise.json.bind.MtoConvert;
 import net.siisise.json.bind.OMConvert;
 
@@ -14,7 +14,7 @@ public class JSONNumberM implements OMConvert {
 
     @Override
     public Class[] getSrcClasses() {
-        return new Class[]{JsonNumber.class, JSON2Number.class, Number.class, Integer.class, Long.class, Float.class, Short.class, BigInteger.class, Double.class, BigDecimal.class};
+        return new Class[]{JsonNumber.class, JSONNumber.class, Number.class, Integer.class, Long.class, Float.class, Short.class, BigInteger.class, Double.class, BigDecimal.class};
     }
 
     @Override

@@ -9,7 +9,7 @@ import javax.json.JsonReader;
 import javax.json.JsonStructure;
 import javax.json.JsonValue;
 import net.siisise.io.FrontPacket;
-import net.siisise.json.JSON2;
+import net.siisise.json.JSON;
 
 /**
  * リーダー
@@ -24,22 +24,22 @@ public class JSONPReader implements JsonReader {
 
     @Override
     public JsonStructure read() {
-        return (JsonStructure) JSON2.parseWrap(fp).toJson();
+        return (JsonStructure) JSON.parseWrap(fp).toJson();
     }
 
     @Override
     public JsonValue readValue() {
-        return JSON2.parseWrap(fp).toJson();
+        return JSON.parseWrap(fp).toJson();
     }
 
     @Override
     public JsonObject readObject() {
-        return (JsonObject) JSON2.parseWrap(fp).toJson();
+        return (JsonObject) JSON.parseWrap(fp).toJson();
     }
 
     @Override
     public JsonArray readArray() {
-        return (JsonArray) JSON2.parseWrap(fp).toJson();
+        return (JsonArray) JSON.parseWrap(fp).toJson();
     }
 
     @Override

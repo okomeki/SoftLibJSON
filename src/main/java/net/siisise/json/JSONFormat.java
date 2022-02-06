@@ -15,13 +15,22 @@
  */
 package net.siisise.json;
 
-public class JSON2Member {
-    public final String key;
-    public final Object value;
+/**
+ * 改行をなんとかするだけ。
+ * JSON2Value#toString(JSON2Format) で使う
+ */
+public class JSONFormat {
     
-    public JSON2Member(String key, Object val) {
-        this.key = key;
-        this.value = val;
+    public final String crlf;
+    public final String tab;
+
+    /**
+     * 改行やタブを入れるか省略するか決める要素
+     * @param crlf 改行コードに相当する部分
+     * @param tab タブに相当する部分
+     */
+    JSONFormat(String crlf, String tab) {
+        this.crlf = crlf;
+        this.tab = tab;
     }
-    
 }

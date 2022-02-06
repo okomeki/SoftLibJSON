@@ -30,7 +30,7 @@ import net.siisise.json.parser.JSON8259Reg;
  JavaObjectマップ typeMap()
  JSONP toJson()
  */
-public interface JSON2 {
+public interface JSON {
 
     /**
      * JSON文字列からObjectにパースする.
@@ -49,7 +49,7 @@ public interface JSON2 {
      * @param json
      * @return JSON2Valueな値
      */
-    public static JSON2Value parseWrap(String json) {
+    public static JSONValue parseWrap(String json) {
         return valueWrap(JSON8259Reg.parse(json));
     }
 
@@ -69,7 +69,7 @@ public interface JSON2 {
      * @param json json stream
      * @return JSON2Valueな値
      */
-    public static JSON2Value parseWrap(byte[] json) {
+    public static JSONValue parseWrap(byte[] json) {
         return valueWrap(JSON8259Reg.parse(json));
     }
 
@@ -89,12 +89,12 @@ public interface JSON2 {
      * @param json json stream
      * @return JSON2Valueな値
      */
-    public static JSON2Value parseWrap(FrontPacket json) {
+    public static JSONValue parseWrap(FrontPacket json) {
         return valueWrap(JSON8259Reg.parse(json));
     }
 
-    public static final JSON2Format NOBR = new JSON2Format("","");
-    public static final JSON2Format TAB = new JSON2Format("\r\n","  ");
+    public static final JSONFormat NOBR = new JSONFormat("","");
+    public static final JSONFormat TAB = new JSONFormat("\r\n","  ");
 
     /**
      * JSON中間型(風) Listまたは Map型で返す。
@@ -113,8 +113,8 @@ public interface JSON2 {
      * @param src
      * @return JSON2Valueな値
      */
-    public static JSON2Value valueOf(Object src) {
-        return OMAP.valueOf(src, JSON2Value.class);
+    public static JSONValue valueOf(Object src) {
+        return OMAP.valueOf(src, JSONValue.class);
     }
 
     /**
@@ -122,17 +122,17 @@ public interface JSON2 {
      * @param val
      * @return 
      */
-    static JSON2Value valueWrap(Object val) {
+    static JSONValue valueWrap(Object val) {
         if (val == null) {
-            return JSON2NULL.NULL;
-        } else if (val instanceof JSON2Value) {
-            return (JSON2Value) val;
+            return JSONNULL.NULL;
+        } else if (val instanceof JSONValue) {
+            return (JSONValue) val;
         } else if (val instanceof Boolean) {
-            return (Boolean) val ? JSON2Boolean.TRUE : JSON2Boolean.FALSE;
+            return (Boolean) val ? JSONBoolean.TRUE : JSONBoolean.FALSE;
         } else if (val instanceof Number) {
-            return new JSON2Number((Number) val);
+            return new JSONNumber((Number) val);
         } else if (val instanceof CharSequence) {
-            return new JSON2String((CharSequence) val);
+            return new JSONString((CharSequence) val);
         }
         throw new UnsupportedOperationException("未" + val.getClass().getName());
     }
@@ -143,10 +143,10 @@ public interface JSON2 {
      * @param <T>
      * @return
      */
-    public static <T> Collector<T, ?, JSON2Array> toJSON2Array() {
+    public static <T> Collector<T, ?, JSONArray> toJSON2Array() {
         return Collector.of(
-                JSON2Array::new,
-                JSON2Array::add,
+                JSONArray::new,
+                JSONArray::add,
                 (ls, vals) -> {
                     ls.addAll(vals);
                     return ls;
@@ -161,10 +161,10 @@ public interface JSON2 {
      * @param <T>
      * @return
      */
-    public static <T> Collector<T, ?, JSON2Array> toJSON2PrimArray() {
+    public static <T> Collector<T, ?, JSONArray> toJSON2PrimArray() {
         return Collector.of(
-                JSON2Array::new,
-                JSON2Array::addValue,
+                JSONArray::new,
+                JSONArray::addValue,
                 (ls, vals) -> {
                     vals.forEach(ls::addValue);
                     return ls;
@@ -178,11 +178,11 @@ public interface JSON2 {
      * @param v 元
      * @return 複製
      */
-    public static JSON2Value copy(JSON2Value v) {
-        if ( v instanceof JSON2Array ) {
-            return ((JSON2Array) v).clone();
-        } else if ( v instanceof JSON2Object ) {
-            return ((JSON2Object) v).clone();
+    public static JSONValue copy(JSONValue v) {
+        if ( v instanceof JSONArray ) {
+            return ((JSONArray) v).clone();
+        } else if ( v instanceof JSONObject ) {
+            return ((JSONObject) v).clone();
         }
         return v;
     }

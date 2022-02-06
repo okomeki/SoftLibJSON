@@ -1,25 +1,25 @@
 package net.siisise.json.parser;
 
 import java.util.List;
-import net.siisise.abnf.ABNF;
-import net.siisise.abnf.ABNFReg;
+import net.siisise.bnf.BNF;
+import net.siisise.bnf.BNFReg;
 import net.siisise.bnf.parser.BNFList;
-import net.siisise.json.JSON2Member;
+import net.siisise.json.JSONMember;
 
 /**
  * object内のmember. stringとvalueの仮の組
  */
-public class JSONMemberP extends BNFList<JSON2Member, Object> {
+public class JSONMemberP extends BNFList<JSONMember, Object> {
 
-    public JSONMemberP(ABNF rule, ABNFReg base) {
+    public JSONMemberP(BNF rule, BNFReg base) {
         super(rule, base, "string", "value");
     }
 
     @Override
-    protected JSON2Member build(List<Object> val) {
+    protected JSONMember build(List<Object> val) {
         String str = (String) val.get(0);
         Object value = val.get(1);
-        return new JSON2Member(str, value);
+        return new JSONMember(str, value);
     }
 
 }

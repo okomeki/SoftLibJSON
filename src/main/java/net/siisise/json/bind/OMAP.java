@@ -32,8 +32,6 @@ import java.util.logging.Logger;
 import javax.json.JsonValue;
 import net.siisise.json.map.JSONDateM;
 import net.siisise.json.map.JSONUUIDM;
-import net.siisise.json.JSON2;
-import net.siisise.json.JSON2Value;
 import net.siisise.json.bind.source.JSONArrayM;
 import net.siisise.json.bind.source.JSONNumberM;
 import net.siisise.json.bind.source.JSONObjectM;
@@ -43,6 +41,8 @@ import net.siisise.json.bind.target.DateConvert;
 import net.siisise.json.bind.target.JsonValueTypeConvert;
 import net.siisise.json.bind.target.OMAPConvert;
 import net.siisise.json.bind.target.StringConvert;
+import net.siisise.json.JSON;
+import net.siisise.json.JSONValue;
 
 /**
  * JSON-B相当のObject Mapping。
@@ -258,17 +258,17 @@ public class OMAP {
      * @param obj null不可
      * @return 
      */
-    public static JSON2Value toJSON(Object obj) {
+    public static JSONValue toJSON(Object obj) {
         Class<? extends Object> cls = obj.getClass();
         try {
             Method toj = cls.getMethod("toJSON");
             Class retType = toj.getReturnType();
-            if ( JSON2Value.class.isAssignableFrom(retType) ) {
-                return ((JSON2Value)toj.invoke(obj));
+            if ( JSONValue.class.isAssignableFrom(retType) ) {
+                return ((JSONValue)toj.invoke(obj));
             } else if ( JsonValue.class.isAssignableFrom(retType) ) {
-                return JSON2.valueOf((JsonValue)toj.invoke(obj));
+                return JSON.valueOf((JsonValue)toj.invoke(obj));
             }
-            return JSON2.parseWrap((String) toj.invoke(obj));
+            return JSON.parseWrap((String) toj.invoke(obj));
         } catch (NoSuchMethodException ex) {
             // 特にないので標準の変換へ
         } catch (SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {

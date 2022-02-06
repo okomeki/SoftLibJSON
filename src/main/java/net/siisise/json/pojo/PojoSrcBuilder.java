@@ -1,13 +1,13 @@
 package net.siisise.json.pojo;
 
 import java.util.Set;
-import net.siisise.json.JSON2Array;
-import net.siisise.json.JSON2Boolean;
-import net.siisise.json.JSON2NULL;
-import net.siisise.json.JSON2Number;
-import net.siisise.json.JSON2Object;
-import net.siisise.json.JSON2String;
-import net.siisise.json.JSON2Value;
+import net.siisise.json.JSONArray;
+import net.siisise.json.JSONBoolean;
+import net.siisise.json.JSONNULL;
+import net.siisise.json.JSONNumber;
+import net.siisise.json.JSONObject;
+import net.siisise.json.JSONString;
+import net.siisise.json.JSONValue;
 
 /**
  * そういうのもあるといいのかもしれず 仮
@@ -23,7 +23,7 @@ public class PojoSrcBuilder {
 
     }
 
-    public String createSrc(JSON2Object json) {
+    public String createSrc(JSONObject json) {
         StringBuilder sb = new StringBuilder();
 
         sb.append("public class ");
@@ -40,18 +40,18 @@ public class PojoSrcBuilder {
         return sb.toString();
     }
 
-    String typeTo(String name, JSON2Value obj) {
-        if (obj instanceof JSON2Boolean) {
+    String typeTo(String name, JSONValue obj) {
+        if (obj instanceof JSONBoolean) {
             return "boolean " + name;
-        } else if (obj instanceof JSON2Array) {
+        } else if (obj instanceof JSONArray) {
             return "List<" + toListClassName(name) + "> " + name + "";
-        } else if (obj instanceof JSON2Object) {
+        } else if (obj instanceof JSONObject) {
             return toClassName(name) + " " + name;
-        } else if (obj instanceof JSON2String) {
+        } else if (obj instanceof JSONString) {
             return "String " + name;
-        } else if (obj instanceof JSON2Number) {
+        } else if (obj instanceof JSONNumber) {
             return "Number " + name;
-        } else if (obj instanceof JSON2NULL) {
+        } else if (obj instanceof JSONNULL) {
             return "Object " + name;
         }
         throw new UnsupportedOperationException("未定義型");

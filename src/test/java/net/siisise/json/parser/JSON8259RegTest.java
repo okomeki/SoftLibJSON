@@ -4,20 +4,20 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import net.siisise.json.JSON2;
-import net.siisise.json.JSON2Value;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import net.siisise.json.JSON;
+import net.siisise.json.JSONValue;
 
 /**
  *
  */
-public class JSON28259RegTest {
+public class JSON8259RegTest {
 
-    public JSON28259RegTest() {
+    public JSON8259RegTest() {
     }
 
     @BeforeAll
@@ -44,25 +44,25 @@ public class JSON28259RegTest {
         Map<String, List> k = new HashMap<>();
         a.add("ふ\"");
         k.put("ni", a);
-        String js = JSON2.valueOf(k).toJSON();
+        String js = JSON.valueOf(k).toJSON();
         System.out.println(js);
 
         System.out.println(js);
-        JSON2Value r = JSON2.parseWrap(js);
+        JSONValue r = JSON.parseWrap(js);
         System.out.println(r);
 
-        System.out.println(JSON2.valueOf(null));
-        System.out.println(JSON2.valueOf(true));
-        System.out.println(JSON2.valueOf(false));
-        System.out.println(JSON2.valueOf(10));
-        System.out.println(JSON2.valueOf("abc"));
+        System.out.println(JSON.valueOf(null));
+        System.out.println(JSON.valueOf(true));
+        System.out.println(JSON.valueOf(false));
+        System.out.println(JSON.valueOf(10));
+        System.out.println(JSON.valueOf("abc"));
         String[] s = new String[]{"a", "b", "c"};
-        System.out.println(JSON2.valueOf(s));
+        System.out.println(JSON.valueOf(s));
         int[] n = new int[]{1, 2, 3};
-        System.out.println(JSON2.valueOf(n));
+        System.out.println(JSON.valueOf(n));
         int[][] d = new int[][]{n, n};
-        System.out.println(JSON2.valueOf(d));
-        r = JSON2.parseWrap("[\r\n"
+        System.out.println(JSON.valueOf(d));
+        r = JSON.parseWrap("[\r\n"
                 + "  {\r\n"
                 + "    \"name\": \"Taro\",\r\n"
                 + "    \"age\": 30,\r\n"

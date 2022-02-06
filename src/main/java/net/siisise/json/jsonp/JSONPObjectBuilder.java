@@ -6,8 +6,8 @@ import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonValue;
-import net.siisise.json.JSON2Number;
-import net.siisise.json.JSON2String;
+import net.siisise.json.JSONNumber;
+import net.siisise.json.JSONString;
 
 /**
  * びるだー
@@ -33,37 +33,37 @@ public class JSONPObjectBuilder implements JsonObjectBuilder {
 
     @Override
     public JsonObjectBuilder add(String name, String value) {
-        obj.put(name, new JSON2String(value));
+        obj.put(name, new JSONString(value));
         return this;
     }
 
     @Override
     public JsonObjectBuilder add(String name, BigInteger value) {
-        obj.put(name, new JSON2Number(value));
+        obj.put(name, new JSONNumber(value));
         return this;
     }
 
     @Override
     public JsonObjectBuilder add(String name, BigDecimal value) {
-        obj.put(name, new JSON2Number(value));
+        obj.put(name, new JSONNumber(value));
         return this;
     }
 
     @Override
     public JsonObjectBuilder add(String name, int value) {
-        obj.put(name, new JSON2Number(value));
+        obj.put(name, new JSONNumber(value));
         return this;
     }
 
     @Override
     public JsonObjectBuilder add(String name, long value) {
-        obj.put(name, new JSON2Number(value));
+        obj.put(name, new JSONNumber(value));
         return this;
     }
 
     @Override
     public JsonObjectBuilder add(String name, double value) {
-        obj.put(name, new JSON2Number(value));
+        obj.put(name, new JSONNumber(value));
         return this;
     }
 

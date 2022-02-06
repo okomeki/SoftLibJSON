@@ -32,7 +32,7 @@ import javax.json.JsonValue;
  JSON2ObjectとJSON2ArrayはMapとListとして内容の変更が可能
  JSON2を継承する必要はなくなったのでどこかで外す。
  */
-public interface JSON2Value {
+public interface JSONValue {
     
     /**
      * JSON (JavaのString)として出力する.
@@ -52,8 +52,8 @@ public interface JSON2Value {
     String toString();
     
 
-    public static final JSON2Format NOBR = new JSON2Format("","");
-    public static final JSON2Format TAB = new JSON2Format("\r\n","  ");
+    public static final JSONFormat NOBR = new JSONFormat("","");
+    public static final JSONFormat TAB = new JSONFormat("\r\n","  ");
 
     /**
      * 書式を指定してJSONとして出力する.
@@ -61,7 +61,7 @@ public interface JSON2Value {
      * @param format
      * @return
      */
-    String toJSON(JSON2Format format);
+    String toJSON(JSONFormat format);
 
     /**
      * 固定のJava寄りの型に変換する。

@@ -7,11 +7,11 @@ import javax.json.JsonNumber;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
 import net.siisise.json.jsonp.JSONPArray;
-import net.siisise.json.JSON2Number;
-import net.siisise.json.JSON2Object;
-import net.siisise.json.JSON2String;
-import net.siisise.json.JSON2Value;
+import net.siisise.json.JSONNumber;
+import net.siisise.json.JSONObject;
+import net.siisise.json.JSONString;
 import net.siisise.json.bind.OMAP;
+import net.siisise.json.JSONValue;
 
 /**
  *
@@ -35,12 +35,12 @@ public class JsonpConvert extends OBJConvert<JsonValue> {
 
     @Override
     public JsonNumber numberValue(Number number) {
-        return new JSON2Number(number);
+        return new JSONNumber(number);
     }
 
     @Override
     public JsonValue stringValue(CharSequence str) {
-        return new JSON2String(str);
+        return new JSONString(str);
     }
 
     @Override
@@ -56,7 +56,7 @@ public class JsonpConvert extends OBJConvert<JsonValue> {
         if ( map.isEmpty() ) {
             return JsonValue.EMPTY_JSON_OBJECT;
         }
-        return (JsonObject) new JSON2Object(map).toJson();
+        return (JsonObject) new JSONObject(map).toJson();
     }
 
     /**
@@ -67,7 +67,7 @@ public class JsonpConvert extends OBJConvert<JsonValue> {
     @Override
     public JsonValue objectValue(Object obj) {
         // toJSON メソッドで変換
-        JSON2Value json = OMAP.toJSON(obj);
+        JSONValue json = OMAP.toJSON(obj);
         if ( json != null ) {
             return json.toJson();
         }

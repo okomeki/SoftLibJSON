@@ -20,12 +20,12 @@ import javax.json.stream.JsonParsingException;
 import net.siisise.io.FrontPacket;
 import net.siisise.io.Packet;
 import net.siisise.io.StreamFrontPacket;
-import net.siisise.json.JSON2;
 import net.siisise.json.parser.JSON8259Reg;
-import net.siisise.json.JSON2Array;
-import net.siisise.json.JSON2Number;
-import net.siisise.json.JSON2Object;
+import net.siisise.json.JSONArray;
+import net.siisise.json.JSONNumber;
+import net.siisise.json.JSONObject;
 import net.siisise.json.bind.OMAP;
+import net.siisise.json.JSON;
 
 /**
  * ABNF Parserを使っているのでこちらは軽く実装.
@@ -64,7 +64,7 @@ public class JSONPParser implements JsonParser {
      * @return 
      */
     static List<Next> nexts(Object src) {
-        Object obj = JSON2.valueMap(src);
+        Object obj = JSON.valueMap(src);
         List<Next> nexts = new ArrayList<>();
         if ( obj == null ) {
             nexts.add(new Next(obj, Event.VALUE_NULL));
@@ -124,7 +124,7 @@ public class JSONPParser implements JsonParser {
      * @return 
      */
     private Map parseObject() {
-        JSON2Object obj = new JSON2Object();
+        JSONObject obj = new JSONObject();
         next();
         while ( current.state != Event.END_OBJECT ) {
             if ( current.state == Event.KEY_NAME ) {
@@ -145,7 +145,7 @@ public class JSONPParser implements JsonParser {
      * @return 
      */
     private List parseArray() {
-        JSON2Array obj = new JSON2Array();
+        JSONArray obj = new JSONArray();
         next();
         while ( current.state != Event.END_ARRAY ) {
             Object val = parseValue();
@@ -165,7 +165,7 @@ public class JSONPParser implements JsonParser {
         if (nexts.isEmpty() && stream != null && stream.size() > 0) {
             Packet p;
             Next nextb;
-            //nexts = nexts(JSON2.parseWrap(stream));
+            //nexts = nexts(JSON.parseWrap(stream));
             if ( JSON8259Reg.value_separator.is(stream) != null ) { // JsonParserでは扱っていないので変な位置にでてこないようチェック
                 if ( current == null || current.state == Event.START_ARRAY || current.state == Event.START_OBJECT || current.state == Event.KEY_NAME ) {
                     // エラーにするといい
@@ -231,7 +231,7 @@ public class JSONPParser implements JsonParser {
     @Override
     public boolean isIntegralNumber() {
         if ( current.json instanceof Number ) {
-            return new JSON2Number((Number)current.json).isIntegral();
+            return new JSONNumber((Number)current.json).isIntegral();
         }
         return false;
     }
@@ -257,7 +257,7 @@ public class JSONPParser implements JsonParser {
     @Override
     public BigDecimal getBigDecimal() {
         if ( current.state == Event.VALUE_NUMBER ) {
-            return new JSON2Number((Number)current.json).bigDecimalValue();
+            return new JSONNumber((Number)current.json).bigDecimalValue();
         }
         throw new IllegalStateException();
 //        return new BigDecimal(current.json.toJSON());

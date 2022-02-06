@@ -29,11 +29,11 @@ import net.siisise.json.bind.OMAP;
  * データ型は特定のものを想定していないのでいろいろ。
  * これもNumver型になれるので多重ラップしないよう注意。
  */
-public class JSON2Number extends Number implements JSON2Value,JsonNumber {
+public class JSONNumber extends Number implements JSONValue,JsonNumber {
     
     private final Number number;
     
-    public JSON2Number(Number num) {
+    public JSONNumber(Number num) {
         number = num;
     }
 
@@ -74,7 +74,7 @@ public class JSON2Number extends Number implements JSON2Value,JsonNumber {
     
     @Override
     public String toString() {
-        return toJSON();
+        return number.toString();
     }
     
     @Override
@@ -83,7 +83,7 @@ public class JSON2Number extends Number implements JSON2Value,JsonNumber {
     }
 
     @Override
-    public String toJSON(JSON2Format format) {
+    public String toJSON(JSONFormat format) {
         return toJSON();
     }
 
@@ -135,8 +135,8 @@ public class JSON2Number extends Number implements JSON2Value,JsonNumber {
     
     @Override
     public boolean equals(Object o) {
-        if ( o instanceof JSON2Number ) {
-            return toJSON().equals(((JSON2Value)o).toJSON());
+        if ( o instanceof JSONNumber ) {
+            return toJSON().equals(((JSONValue)o).toJSON());
         } else if ( o instanceof Number ) {
             return number.equals(o);
         }

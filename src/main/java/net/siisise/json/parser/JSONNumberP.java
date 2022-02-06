@@ -3,9 +3,8 @@ package net.siisise.json.parser;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.List;
-import net.siisise.abnf.ABNF;
-import net.siisise.abnf.ABNFReg;
 import net.siisise.bnf.BNF;
+import net.siisise.bnf.BNFReg;
 import net.siisise.bnf.parser.BNFBuildParser;
 import net.siisise.io.Packet;
 
@@ -16,7 +15,7 @@ import net.siisise.io.Packet;
  */
 public class JSONNumberP extends BNFBuildParser<Number, Packet> {
 
-    public JSONNumberP(ABNF rule, ABNFReg base) {
+    public JSONNumberP(BNF rule, BNFReg base) {
         super(rule, base, "frac", "exp");
     }
 

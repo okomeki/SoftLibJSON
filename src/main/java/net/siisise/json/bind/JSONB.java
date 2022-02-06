@@ -28,8 +28,8 @@ import javax.json.bind.JsonbConfig;
 import javax.json.bind.JsonbException;
 import net.siisise.io.FrontPacket;
 import net.siisise.io.StreamFrontPacket;
-import net.siisise.json.JSON2;
-import net.siisise.json.JSON2Value;
+import net.siisise.json.JSON;
+import net.siisise.json.JSONValue;
 
 /**
  * OMAPの該当機能を割り当てるだけ
@@ -54,7 +54,7 @@ public class JSONB implements Jsonb {
     
     @Override
     public <T> T fromJson(String str, Class<T> type) throws JsonbException {
-        Object json = JSON2.parse(str);
+        Object json = JSON.parse(str);
         return OMAP.valueOf(json, type);
     }
 
@@ -63,14 +63,14 @@ public class JSONB implements Jsonb {
      */
     @Override
     public <T> T fromJson(String str, Type runtimeType) throws JsonbException {
-        Object json = JSON2.parse(str);
+        Object json = JSON.parse(str);
         return OMAP.valueOf(json, runtimeType);
     }
 
     @Override
     public <T> T fromJson(Reader reader, Class<T> type) throws JsonbException {
         FrontPacket fp = new StreamFrontPacket(reader);
-        Object json = JSON2.parse(fp);
+        Object json = JSON.parse(fp);
         readers.add(reader);
         return OMAP.valueOf(json, type);
         
@@ -79,7 +79,7 @@ public class JSONB implements Jsonb {
     @Override
     public <T> T fromJson(Reader reader, Type runtimeType) throws JsonbException {
         FrontPacket fp = new StreamFrontPacket(reader);
-        Object json = JSON2.parse(fp);
+        Object json = JSON.parse(fp);
         readers.add(reader);
         return OMAP.valueOf(json, runtimeType);
     }
@@ -87,7 +87,7 @@ public class JSONB implements Jsonb {
     @Override
     public <T> T fromJson(InputStream stream, Class<T> type) throws JsonbException {
         FrontPacket fp = new StreamFrontPacket(stream);
-        Object json = JSON2.parse(fp);
+        Object json = JSON.parse(fp);
         ins.add(stream);
         return OMAP.valueOf(json, type);
     }
@@ -95,19 +95,19 @@ public class JSONB implements Jsonb {
     @Override
     public <T> T fromJson(InputStream stream, Type runtimeType) throws JsonbException {
         FrontPacket fp = new StreamFrontPacket(stream);
-        Object json = JSON2.parse(fp);
+        Object json = JSON.parse(fp);
         ins.add(stream);
         return OMAP.valueOf(json, runtimeType);
     }
 
     @Override
     public String toJson(Object object) throws JsonbException {
-        return ((JSON2Value)OMAP.valueOf(object, JSON2Value.class)).toJSON();
+        return ((JSONValue)OMAP.valueOf(object, JSONValue.class)).toJSON();
     }
 
     @Override
     public String toJson(Object object, Type runtimeType) throws JsonbException {
-        return ((JSON2Value)OMAP.valueOf(object, JSON2Value.class)).toJSON();
+        return ((JSONValue)OMAP.valueOf(object, JSONValue.class)).toJSON();
     }
 
     @Override

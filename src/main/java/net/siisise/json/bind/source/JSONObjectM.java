@@ -2,7 +2,7 @@ package net.siisise.json.bind.source;
 
 import java.util.HashMap;
 import java.util.Map;
-import net.siisise.json.JSON2Object;
+import net.siisise.json.JSONObject;
 import net.siisise.json.bind.MtoConvert;
 import net.siisise.json.bind.OMConvert;
 
@@ -13,7 +13,7 @@ public class JSONObjectM implements OMConvert {
 
     @Override
     public Class[] getSrcClasses() {
-        return new Class[]{JSON2Object.class, HashMap.class, Object.class};
+        return new Class[]{JSONObject.class, HashMap.class, Object.class};
     }
 
     /**

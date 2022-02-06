@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.siisise.io.BASE64;
-import net.siisise.json.JSON2Array;
+import net.siisise.json.JSONArray;
 import net.siisise.json.bind.MtoConvert;
 
 public abstract class OBJConvert<T> implements MtoConvert<T> {
@@ -44,7 +44,7 @@ public abstract class OBJConvert<T> implements MtoConvert<T> {
             } else if ( cpType == Character.TYPE ) {
                 return stringValue(new String((char[])array));
             }
-            JSON2Array cnv = new JSON2Array();
+            JSONArray cnv = new JSONArray();
             int len = Array.getLength(array);
             for ( int i = 0; i < len; i++ ) {
                 cnv.add(Array.get(array,i));

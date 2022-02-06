@@ -43,12 +43,12 @@ import javax.json.JsonObject;
 import javax.json.JsonValue;
 import net.siisise.io.BASE64;
 import net.siisise.json.jsonp.JSONPArray;
-import net.siisise.json.JSON2Array;
-import net.siisise.json.JSON2Boolean;
-import net.siisise.json.JSON2Object;
-import net.siisise.json.JSON2String;
-import net.siisise.json.JSON2Value;
+import net.siisise.json.JSONArray;
+import net.siisise.json.JSONBoolean;
+import net.siisise.json.JSONObject;
+import net.siisise.json.JSONString;
 import net.siisise.json.bind.OMAP;
+import net.siisise.json.JSONValue;
 
 /**
  * String Integer, 継承関係型 JSON2NULL など継承、未解決型への変換.
@@ -81,8 +81,8 @@ public class OMAPConvert<T> extends OBJConvert<T> {
                 return (Boolean)bool;
             } else if ( cls == String.class || cls == CharSequence.class ) {
                 return Boolean.toString(bool);
-            } else if ( cls.isAssignableFrom(JSON2Boolean.class) ) {
-                return (bool ? JSON2Boolean.TRUE : JSON2Boolean.FALSE);
+            } else if ( cls.isAssignableFrom(JSONBoolean.class) ) {
+                return (bool ? JSONBoolean.TRUE : JSONBoolean.FALSE);
             } else if ( cls.isAssignableFrom(Integer.class) ) {
                 return Integer.valueOf( bool ? 1 : 0 );
             } else if ( cls.isAssignableFrom(Byte.class) ) {
@@ -168,8 +168,8 @@ public class OMAPConvert<T> extends OBJConvert<T> {
                 }
                 throw new UnsupportedOperationException("謎の配列");
             }
-            if ( cls.isAssignableFrom(JSON2String.class) ) {
-                return new JSON2String(val);
+            if ( cls.isAssignableFrom(JSONString.class) ) {
+                return new JSONString(val);
             }
             if ( type == UUID.class ) {
                 return UUID.fromString(val);
@@ -283,8 +283,8 @@ public class OMAPConvert<T> extends OBJConvert<T> {
         
         int i = 0;
         for ( I val : src ) {
-            if ( val instanceof JSON2Value ) { // 中身はGeneric対応で変換
-                Array.set(array, i++, ((JSON2Value) val).typeMap(componentType));
+            if ( val instanceof JSONValue ) { // 中身はGeneric対応で変換
+                Array.set(array, i++, ((JSONValue) val).typeMap(componentType));
             } else {
                 Array.set(array, i++, OMAP.valueOf(val,componentType));
             }
@@ -330,8 +330,8 @@ public class OMAPConvert<T> extends OBJConvert<T> {
             try {
                 for (int i = 0; i < pt.length; i++) {
                     Object o = array.get(i);
-                    if (o instanceof JSON2Value) {
-                        params[i] = ((JSON2Value) o).typeMap(pt[i]);
+                    if (o instanceof JSONValue) {
+                        params[i] = ((JSONValue) o).typeMap(pt[i]);
                     } else {
                         params[i] = OMAP.valueOf(o, pt[i]);
                     }
@@ -423,7 +423,7 @@ public class OMAPConvert<T> extends OBJConvert<T> {
         }
     }
 
-    static Class[] MAPS = {HashMap.class, JSON2Object.class, LinkedHashMap.class, EnumMap.class, Hashtable.class, TreeMap.class};
+    static Class[] MAPS = {HashMap.class, JSONObject.class, LinkedHashMap.class, EnumMap.class, Hashtable.class, TreeMap.class};
 
     /**
      * Mapに使える実装を適当に決める
@@ -461,7 +461,7 @@ public class OMAPConvert<T> extends OBJConvert<T> {
     }
     
 
-    static Class<? extends Collection>[] COLL = new Class[]{JSON2Array.class, ArrayList.class, HashSet.class, LinkedList.class};
+    static Class<? extends Collection>[] COLL = new Class[]{JSONArray.class, ArrayList.class, HashSet.class, LinkedList.class};
 
     static Collection typeToList(Class cls) {
         for (Class<? extends Collection> colCls : COLL) {

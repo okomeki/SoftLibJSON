@@ -27,15 +27,15 @@ import net.siisise.json.bind.OMAP;
 /**
  * JSON String.
  */
-public class JSON2String implements JSON2Value,JsonString,CharSequence {
+public class JSONString implements JSONValue,JsonString,CharSequence {
     
     private final String value;
 
-    public JSON2String(CharSequence val) {
+    public JSONString(CharSequence val) {
         value = val.toString();
     }
 
-    public JSON2String(String val) {
+    public JSONString(String val) {
         value = val;
     }
 
@@ -68,7 +68,7 @@ public class JSON2String implements JSON2Value,JsonString,CharSequence {
     }
 
     @Override
-    public String toJSON(JSON2Format format) {
+    public String toJSON(JSONFormat format) {
         return "\"" + esc(value) + "\"";
     }
     

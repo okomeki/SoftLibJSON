@@ -36,9 +36,9 @@ public class JSONMergePatch7396 implements JsonMergePatch {
     // 4.IANA Considerations
     public static final String typeName = "application"; 
     public static final String subtypeName = "merge-patch+json";
-    private final JSON2Value patch;
+    private final JSONValue patch;
     
-    public JSONMergePatch7396(JSON2Value patch) {
+    public JSONMergePatch7396(JSONValue patch) {
         this.patch = patch;
     }
     
@@ -48,19 +48,19 @@ public class JSONMergePatch7396 implements JsonMergePatch {
      * @param patch
      * @return result
      */
-    public static JSON2Value mergePatch(JSON2Value target, JSON2Value patch) {
-        if ( patch instanceof JSON2Object ) {
-            if ( target == null || !(target instanceof JSON2Object) ) {
-                target = new JSON2Object();
+    public static JSONValue mergePatch(JSONValue target, JSONValue patch) {
+        if ( patch instanceof JSONObject ) {
+            if ( target == null || !(target instanceof JSONObject) ) {
+                target = new JSONObject();
             }
-            for ( String name : ((JSON2Object<?>)patch).keySet() ) {
-                JSON2Value v = ((JSON2Object) patch).getJSON(name);
-                if ( v instanceof JSON2NULL ) {
-                    if ( ((JSON2Object<?>)target).get(name) != null ) {
-                        ((JSON2Object<?>)target).remove(name);
+            for ( String name : ((JSONObject<?>)patch).keySet() ) {
+                JSONValue v = ((JSONObject) patch).getJSON(name);
+                if ( v instanceof JSONNULL ) {
+                    if ( ((JSONObject<?>)target).get(name) != null ) {
+                        ((JSONObject<?>)target).remove(name);
                     }
                 } else {
-                    ((JSON2Object<?>)target).addJSON(name, mergePatch(((JSON2Object)target).getJSON(name), v));
+                    ((JSONObject<?>)target).addJSON(name, mergePatch(((JSONObject)target).getJSON(name), v));
                 }
             }
             return target;
@@ -76,36 +76,36 @@ public class JSONMergePatch7396 implements JsonMergePatch {
      * @param target 変更先
      * @return JSON MergePatch形式 差分
      */
-    public static JSON2Value diff(JSON2Value original, JSON2Value target) {
-        JSON2Object diff = new JSON2Object();
-        if ( (original instanceof JSON2Object) && (target instanceof JSON2Object)) {
-            Set<String> skeyset = new HashSet<>(((JSON2Object)original).keySet());
-            Set<String> tkeyset = ((JSON2Object) target).keySet();
+    public static JSONValue diff(JSONValue original, JSONValue target) {
+        JSONObject diff = new JSONObject();
+        if ( (original instanceof JSONObject) && (target instanceof JSONObject)) {
+            Set<String> skeyset = new HashSet<>(((JSONObject)original).keySet());
+            Set<String> tkeyset = ((JSONObject) target).keySet();
             for ( String tkey : tkeyset ) {
-                JSON2Value s = ((JSON2Object)original).getJSON(tkey);
-                JSON2Value t = ((JSON2Object)target).getJSON(tkey);
+                JSONValue s = ((JSONObject)original).getJSON(tkey);
+                JSONValue t = ((JSONObject)target).getJSON(tkey);
                 if ( s == null ) {
                     // 追加
-                    diff.putJSON(tkey, JSON2.copy(t));
+                    diff.putJSON(tkey, JSON.copy(t));
                 } else if ( !s.equals(t)) {
                     // object なら差分を作る
-                    JSON2Value d = diff(s, t);
+                    JSONValue d = diff(s, t);
                     diff.putJSON(tkey, d);
                 }
                 skeyset.remove(tkey);
             }
             for ( String skey : skeyset ) {
-                diff.putJSON(skey, JSON2NULL.NULL);
+                diff.putJSON(skey, JSONNULL.NULL);
             }
             return diff;
         } else { // targetがObjectではなかった
-            return JSON2.copy(target);
+            return JSON.copy(target);
         }
     }
 
     @Override
     public JsonValue apply(JsonValue target) {
-        return mergePatch(JSON2.valueOf(target), patch).toJson();
+        return mergePatch(JSON.valueOf(target), patch).toJson();
     }
 
     @Override
@@ -113,7 +113,7 @@ public class JSONMergePatch7396 implements JsonMergePatch {
         return patch.toJson();
     }
     
-    public JSON2Value toJSON() {
-        return JSON2.copy(patch);
+    public JSONValue toJSON() {
+        return JSON.copy(patch);
     }
 }

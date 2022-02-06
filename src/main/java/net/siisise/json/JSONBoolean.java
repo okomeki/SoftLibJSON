@@ -23,18 +23,18 @@ import net.siisise.json.bind.OMAP;
  * JSON boolean.
  * JSON Pに定義があるので近いところにあわせておく。
  */
-public class JSON2Boolean implements JSON2Value,JsonValue {
+public class JSONBoolean implements JSONValue,JsonValue {
     
-    public static final JSON2Boolean TRUE = new JSON2Boolean(true);
-    public static final JSON2Boolean FALSE = new JSON2Boolean(false);
+    public static final JSONBoolean TRUE = new JSONBoolean(true);
+    public static final JSONBoolean FALSE = new JSONBoolean(false);
 
     private final boolean bool;
     
-    public JSON2Boolean(boolean b) {
+    public JSONBoolean(boolean b) {
         bool = b;
     }
     
-    public static JSON2Boolean valieOf(boolean b) {
+    public static JSONBoolean valieOf(boolean b) {
         return b ? TRUE : FALSE;
     }
 
@@ -59,7 +59,7 @@ public class JSON2Boolean implements JSON2Value,JsonValue {
     }
     
     @Override
-    public String toJSON(JSON2Format format) {
+    public String toJSON(JSONFormat format) {
         return Boolean.toString(bool);
     }
 
@@ -75,8 +75,8 @@ public class JSON2Boolean implements JSON2Value,JsonValue {
     
     @Override
     public boolean equals(Object obj) {
-        if ( obj instanceof JSON2Boolean ) {
-            return bool == (Boolean)((JSON2Boolean) obj).map();
+        if ( obj instanceof JSONBoolean ) {
+            return bool == (Boolean)((JSONBoolean) obj).map();
         } else if ( obj == JsonValue.TRUE ) {
             return bool;
         } else if ( obj == JsonValue.FALSE ) {

@@ -9,7 +9,7 @@ import javax.json.JsonObject;
 import javax.json.JsonStructure;
 import javax.json.JsonValue;
 import javax.json.JsonWriter;
-import net.siisise.json.JSON2;
+import net.siisise.json.JSON;
 
 /**
  *
@@ -25,7 +25,7 @@ public class JSONPWriter implements JsonWriter {
     @Override
     public void writeArray(JsonArray array) {
         try {
-            writer.write(JSON2.valueOf(array).toJSON());
+            writer.write(JSON.valueOf(array).toJSON());
             writer.flush();
         } catch (IOException ex) {
             Logger.getLogger(JSONPWriter.class.getName()).log(Level.SEVERE, null, ex);
@@ -36,7 +36,7 @@ public class JSONPWriter implements JsonWriter {
     @Override
     public void writeObject(JsonObject object) {
         try {
-            writer.write(JSON2.valueOf(object).toJSON());
+            writer.write(JSON.valueOf(object).toJSON());
             writer.flush();
         } catch (IOException ex) {
             Logger.getLogger(JSONPWriter.class.getName()).log(Level.SEVERE, null, ex);
@@ -47,7 +47,7 @@ public class JSONPWriter implements JsonWriter {
     @Override
     public void write(JsonStructure value) {
         try {
-            writer.write(JSON2.valueOf(value).toJSON());
+            writer.write(JSON.valueOf(value).toJSON());
             writer.flush();
         } catch (IOException ex) {
             Logger.getLogger(JSONPWriter.class.getName()).log(Level.SEVERE, null, ex);
@@ -58,7 +58,7 @@ public class JSONPWriter implements JsonWriter {
     @Override
     public void write(JsonValue value) {
         try {
-            writer.write(JSON2.valueOf(value).toJSON());
+            writer.write(JSON.valueOf(value).toJSON());
             writer.flush();
         } catch (IOException ex) {
             Logger.getLogger(JSONPWriter.class.getName()).log(Level.SEVERE, null, ex);

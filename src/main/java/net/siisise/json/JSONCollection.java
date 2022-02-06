@@ -20,14 +20,14 @@ package net.siisise.json;
  * Arrayではindexは文字列に変換して代用。挿入、削除すると配置は変わる。
  * @param <T> データ型
  */
-public interface JSON2Collection<T> extends JSON2Value {
+public interface JSONCollection<T> extends JSONValue {
     
     /**
      * JSON2Value として内容を変換している
      * @param key
      * @return 
      */
-    JSON2Value getJSON(String key);
+    JSONValue getJSON(String key);
 
     /**
      * 値をセットする。
@@ -35,14 +35,14 @@ public interface JSON2Collection<T> extends JSON2Value {
      * @param key キー
      * @param obj
      */
-    void setJSON(String key, JSON2Value obj);
+    void setJSON(String key, JSONValue obj);
 
     /**
      * 
      * @param key 末尾に追加する場合は "-"
      * @param obj 
      */
-    void addJSON(String key, JSON2Value obj);
+    void addJSON(String key, JSONValue obj);
 
     /**
      * 値をセットする。
@@ -51,19 +51,19 @@ public interface JSON2Collection<T> extends JSON2Value {
      * @param obj データ
      * @return 
      */
-    JSON2Value putJSON(String key, JSON2Value obj);
+    JSONValue putJSON(String key, JSONValue obj);
     /**
      * 戻り型がJSON2Valueなremove.
      * keyに一致する項目を削除して返す.
      * @param key
      * @return 該当しない場合はnullかな
      */
-    JSON2Value removeJSON(String key);
+    JSONValue removeJSON(String key);
     
     default String tab(String val) {
         return val.replace("\r\n", "\r\n  ");
     }
     
-    JSON2Collection clone();
+    JSONCollection clone();
     
 }

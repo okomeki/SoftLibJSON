@@ -39,7 +39,7 @@ import net.siisise.json.bind.OMAP;
  * JsonArray,JsonArrayBuilder,JsonStructure ではない
  * @param <E> 内部で保持する型。JSONではなくていい。
  */
-public class JSON2Array<E> extends ArrayList<E> implements JSON2Collection<E> {
+public class JSONArray<E> extends ArrayList<E> implements JSONCollection<E> {
 
     /**
      * Eを参照したいので持っておく型
@@ -47,30 +47,30 @@ public class JSON2Array<E> extends ArrayList<E> implements JSON2Collection<E> {
      */
     private final Class<E> def;
 
-    public JSON2Array() {
+    public JSONArray() {
         def = null;
     }
 
-    protected JSON2Array(Class<E> c) {
+    protected JSONArray(Class<E> c) {
         def = c;
     }
 
-    public JSON2Array(Collection<E> vals) {
+    public JSONArray(Collection<E> vals) {
         super(vals);
         def = null;
     }
 
     @Override
-    public JSON2Value getJSON(String key) {
+    public JSONValue getJSON(String key) {
         return getJSON(Integer.parseInt(key));
     }
 
-    public JSON2Value getJSON(int index) {
-        return JSON2.valueOf(get(index));
+    public JSONValue getJSON(int index) {
+        return JSON.valueOf(get(index));
     }
 
     @Override
-    public void setJSON(String key, JSON2Value obj) {
+    public void setJSON(String key, JSONValue obj) {
         E val = def == null ? obj.map() : obj.typeMap(def);
         if (key.equals("-")) {
             add(val);
@@ -79,13 +79,13 @@ public class JSON2Array<E> extends ArrayList<E> implements JSON2Collection<E> {
         }
     }
     
-    public void setJSON(int index, JSON2Value obj) {
+    public void setJSON(int index, JSONValue obj) {
         E val = def == null ? obj.map() : obj.typeMap(def);
         set(index, val);
     }
 
     @Override
-    public void addJSON(String key, JSON2Value obj) {
+    public void addJSON(String key, JSONValue obj) {
         E val = def == null ? obj.map() : obj.typeMap(def);
         if (key.equals("-")) {
             add(val);
@@ -94,7 +94,7 @@ public class JSON2Array<E> extends ArrayList<E> implements JSON2Collection<E> {
         }
     }
 
-    public void addJSON(int index, JSON2Value obj) {
+    public void addJSON(int index, JSONValue obj) {
         E val = def == null ? obj.map() : obj.typeMap(def);
         add(index, val);
     }
@@ -105,13 +105,13 @@ public class JSON2Array<E> extends ArrayList<E> implements JSON2Collection<E> {
      * @return 削除した値
      */
     @Override
-    public JSON2Value removeJSON(String key) {
-        return JSON2.valueOf(remove(Integer.parseInt(key)));
+    public JSONValue removeJSON(String key) {
+        return JSON.valueOf(remove(Integer.parseInt(key)));
     }
 
     @Override
-    public JSON2Value putJSON(String key, JSON2Value obj) {
-        JSON2Value val = getJSON(key);
+    public JSONValue putJSON(String key, JSONValue obj) {
+        JSONValue val = getJSON(key);
         setJSON(key, obj);
         return val;
     }
@@ -125,7 +125,7 @@ public class JSON2Array<E> extends ArrayList<E> implements JSON2Collection<E> {
         if (def != null) {
             val = OMAP.valueOf(val,def);
         } else {
-            val = JSON2.valueMap(val); // Object系に変換
+            val = JSON.valueMap(val); // Object系に変換
         }
         add((E) val);
     }
@@ -139,8 +139,8 @@ public class JSON2Array<E> extends ArrayList<E> implements JSON2Collection<E> {
      * forEachもここから
      * @return 
      */
-    Stream<JSON2Value> j2Stream() {
-        return parallelStream().map(JSON2::valueOf);
+    Stream<JSONValue> j2Stream() {
+        return parallelStream().map(JSON::valueOf);
     }
 
     /* まだ不要
@@ -174,7 +174,6 @@ public class JSON2Array<E> extends ArrayList<E> implements JSON2Collection<E> {
         }
         JSONPArray ar = new JSONPArray();
         parallelStream().map(v -> (JsonValue)OMAP.valueOf(v, JsonValue.class)).forEach(ar::add);
-        //j2Stream().map(v -> v.toJson()).forEach(ar::add);
         return ar;
     }
 
@@ -183,12 +182,13 @@ public class JSON2Array<E> extends ArrayList<E> implements JSON2Collection<E> {
         return toJSON(NOBR);
     }
     
+    @Override
     public String toString() {
         return toJSON();
     }
 
     @Override
-    public String toJSON(JSON2Format format) {
+    public String toJSON(JSONFormat format) {
         return j2Stream().map(val -> 
             format.crlf + format.tab + tab(val.toJSON(format)))
                 .collect( Collectors.joining(",", "[", format.crlf +  "]"));
@@ -201,7 +201,7 @@ public class JSON2Array<E> extends ArrayList<E> implements JSON2Collection<E> {
      */
     @Override
     public <T> T map() {
-        return (T)new JSON2Array(this);
+        return (T)new JSONArray(this);
     }
 
     /**
@@ -210,23 +210,23 @@ public class JSON2Array<E> extends ArrayList<E> implements JSON2Collection<E> {
      * @return 配列、オブジェクトは中まで複製したもの
      */
     @Override
-    public JSON2Array<E> clone() {
-        JSON2Array<E> array = (JSON2Array<E>) super.clone();
+    public JSONArray<E> clone() {
+        JSONArray<E> array = (JSONArray<E>) super.clone();
         array.clear();
         for ( E e : this ) {
             if ( e == null ) {
-            } else if ( e instanceof ArrayList ) { // JSON2Array っぽいもの
+            } else if ( e instanceof ArrayList ) { // JSONArray っぽいもの
                 e = (E)((ArrayList)e).clone();
-            } else if ( e instanceof HashMap ) { // JSON2Object っぽいもの
+            } else if ( e instanceof HashMap ) { // JSONObject っぽいもの
                 e = (E)((HashMap)e).clone();
-            } else if ( e instanceof JSON2Value || e instanceof JsonValue ) { // 複製しなくていい
+            } else if ( e instanceof JSONValue || e instanceof JsonValue ) { // 複製しなくていい
 
             } else if ( e instanceof Cloneable ) {
                 try {
                     Method cl = e.getClass().getMethod("clone");
                     e = (E) cl.invoke(e);
                 } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException ex) {
-//                    Logger.getLogger(JSON2Array.class.getName()).log(Level.SEVERE, null, ex);
+//                    Logger.getLogger(JSONArray.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
             array.add((E)e);

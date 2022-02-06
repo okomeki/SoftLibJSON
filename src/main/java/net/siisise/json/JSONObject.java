@@ -38,12 +38,12 @@ import net.siisise.json.bind.OMAP;
  *
  * @param <V> JSONに変換可能な型、または自由
  */
-public class JSON2Object<V> extends LinkedHashMap<String, V> implements JSON2Collection<V> {
+public class JSONObject<V> extends LinkedHashMap<String, V> implements JSONCollection<V> {
 
-    public JSON2Object() {
+    public JSONObject() {
     }
 
-    public JSON2Object(Map<?,V> map) {
+    public JSONObject(Map<?,V> map) {
         map.forEach((key, o) -> {
             if (key instanceof String) {
                 put((String) key, o);
@@ -60,32 +60,32 @@ public class JSON2Object<V> extends LinkedHashMap<String, V> implements JSON2Col
      * @return JSON2Value または該当キーがない場合 null 
      */
     @Override
-    public JSON2Value getJSON(String key) {
+    public JSONValue getJSON(String key) {
         if ( !containsKey(key)) {
             return null;
         }
-        return JSON2.valueOf(get(key));
+        return JSON.valueOf(get(key));
     }
 
     @Override
-    public void setJSON(String key, JSON2Value obj) {
+    public void setJSON(String key, JSONValue obj) {
         putJSON(key, obj);
     }
 
     @Override
-    public void addJSON(String key, JSON2Value obj) {
+    public void addJSON(String key, JSONValue obj) {
         putJSON(key, obj);
     }
 
     @Override
-    public JSON2Value putJSON(String key, JSON2Value obj) {
-        return JSON2.valueOf(put(key, obj.map()));
+    public JSONValue putJSON(String key, JSONValue obj) {
+        return JSON.valueOf(put(key, obj.map()));
     }
 
     @Override
-    public JSON2Value removeJSON(String key) {
+    public JSONValue removeJSON(String key) {
         if (containsKey(key)) {
-            return JSON2.valueOf(remove(key));
+            return JSON.valueOf(remove(key));
         }
         return null;
     }
@@ -135,9 +135,9 @@ public class JSON2Object<V> extends LinkedHashMap<String, V> implements JSON2Col
     }
 
     @Override
-    public String toJSON(JSON2Format format) {
+    public String toJSON(JSONFormat format) {
         return keySet().stream().map(key -> {
-            return format.crlf + format.tab + new JSON2String(key).toJSON(format) + ":"
+            return format.crlf + format.tab + new JSONString(key).toJSON(format) + ":"
                     + tab(getJSON(key).toJSON(format));
         }).collect(Collectors.joining(",", "{", format.crlf + "}"));
     }
@@ -148,8 +148,8 @@ public class JSON2Object<V> extends LinkedHashMap<String, V> implements JSON2Col
      * @return 中まで複製したもの
      */
     @Override
-    public JSON2Object<V> clone() {
-        JSON2Object<V> clone = (JSON2Object<V>) super.clone();
+    public JSONObject<V> clone() {
+        JSONObject<V> clone = (JSONObject<V>) super.clone();
         clone.clear();
         for ( Map.Entry<String, V> e : entrySet() ) {
             V v = e.getValue();
@@ -158,7 +158,7 @@ public class JSON2Object<V> extends LinkedHashMap<String, V> implements JSON2Col
                 v = (V)((ArrayList)v).clone();
             } else if ( v instanceof HashMap ) { // JSON2Object の素
                 v = (V)((HashMap)v).clone();
-            } else if ( v instanceof JSON2Value || v instanceof JsonValue ) { // 複製不要
+            } else if ( v instanceof JSONValue || v instanceof JsonValue ) { // 複製不要
             } else if ( v instanceof Cloneable ) {
                 try {
                 Method cl = v.getClass().getMethod("clone");
@@ -176,7 +176,7 @@ public class JSON2Object<V> extends LinkedHashMap<String, V> implements JSON2Col
      * value を JSON2Valueに変換したforEach
      * @param action 
      */
-    void j2forEach(BiConsumer<String,? super JSON2Value> action) {
-        forEach((k,v)->{ action.accept(k, JSON2.valueOf(v));});
+    void j2forEach(BiConsumer<String,? super JSONValue> action) {
+        forEach((k,v)->{ action.accept(k, JSON.valueOf(v));});
     }
 }

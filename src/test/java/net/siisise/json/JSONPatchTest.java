@@ -38,8 +38,8 @@ public class JSONPatchTest {
     @org.junit.jupiter.api.Test
     public void testRun() {
         System.out.println("Test");
-        JSON2Object obj = (JSON2Object) JSON2.parse("{ \"foo\":\"\"}");
-        JSON2Array patchList = (JSON2Array) JSON8259Reg.parse("[\r\n{ \"op\": \"add\", \"path\": \"/baz\", \"value\": \"qux\" }]");
+        JSONObject obj = (JSONObject) JSON.parse("{ \"foo\":\"\"}");
+        JSONArray patchList = (JSONArray) JSON8259Reg.parse("[\r\n{ \"op\": \"add\", \"path\": \"/baz\", \"value\": \"qux\" }]");
         JSONPatch.run(obj, patchList);
         System.out.println("A.1...." + obj);
         // TODO review the generated test code and remove the default call to fail.
@@ -52,11 +52,11 @@ public class JSONPatchTest {
     @org.junit.jupiter.api.Test
     public void testRunA1() {
         System.out.println("A.1.");
-        JSON2Object obj = (JSON2Object) JSON2.parseWrap("{ \"foo\":\"bar\"}");
-        JSON2Array patchList = (JSON2Array) JSON2.parseWrap("[\r\n{ \"op\": \"add\", \"path\": \"/baz\", \"value\": \"qux\" }]");
-        JSON2Value ex = JSON2.parseWrap("{\"foo\":\"bar\",\"baz\":\"qux\"}");
+        JSONObject obj = (JSONObject) JSON.parseWrap("{ \"foo\":\"bar\"}");
+        JSONArray patchList = (JSONArray) JSON.parseWrap("[\r\n{ \"op\": \"add\", \"path\": \"/baz\", \"value\": \"qux\" }]");
+        JSONValue ex = JSON.parseWrap("{\"foo\":\"bar\",\"baz\":\"qux\"}");
         JSONPatch p = new JSONPatch(patchList);
-        JSON2Value val = p.apply(obj);
+        JSONValue val = p.apply(obj);
         System.out.println("src: " + obj.toJSON());
         System.out.println("diff: " + patchList.toJSON());
         System.out.println("result: "  + val.toJSON());
@@ -68,12 +68,12 @@ public class JSONPatchTest {
     @org.junit.jupiter.api.Test
     public void testRunA2() {
         System.out.println("A.2.");
-        JSON2Object obj = (JSON2Object) JSON8259Reg.parse("{ \"foo\": [ \"bar\", \"baz\" ] }");
-        JSON2Array patchList = (JSON2Array) JSON8259Reg.parse("[\r\n { \"op\": \"add\", \"path\": \"/foo/1\", \"value\": \"qux\" }\r\n]");
-        JSON2Value ex = JSON2.parseWrap("{\"foo\": [\"bar\",\"qux\",\"baz\"]}");
+        JSONObject obj = (JSONObject) JSON8259Reg.parse("{ \"foo\": [ \"bar\", \"baz\" ] }");
+        JSONArray patchList = (JSONArray) JSON8259Reg.parse("[\r\n { \"op\": \"add\", \"path\": \"/foo/1\", \"value\": \"qux\" }\r\n]");
+        JSONValue ex = JSON.parseWrap("{\"foo\": [\"bar\",\"qux\",\"baz\"]}");
 //        JSONPatch.run(obj, patchList);
         JSONPatch p = new JSONPatch(patchList);
-        JSON2Value val = p.apply(obj);
+        JSONValue val = p.apply(obj);
         System.out.println("src: " + obj);
         System.out.println("diff: " + patchList.toJSON());
         System.out.println("result: " + val);
@@ -85,12 +85,12 @@ public class JSONPatchTest {
     @org.junit.jupiter.api.Test
     public void testRunA3() {
         System.out.println("A.3.");
-        JSON2Object obj = (JSON2Object) JSON2.parseWrap("{  \"baz\": \"qux\",\n  \"foo\": \"bar\" }");
-        JSON2Array patchList = (JSON2Array) JSON2.parseWrap("[  { \"op\": \"remove\", \"path\": \"/baz\" }]");
-        JSON2Value ex = JSON2.parseWrap("{\"foo\": \"bar\"}");
+        JSONObject obj = (JSONObject) JSON.parseWrap("{  \"baz\": \"qux\",\n  \"foo\": \"bar\" }");
+        JSONArray patchList = (JSONArray) JSON.parseWrap("[  { \"op\": \"remove\", \"path\": \"/baz\" }]");
+        JSONValue ex = JSON.parseWrap("{\"foo\": \"bar\"}");
 //        JSONPatch.run(obj, patchList);
         JSONPatch p = new JSONPatch(patchList);
-        JSON2Value val = p.apply(obj);
+        JSONValue val = p.apply(obj);
         System.out.println("src: " + obj);
         System.out.println("diff: " + patchList.toJSON());
         System.out.println("result: " + val);
@@ -102,11 +102,11 @@ public class JSONPatchTest {
     @org.junit.jupiter.api.Test
     public void testRunA4() {
         System.out.println("A.4.");
-        JSON2Object<?> obj = (JSON2Object) JSON8259Reg.parse("{ \"foo\": [ \"bar\", \"qux\", \"baz\" ] }");
-        JSON2Array patchList = (JSON2Array) JSON8259Reg.parse("[  { \"op\": \"remove\", \"path\": \"/foo/1\" }]");
-        JSON2Value ex = JSON2.parseWrap("{\"foo\": [\"bar\",\"baz\"]}");
+        JSONObject<?> obj = (JSONObject) JSON8259Reg.parse("{ \"foo\": [ \"bar\", \"qux\", \"baz\" ] }");
+        JSONArray patchList = (JSONArray) JSON8259Reg.parse("[  { \"op\": \"remove\", \"path\": \"/foo/1\" }]");
+        JSONValue ex = JSON.parseWrap("{\"foo\": [\"bar\",\"baz\"]}");
         JSONPatch p = new JSONPatch(patchList);
-        JSON2Value val = p.apply(obj);
+        JSONValue val = p.apply(obj);
         System.out.println("src: " + obj);
         System.out.println("diff: " + patchList.toJSON());
         System.out.println("result: " + val);
@@ -118,11 +118,11 @@ public class JSONPatchTest {
     @org.junit.jupiter.api.Test
     public void testRunA5() {
         System.out.println("A.5.");
-        JSON2Object obj = (JSON2Object) JSON8259Reg.parse("{  \"baz\": \"qux\",  \"foo\": \"bar\"}");
-        JSON2Array patchList = (JSON2Array) JSON8259Reg.parse("[  { \"op\": \"replace\", \"path\": \"/baz\", \"value\": \"boo\" }]");
-        JSON2Value ex = JSON2.parseWrap("{\"baz\": \"boo\", \"foo\": \"bar\"}");
+        JSONObject obj = (JSONObject) JSON8259Reg.parse("{  \"baz\": \"qux\",  \"foo\": \"bar\"}");
+        JSONArray patchList = (JSONArray) JSON8259Reg.parse("[  { \"op\": \"replace\", \"path\": \"/baz\", \"value\": \"boo\" }]");
+        JSONValue ex = JSON.parseWrap("{\"baz\": \"boo\", \"foo\": \"bar\"}");
         JSONPatch p = new JSONPatch(patchList);
-        JSON2Value val = p.apply(obj);
+        JSONValue val = p.apply(obj);
         System.out.println("src: " + obj);
         System.out.println("diff: " + patchList.toJSON());
         System.out.println("result: " + val);
@@ -134,7 +134,7 @@ public class JSONPatchTest {
     @org.junit.jupiter.api.Test
     public void testRunA6() {
         System.out.println("A.6.");
-        JSON2Object obj = (JSON2Object) JSON8259Reg.parse("{\r\n"
+        JSONObject obj = (JSONObject) JSON8259Reg.parse("{\r\n"
                 + "  \"foo\": {"
                 + "    \"bar\": \"baz\","
                 + "    \"waldo\": \"fred\""
@@ -147,10 +147,10 @@ public class JSONPatchTest {
         String patch = "[\r\n"
                 + "  { \"op\": \"move\", \"from\": \"/foo/waldo\", \"path\": \"/qux/thud\" }\r\n"
                 + "]";
-        JSON2Array patchList = (JSON2Array) JSON8259Reg.parse(patch);
-        JSON2Value ex = JSON2.parseWrap("{\"foo\": { \"bar\": \"baz\"}, \"qux\": { \"corge\": \"grault\", \"thud\": \"fred\"}}");
+        JSONArray patchList = (JSONArray) JSON8259Reg.parse(patch);
+        JSONValue ex = JSON.parseWrap("{\"foo\": { \"bar\": \"baz\"}, \"qux\": { \"corge\": \"grault\", \"thud\": \"fred\"}}");
         JSONPatch p = new JSONPatch(patchList);
-        JSON2Value val = p.apply(obj);
+        JSONValue val = p.apply(obj);
         System.out.println("src: " + obj);
         System.out.println("diff: " + patchList.toJSON());
         System.out.println("result: " + val);

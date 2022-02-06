@@ -1,7 +1,7 @@
 package net.siisise.json.bind.source;
 
 import javax.json.JsonString;
-import net.siisise.json.JSON2String;
+import net.siisise.json.JSONString;
 import net.siisise.json.bind.MtoConvert;
 import net.siisise.json.bind.OMConvert;
 
@@ -12,7 +12,7 @@ public class JSONStringM implements OMConvert {
 
     @Override
     public Class[] getSrcClasses() {
-        return new Class[] { JsonString.class, JSON2String.class, String.class, CharSequence.class };
+        return new Class[] { JsonString.class, JSONString.class, String.class, CharSequence.class };
     }
 
     @Override

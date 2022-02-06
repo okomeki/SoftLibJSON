@@ -6,8 +6,8 @@ import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonValue;
-import net.siisise.json.JSON2Number;
-import net.siisise.json.JSON2String;
+import net.siisise.json.JSONNumber;
+import net.siisise.json.JSONString;
 import net.siisise.json.bind.OMAP;
 
 /**
@@ -25,37 +25,37 @@ public class JSONPArrayBuilder implements JsonArrayBuilder {
 
     @Override
     public JsonArrayBuilder add(String val) {
-        array.add(new JSON2String(val));
+        array.add(new JSONString(val));
         return this;
     }
 
     @Override
     public JsonArrayBuilder add(BigDecimal val) {
-        array.add(new JSON2Number(val));
+        array.add(new JSONNumber(val));
         return this;
     }
 
     @Override
     public JsonArrayBuilder add(BigInteger val) {
-        array.add(new JSON2Number(val));
+        array.add(new JSONNumber(val));
         return this;
     }
 
     @Override
     public JsonArrayBuilder add(int val) {
-        array.add(new JSON2Number(val));
+        array.add(new JSONNumber(val));
         return this;
     }
 
     @Override
     public JsonArrayBuilder add(long val) {
-        array.add(new JSON2Number(val));
+        array.add(new JSONNumber(val));
         return this;
     }
 
     @Override
     public JsonArrayBuilder add(double val) {
-        array.add(new JSON2Number(val));
+        array.add(new JSONNumber(val));
         return this;
     }
 
@@ -103,37 +103,37 @@ public class JSONPArrayBuilder implements JsonArrayBuilder {
 
     @Override
     public JsonArrayBuilder add(int index, String value) {
-        array.add(index, new JSON2String(value));
+        array.add(index, new JSONString(value));
         return this;
     }
 
     @Override
     public JsonArrayBuilder add(int index, BigDecimal value) {
-        array.add(index, new JSON2Number(value));
+        array.add(index, new JSONNumber(value));
         return this;
     }
 
     @Override
     public JsonArrayBuilder add(int index, BigInteger value) {
-        array.add(index, new JSON2Number(value));
+        array.add(index, new JSONNumber(value));
         return this;
     }
 
     @Override
     public JsonArrayBuilder add(int index, int value) {
-        array.add(index, new JSON2Number(value));
+        array.add(index, new JSONNumber(value));
         return this;
     }
 
     @Override
     public JsonArrayBuilder add(int index, long value) {
-        array.add(index, new JSON2Number(value));
+        array.add(index, new JSONNumber(value));
         return this;
     }
 
     @Override
     public JsonArrayBuilder add(int index, double value) {
-        array.add(index, new JSON2Number(value));
+        array.add(index, new JSONNumber(value));
         return this;
     }
 
@@ -169,37 +169,37 @@ public class JSONPArrayBuilder implements JsonArrayBuilder {
 
     @Override
     public JsonArrayBuilder set(int index, String value) {
-        array.set(index, new JSON2String(value));
+        array.set(index, new JSONString(value));
         return this;
     }
 
     @Override
     public JsonArrayBuilder set(int index, BigDecimal value) {
-        array.set(index, new JSON2Number(value));
+        array.set(index, new JSONNumber(value));
         return this;
     }
 
     @Override
     public JsonArrayBuilder set(int index, BigInteger value) {
-        array.set(index, new JSON2Number(value));
+        array.set(index, new JSONNumber(value));
         return this;
     }
 
     @Override
     public JsonArrayBuilder set(int index, int value) {
-        array.set(index, new JSON2Number(value));
+        array.set(index, new JSONNumber(value));
         return this;
     }
 
     @Override
     public JsonArrayBuilder set(int index, long value) {
-        array.set(index, new JSON2Number(value));
+        array.set(index, new JSONNumber(value));
         return this;
     }
 
     @Override
     public JsonArrayBuilder set(int index, double value) {
-        array.set(index, new JSON2Number(value));
+        array.set(index, new JSONNumber(value));
         return this;
     }
 

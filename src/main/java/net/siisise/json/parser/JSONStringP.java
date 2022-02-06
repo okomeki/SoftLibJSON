@@ -1,8 +1,8 @@
 package net.siisise.json.parser;
 
 import java.util.List;
-import net.siisise.abnf.ABNF;
-import net.siisise.abnf.ABNFReg;
+import net.siisise.bnf.BNF;
+import net.siisise.bnf.BNFReg;
 import net.siisise.bnf.parser.BNFList;
 
 /**
@@ -11,7 +11,7 @@ import net.siisise.bnf.parser.BNFList;
  */
 public class JSONStringP extends BNFList<String, Integer> {
 
-    public JSONStringP(ABNF rule, ABNFReg base) {
+    public JSONStringP(BNF rule, BNFReg base) {
         super(rule, base, "char");
     }
     

@@ -8,7 +8,7 @@ import javax.json.JsonArrayBuilder;
 import javax.json.JsonBuilderFactory;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
-import net.siisise.json.JSON2;
+import net.siisise.json.JSON;
 
 /**
  *
@@ -27,14 +27,14 @@ public class JSONPBuilderFactory implements JsonBuilderFactory {
     @Override
     public JsonObjectBuilder createObjectBuilder(JsonObject object) {
         JsonObjectBuilder ob = createObjectBuilder();
-        object.forEach((k,v) -> {ob.add(k, JSON2.valueOf(v).toJson());});
+        object.forEach((k,v) -> {ob.add(k, JSON.valueOf(v).toJson());});
         return ob;
     }
 
     @Override
     public JsonObjectBuilder createObjectBuilder(Map<String, Object> object) {
         JsonObjectBuilder ob = createObjectBuilder();
-        object.forEach((k,v) -> {ob.add(k, JSON2.valueOf(v).toJson());});
+        object.forEach((k,v) -> {ob.add(k, JSON.valueOf(v).toJson());});
         return ob;
     }
 
@@ -46,14 +46,14 @@ public class JSONPBuilderFactory implements JsonBuilderFactory {
     @Override
     public JsonArrayBuilder createArrayBuilder(JsonArray array) {
         JsonArrayBuilder ab = createArrayBuilder();
-        array.forEach(v -> ab.add(JSON2.valueOf(v).toJson()));
+        array.forEach(v -> ab.add(JSON.valueOf(v).toJson()));
         return ab;
     }
 
     @Override
     public JsonArrayBuilder createArrayBuilder(Collection<?> collection) {
         JsonArrayBuilder ab = createArrayBuilder();
-        collection.forEach(o -> ab.add(JSON2.valueOf(o).toJson()));
+        collection.forEach(o -> ab.add(JSON.valueOf(o).toJson()));
         return ab;
     }
 

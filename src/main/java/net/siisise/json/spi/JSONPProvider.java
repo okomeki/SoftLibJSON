@@ -39,11 +39,11 @@ import net.siisise.json.jsonp.JSONPReaderFactory;
 import net.siisise.json.jsonp.JSONPWriterFactory;
 import net.siisise.json.stream.JSONPGeneratorFactory;
 import net.siisise.json.stream.JSONPParserFactory;
-import net.siisise.json.JSON2;
-import net.siisise.json.JSON2Array;
-import net.siisise.json.JSON2Number;
-import net.siisise.json.JSON2String;
-import net.siisise.json.JSON2Value;
+import net.siisise.json.JSONArray;
+import net.siisise.json.JSONNumber;
+import net.siisise.json.JSONString;
+import net.siisise.json.JSON;
+import net.siisise.json.JSONValue;
 
 /**
  * JSR 374 Java API for JSON Processing (JSON-P)
@@ -177,7 +177,7 @@ public class JSONPProvider extends JsonProvider {
      */
     @Override
     public JsonPatchBuilder createPatchBuilder(JsonArray array) {
-        return new JSONPatchBuilder((JSON2Array) JSON2.valueOf(array));
+        return new JSONPatchBuilder((JSONArray) JSON.valueOf(array));
     }
     
     /**
@@ -199,20 +199,20 @@ public class JSONPProvider extends JsonProvider {
      */
     @Override
     public JsonPatch createDiff(JsonStructure source, JsonStructure target) {
-        JSON2Value s = JSON2.valueOf(source);
-        JSON2Value t = JSON2.valueOf(target);
+        JSONValue s = JSON.valueOf(source);
+        JSONValue t = JSON.valueOf(target);
         return JSONPatch.diff(s, t);
     }
 
     @Override
     public JsonMergePatch createMergePatch(JsonValue patch) {
-        return new JSONMergePatch7396(JSON2.valueOf(patch));
+        return new JSONMergePatch7396(JSON.valueOf(patch));
     }
 
     @Override
     public JsonMergePatch createMergeDiff(JsonValue source, JsonValue target) {
-        JSON2Value s = JSON2.valueOf(source);
-        JSON2Value t = JSON2.valueOf(target);
+        JSONValue s = JSON.valueOf(source);
+        JSONValue t = JSON.valueOf(target);
         return new JSONMergePatch7396(JSONMergePatch7396.diff(s, t));
     }
 
@@ -229,31 +229,31 @@ public class JSONPProvider extends JsonProvider {
 
     @Override
     public JsonString createValue(String value) {
-        return new JSON2String(value);
+        return new JSONString(value);
     }
 
     @Override
     public JsonNumber createValue(int value) {
-        return new JSON2Number(value);
+        return new JSONNumber(value);
     }
 
     @Override
     public JsonNumber createValue(long value) {
-        return new JSON2Number(value);
+        return new JSONNumber(value);
     }
 
     @Override
     public JsonNumber createValue(double value) {
-        return new JSON2Number(value);
+        return new JSONNumber(value);
     }
 
     @Override
     public JsonNumber createValue(BigDecimal value) {
-        return new JSON2Number(value);
+        return new JSONNumber(value);
     }
 
     @Override
     public JsonNumber createValue(BigInteger value) {
-        return new JSON2Number(value);
+        return new JSONNumber(value);
     }
 }

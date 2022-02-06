@@ -23,9 +23,9 @@ import net.siisise.json.bind.OMAP;
  * JSON NULL.
  * 
  */
-public class JSON2NULL implements JSON2Value,JsonValue {
+public class JSONNULL implements JSONValue,JsonValue {
     
-    public static final JSON2NULL NULL = new JSON2NULL();
+    public static final JSONNULL NULL = new JSONNULL();
 
     @Override
     public <T> T map() {
@@ -44,18 +44,23 @@ public class JSON2NULL implements JSON2Value,JsonValue {
     
     @Override
     public String toString() {
-        return toJSON(NOBR);
+        return toJSON();
     }
     
+    @Override
     public String toJSON() {
-        return toJSON(NOBR);
+        return "null";
     }
 
     @Override
-    public String toJSON(JSON2Format format) {
-        return "null";
+    public String toJSON(JSONFormat format) {
+        return toJSON();
     }
     
+    /**
+     * JsonValue互換要素.
+     * @return 
+     */
     @Override
     public ValueType getValueType() {
         return ValueType.NULL;
@@ -66,8 +71,9 @@ public class JSON2NULL implements JSON2Value,JsonValue {
      * @param obj
      * @return 
      */
+    @Override
     public boolean equals(Object obj) {
-        return (obj != null && (obj instanceof JSON2NULL || obj == JsonValue.NULL));
+        return (obj != null && (obj instanceof JSONNULL || obj == JsonValue.NULL));
             
     }
     

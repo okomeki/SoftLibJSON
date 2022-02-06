@@ -64,8 +64,8 @@ public class JSONPointer implements JsonPointer {
      * @param target
      * @param value
      */
-    public void add(JSON2Collection target, JSON2Value value) {
-        ColKey<JSON2Collection> vp = step(target);
+    public void add(JSONCollection target, JSONValue value) {
+        ColKey<JSONCollection> vp = step(target);
         vp.coll.addJSON(vp.key, value);
     }
 
@@ -78,8 +78,8 @@ public class JSONPointer implements JsonPointer {
      */
     @Override
     public <T extends JsonStructure> T add(T target, JsonValue value) {
-        JSON2Collection t2 = (JSON2Collection) JSON2.valueOf(target);
-        add(t2,JSON2.valueOf(value));
+        JSONCollection t2 = (JSONCollection) JSON.valueOf(target);
+        add(t2,JSON.valueOf(value));
         return (T) t2.toJson();
     }
 
@@ -88,8 +88,8 @@ public class JSONPointer implements JsonPointer {
      * @param target
      * @return 値?
      */
-    public JSON2Value remove(JSON2Collection target) {
-        ColKey<JSON2Collection> vp = step(target);
+    public JSONValue remove(JSONCollection target) {
+        ColKey<JSONCollection> vp = step(target);
         return vp.coll.removeJSON(vp.key);
     }
 
@@ -101,7 +101,7 @@ public class JSONPointer implements JsonPointer {
      */
     @Override
     public <T extends JsonStructure> T remove(T target) {
-        JSON2Collection t2 = (JSON2Collection) JSON2.valueOf(target);
+        JSONCollection t2 = (JSONCollection) JSON.valueOf(target);
         remove(t2);
         return (T) t2.toJson();
     }
@@ -111,19 +111,19 @@ public class JSONPointer implements JsonPointer {
      * @param target
      * @return 
      */
-    public JSON2Value get(JSON2Collection target) {
-        return step((JSON2Value) target, false).val;
+    public JSONValue get(JSONCollection target) {
+        return step((JSONValue) target, false).val;
     }
 
-    public void set(JSON2Collection target, Object value) {
-        ColKey<JSON2Collection> vp = step(target);
-        vp.coll.setJSON(vp.key, JSON2.valueOf(value));
+    public void set(JSONCollection target, Object value) {
+        ColKey<JSONCollection> vp = step(target);
+        vp.coll.setJSON(vp.key, JSON.valueOf(value));
     }
 
-    public void replace(JSON2Collection target, Object value) {
-        ColKey<JSON2Collection> vp = step(target);
+    public void replace(JSONCollection target, Object value) {
+        ColKey<JSONCollection> vp = step(target);
         vp.coll.removeJSON(vp.key);
-        vp.coll.addJSON(vp.key, JSON2.valueOf(value));
+        vp.coll.addJSON(vp.key, JSON.valueOf(value));
     }
 
     private static class ColKey<J> {
@@ -161,7 +161,7 @@ public class JSONPointer implements JsonPointer {
     }
     
     public String toJSON() {
-        return JSON2.valueOf(toString()).toJSON();
+        return JSON.valueOf(toString()).toJSON();
     }
 
     public String[] toDecodeString() {
@@ -327,8 +327,8 @@ public class JSONPointer implements JsonPointer {
             return new ValuePointer(tg, null);
         } else if (ds.length == 2 && keep) {
             return new ValuePointer(tg, this);
-        } else if (tg instanceof JSON2Collection) {
-            tg = (J) ((JSON2Collection) tg).getJSON(ds[1]);
+        } else if (tg instanceof JSONCollection) {
+            tg = (J) ((JSONCollection) tg).getJSON(ds[1]);
             return sub().step(tg, keep);
         } else {
             throw new java.lang.UnsupportedOperationException();
@@ -341,10 +341,10 @@ public class JSONPointer implements JsonPointer {
      * @param obj
      * @return 複製しない方がいい
      */
-    private ColKey<JSON2Collection> step(JSON2Collection obj) {
-        JSONPointer.ValuePointer<JSON2Value> vp = step((JSON2Value) obj, true);
-        ColKey<JSON2Collection> kv = new ColKey();
-        kv.coll = (JSON2Collection) vp.val;
+    private ColKey<JSONCollection> step(JSONCollection obj) {
+        JSONPointer.ValuePointer<JSONValue> vp = step((JSONValue) obj, true);
+        ColKey<JSONCollection> kv = new ColKey();
+        kv.coll = (JSONCollection) vp.val;
         kv.key = vp.path.toDecodeString()[1];
         return kv;
     }

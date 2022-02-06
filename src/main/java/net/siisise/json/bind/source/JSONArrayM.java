@@ -21,7 +21,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 //import net.siisise.io.BASE64;
-import net.siisise.json.JSON2Array;
+import net.siisise.json.JSONArray;
 import net.siisise.json.bind.MtoConvert;
 import net.siisise.json.bind.OMConvert;
 
@@ -60,7 +60,7 @@ public class JSONArrayM implements OMConvert {
                     
                 }
                 */
-                cnv = new JSON2Array();
+                cnv = new JSONArray();
                 for ( int i = 0; i < len; i++ ) {
                     cnv.add(Array.get(src, i));
                 }

@@ -33,23 +33,23 @@ public class JSONPatch implements JsonPatch {
         public JSONPointer path;
         public JSONPointer from;
         // StringではなくJSONValueがいい
-        public JSON2Value value;
+        public JSONValue value;
 
-        public <T extends JSON2Collection> T apply(T target) {
+        public <T extends JSONCollection> T apply(T target) {
             return target;
         }
 
-        public JSON2Object toJSON() { // ない項目を省略するだけ
+        public JSONObject toJSON() { // ない項目を省略するだけ
             //op = getClass().getName().substring(3).toLowerCase();
-            JSON2Object p = new JSON2Object();
+            JSONObject p = new JSONObject();
             if (op != null) {
                 p.put("op", op);
             }
             if (path != null) {
-                p.putJSON("path", JSON2.valueOf(path));
+                p.putJSON("path", JSON.valueOf(path));
             }
             if (from != null) {
-                p.putJSON("from", JSON2.valueOf(from));
+                p.putJSON("from", JSON.valueOf(from));
             }
             if (value != null) {
                 p.putJSON("value", value);
@@ -61,7 +61,7 @@ public class JSONPatch implements JsonPatch {
         public Patch clone() throws CloneNotSupportedException {
             Patch c;
             c = (Patch) super.clone();
-            c.value = JSON2.copy(value);
+            c.value = JSON.copy(value);
             return c;
         }
     }
@@ -73,7 +73,7 @@ public class JSONPatch implements JsonPatch {
         }
 
         @Override
-        public <T extends JSON2Collection> T apply(T target) {
+        public <T extends JSONCollection> T apply(T target) {
             path.add(target, value);
             return target;
         }
@@ -86,7 +86,7 @@ public class JSONPatch implements JsonPatch {
         }
 
         @Override
-        public <T extends JSON2Collection> T apply(T target) {
+        public <T extends JSONCollection> T apply(T target) {
             path.remove(target);
             return target;
         }
@@ -99,7 +99,7 @@ public class JSONPatch implements JsonPatch {
         }
 
         @Override
-        public <T extends JSON2Collection> T apply(T target) {
+        public <T extends JSONCollection> T apply(T target) {
             path.remove(target);
             path.add(target, value);
             return target;
@@ -114,9 +114,9 @@ public class JSONPatch implements JsonPatch {
         }
 
         @Override
-        public <T extends JSON2Collection> T apply(T target) {
-            JSON2Value v = from.get(target);
-            v = JSON2.copy(v);
+        public <T extends JSONCollection> T apply(T target) {
+            JSONValue v = from.get(target);
+            v = JSON.copy(v);
             from.remove(target);
             path.add(target, v);
             return target;
@@ -131,9 +131,9 @@ public class JSONPatch implements JsonPatch {
         }
 
         @Override
-        public <T extends JSON2Collection> T apply(T target) {
-            JSON2Value v = from.get(target);
-            v = JSON2.copy(v);
+        public <T extends JSONCollection> T apply(T target) {
+            JSONValue v = from.get(target);
+            v = JSON.copy(v);
             path.add(target, v);
             return target;
         }
@@ -146,8 +146,8 @@ public class JSONPatch implements JsonPatch {
         }
 
         @Override
-        public <T extends JSON2Collection> T apply(T target) {
-            JSON2Value val1 = path.get(target);
+        public <T extends JSONCollection> T apply(T target) {
+            JSONValue val1 = path.get(target);
             if (!val1.equals(value)) {
                 return null;
             }
@@ -155,15 +155,15 @@ public class JSONPatch implements JsonPatch {
         }
     }
 
-    final JSON2Array<Patch> cmds = new JSON2Array();
+    final JSONArray<Patch> cmds = new JSONArray();
 
     public JSONPatch() {
     }
 
-    public JSONPatch(JSON2Array patchList) {
+    public JSONPatch(JSONArray patchList) {
 
         for (Object patch : patchList) {
-            cmds.add(cmd((JSON2Object) JSON2.valueOf(patch)));
+            cmds.add(cmd((JSONObject) JSON.valueOf(patch)));
         }
     }
 
@@ -173,7 +173,7 @@ public class JSONPatch implements JsonPatch {
      * @param patch
      * @return
      */
-    static Patch cmd(JSON2Object patch) {
+    static Patch cmd(JSONObject patch) {
 
         String op = (String) patch.get("op");
         Class<?> cls;
@@ -195,7 +195,7 @@ public class JSONPatch implements JsonPatch {
         return (Patch) patch.typeMap(cls);
     }
 
-    public void add(JSONPointer path, JSON2Value val) {
+    public void add(JSONPointer path, JSONValue val) {
         CmdAdd cmd = new CmdAdd();
         cmd.path = path;
         cmd.value = val;
@@ -203,7 +203,7 @@ public class JSONPatch implements JsonPatch {
     }
 
     public void add(String path, Object val) {
-        add(new JSONPointer(path), JSON2.valueOf(val));
+        add(new JSONPointer(path), JSON.valueOf(val));
     }
 
     public void remove(JSONPointer path) {
@@ -212,7 +212,7 @@ public class JSONPatch implements JsonPatch {
         cmds.add(cmd);
     }
 
-    public void replace(JSONPointer path, JSON2Value val) {
+    public void replace(JSONPointer path, JSONValue val) {
         CmdReplace cmd = new CmdReplace();
         cmd.path = path;
         cmd.value = val;
@@ -240,7 +240,7 @@ public class JSONPatch implements JsonPatch {
      * @param target 元は可変
      * @return target処理後の複製? エラーっぽいときはnull
      */
-    public <T extends JSON2Collection> T apply(T target) {
+    public <T extends JSONCollection> T apply(T target) {
         target = (T) target.clone();
         for (Patch cmd : cmds) {
             target = cmd.apply(target);
@@ -254,7 +254,7 @@ public class JSONPatch implements JsonPatch {
      * @param patchs 差分
      * @return 結果
      */
-    public static JSON2Collection run(JSON2Collection target, JSON2Array patchs) {
+    public static JSONCollection run(JSONCollection target, JSONArray patchs) {
         JSONPatch p = new JSONPatch(patchs);
         return p.apply(target);
     }
@@ -262,7 +262,7 @@ public class JSONPatch implements JsonPatch {
     @Override
     public <T extends JsonStructure> T apply(T target) {
         Class c = target.getClass();
-        JSON2Collection cp = (JSON2Collection) JSON2.valueOf(target);
+        JSONCollection cp = (JSONCollection) JSON.valueOf(target);
         for (Patch cmd : cmds) {
             cp = cmd.apply(cp);
         }
@@ -274,7 +274,7 @@ public class JSONPatch implements JsonPatch {
         return cmds.toJson();
     }
 
-    public JSON2Value toJSON() {
+    public JSONValue toJSON() {
         return cmds.clone();
     }
 
@@ -290,39 +290,39 @@ public class JSONPatch implements JsonPatch {
         }
     }
 
-    private static int fullCount(JSON2Object<?> o, JSON2Value v) {
+    private static int fullCount(JSONObject<?> o, JSONValue v) {
         int c = 0;
 
         for (String key : o.keySet()) {
-            JSON2Value ov = o.getJSON(key);
+            JSONValue ov = o.getJSON(key);
             if (ov == v || (v != null && ov.equals(v))) {
                 c++;
-            } else if (ov instanceof JSON2Array) {
-                c += fullCount((JSON2Array) ov, v);
-            } else if (ov instanceof JSON2Object) {
-                c += fullCount((JSON2Object) ov, v);
+            } else if (ov instanceof JSONArray) {
+                c += fullCount((JSONArray) ov, v);
+            } else if (ov instanceof JSONObject) {
+                c += fullCount((JSONObject) ov, v);
             }
         }
         return c;
     }
 
-    private static int fullCount(JSON2Array o, JSON2Value v) {
+    private static int fullCount(JSONArray o, JSONValue v) {
         int c = 0;
 
         for (Object d : o) {
-            JSON2Value ov = JSON2.valueOf(d);
+            JSONValue ov = JSON.valueOf(d);
             if (ov == v || (v != null && ov.equals(v))) {
                 c++;
-            } else if (ov instanceof JSON2Array) {
-                c += fullCount((JSON2Array) ov, v);
-            } else if (ov instanceof JSON2Object) {
-                c += fullCount((JSON2Object) ov, v);
+            } else if (ov instanceof JSONArray) {
+                c += fullCount((JSONArray) ov, v);
+            } else if (ov instanceof JSONObject) {
+                c += fullCount((JSONObject) ov, v);
             }
         }
         return c;
     }
 
-    private static int count(JSON2Array o, Object v) {
+    private static int count(JSONArray o, Object v) {
         int c = 0;
 
         for (int n = 0; n < o.size(); n++) {
@@ -334,11 +334,11 @@ public class JSONPatch implements JsonPatch {
         return c;
     }
 
-    private static int count(JSON2Array o, JSON2Value v) {
+    private static int count(JSONArray o, JSONValue v) {
         int c = 0;
 
         for (int n = 0; n < o.size(); n++) {
-            JSON2Value ov = o.getJSON(n);
+            JSONValue ov = o.getJSON(n);
             if (ov == v || (v != null && ov.equals(v))) { // null 対策
                 c++;
             }
@@ -346,7 +346,7 @@ public class JSONPatch implements JsonPatch {
         return c;
     }
 
-    private static int indexOf(JSON2Array obj, Object val, int start) {
+    private static int indexOf(JSONArray obj, Object val, int start) {
         for (int i = start; i < obj.size(); i++) {
             if (val.equals(obj.get(i))) {
                 return i;
@@ -362,10 +362,10 @@ public class JSONPatch implements JsonPatch {
      * @param target 先
      * @return 差分
      */
-    static JSONPatch diffArray(JSON2Array<?> source, JSON2Array<?> target) {
+    static JSONPatch diffArray(JSONArray<?> source, JSONArray<?> target) {
         JSONPatch patch = new JSONPatch();
         // ソース側をターゲットと同じになるまでつつく
-        JSON2Array src = source.clone();
+        JSONArray src = source.clone();
 
         for (int t = 0; t < target.size(); t++) {
 //            System.out.println("S:" + src.toJSON() + " T:" + target.toJSON());
@@ -390,12 +390,12 @@ public class JSONPatch implements JsonPatch {
                 if (oscount == otcount) {
                     //add / copy
                     if (scount == 0) {
-                        patch.add(new JSONPointer("/" + t), JSON2.valueOf(newVal));
+                        patch.add(new JSONPointer("/" + t), JSON.valueOf(newVal));
                         src.add(t, newVal);
                     } else {
                         int si = src.indexOf(newVal);
                         patch.copy(new JSONPointer("/" + si), new JSONPointer("/" + t));
-                        JSON2Value v = JSON2.copy(src.getJSON(si));
+                        JSONValue v = JSON.copy(src.getJSON(si));
                         src.addJSON(t, v);
                     }
                     continue;
@@ -426,14 +426,14 @@ public class JSONPatch implements JsonPatch {
                     if (scount < tcount) { // 複製先は残したい
                         int i = src.indexOf(newVal);
                         patch.copy(new JSONPointer("/" + i), new JSONPointer("/" + t)); // copyか
-                        src.addJSON(t, JSON2.copy(src.getJSON(i)));
+                        src.addJSON(t, JSON.copy(src.getJSON(i)));
                     } else {
                         patch.diff("/" + t, src.getJSON(t), target.getJSON(t));
-                        src.setJSON(t, JSON2.copy(target.getJSON(t)));
+                        src.setJSON(t, JSON.copy(target.getJSON(t)));
                     }
                 } else {
                     patch.diff("/" + t, src.getJSON(t), target.getJSON(t));
-                    src.setJSON(t, JSON2.copy(target.getJSON(t)));
+                    src.setJSON(t, JSON.copy(target.getJSON(t)));
                     continue;
                 }
             }
@@ -454,7 +454,7 @@ public class JSONPatch implements JsonPatch {
                         path = new JSONPointer("/" + t);
                     }
                     patch.copy(new JSONPointer("/" + idx), path);
-                    src.addJSON(t, JSON2.copy(src.getJSON(idx)));
+                    src.addJSON(t, JSON.copy(src.getJSON(idx)));
                     scount++;
                 } else {
                     idx = src.subList(t, src.size()).indexOf(newVal) + t;
@@ -478,7 +478,7 @@ public class JSONPatch implements JsonPatch {
                 } else {
                     path = "/" + t;
                 }
-                patch.add(path, JSON2.valueWrap(newVal));
+                patch.add(path, JSON.valueWrap(newVal));
             }
 
         }
@@ -488,9 +488,9 @@ public class JSONPatch implements JsonPatch {
         return patch;
     }
 
-    static JSONPatch diffObject(JSON2Object source, JSON2Object target) {
+    static JSONPatch diffObject(JSONObject source, JSONObject target) {
 
-        JSON2Object<?> obj = source.clone();
+        JSONObject<?> obj = source.clone();
 
         HashSet<String> all = new HashSet<>(target.keySet());
         all.addAll(source.keySet());
@@ -501,8 +501,8 @@ public class JSONPatch implements JsonPatch {
         for (String key : all) {  // ランダム
             String encKey = "/" + JSONPointer.encode(key);
             Object tgt = target.get(key);
-            JSON2Value srcjson = obj.getJSON(key);
-            JSON2Value tgtjson = target.getJSON(key);
+            JSONValue srcjson = obj.getJSON(key);
+            JSONValue tgtjson = target.getJSON(key);
             if ((srcjson == null || !srcjson.equals(tgtjson)) && obj.containsValue(tgt)) { // コピーもとあり
                 Map.Entry<String, ?>[] es = (Map.Entry<String, ?>[]) obj.entrySet().stream().filter(e -> e.getValue().equals(tgt)).toArray();
                 Map.Entry<String, ?> r = null;
@@ -515,11 +515,11 @@ public class JSONPatch implements JsonPatch {
                     rm.remove(r.getKey());
                     patch.move(new JSONPointer("/" + JSONPointer.encode(r.getKey())), new JSONPointer(encKey));
                     obj.remove(r.getKey());
-                    obj.putJSON(key, JSON2.copy(tgtjson));
+                    obj.putJSON(key, JSON.copy(tgtjson));
                 } else {
 
                     patch.copy(new JSONPointer("/" + JSONPointer.encode(es[0].getKey())), new JSONPointer(encKey));
-                    obj.putJSON(key, JSON2.copy(tgtjson));
+                    obj.putJSON(key, JSON.copy(tgtjson));
                 }
             } else {
                 patch.diff(encKey, srcjson, tgtjson);
@@ -527,8 +527,8 @@ public class JSONPatch implements JsonPatch {
         }
         for (String key : rm) {
             String encKey = "/" + JSONPointer.encode(key);
-            JSON2Value srcjson = obj.getJSON(key);
-            JSON2Value tgtjson = target.getJSON(key);
+            JSONValue srcjson = obj.getJSON(key);
+            JSONValue tgtjson = target.getJSON(key);
             patch.diff(encKey, srcjson, tgtjson);
         }
 
@@ -542,31 +542,31 @@ public class JSONPatch implements JsonPatch {
      * @param target
      * @return
      */
-    public static JSONPatch diff(JSON2Value source, JSON2Value target) {
+    public static JSONPatch diff(JSONValue source, JSONValue target) {
         JSONPatch patch = new JSONPatch();
 
         if (source == null) {
             if (target != null) {
-                patch.add(new JSONPointer(""), JSON2.copy(target));
+                patch.add(new JSONPointer(""), JSON.copy(target));
             }
         } else if (target == null) {
             patch.remove(new JSONPointer(""));
         } else if (!source.equals(target)) {
             // object と array は別でなんとかする
-            if (source instanceof JSON2Array && target instanceof JSON2Array) {
-                JSONPatch subPatch = diffArray((JSON2Array) source, (JSON2Array) target);
+            if (source instanceof JSONArray && target instanceof JSONArray) {
+                JSONPatch subPatch = diffArray((JSONArray) source, (JSONArray) target);
                 patch.mrg("", subPatch);
-            } else if (source instanceof JSON2Object && target instanceof JSON2Object) {
-                JSONPatch subPatch = diffObject((JSON2Object) source, (JSON2Object) target);
+            } else if (source instanceof JSONObject && target instanceof JSONObject) {
+                JSONPatch subPatch = diffObject((JSONObject) source, (JSONObject) target);
                 patch.mrg("", subPatch);
             } else {
-                patch.replace(new JSONPointer(""), JSON2.copy(target));
+                patch.replace(new JSONPointer(""), JSON.copy(target));
             }
         }
         return patch;
     }
 
-    public void diff(String path, JSON2Value source, JSON2Value target) {
+    public void diff(String path, JSONValue source, JSONValue target) {
         JSONPatch p = diff(source, target);
         mrg(path, p);
     }

@@ -30,7 +30,7 @@ public class JSONPatchBuilder implements JsonPatchBuilder {
         patch = new JSONPatch();
     }
     
-    public JSONPatchBuilder(JSON2Array array) {
+    public JSONPatchBuilder(JSONArray array) {
         patch = new JSONPatch(array);
     }
 
@@ -44,7 +44,7 @@ public class JSONPatchBuilder implements JsonPatchBuilder {
     public JsonPatchBuilder add(String path, JsonValue value) {
         JSONPatch.CmdAdd cmd = new JSONPatch.CmdAdd();
         cmd.path = new JSONPointer(path);
-        cmd.value = JSON2.valueOf(value);
+        cmd.value = JSON.valueOf(value);
         patch.cmds.add(cmd);
         return this;
     }
@@ -59,7 +59,7 @@ public class JSONPatchBuilder implements JsonPatchBuilder {
     public JsonPatchBuilder add(String path, String value) {
         JSONPatch.CmdAdd cmd = new JSONPatch.CmdAdd();
         cmd.path = new JSONPointer(path);
-        cmd.value = JSON2.valueOf(value);
+        cmd.value = JSON.valueOf(value);
         patch.cmds.add(cmd);
         return this;
     }
@@ -74,7 +74,7 @@ public class JSONPatchBuilder implements JsonPatchBuilder {
     public JsonPatchBuilder add(String path, int value) {
         JSONPatch.CmdAdd cmd = new JSONPatch.CmdAdd();
         cmd.path = new JSONPointer(path);
-        cmd.value = JSON2.valueOf(value);
+        cmd.value = JSON.valueOf(value);
         patch.cmds.add(cmd);
         return this;
     }
@@ -89,7 +89,7 @@ public class JSONPatchBuilder implements JsonPatchBuilder {
     public JsonPatchBuilder add(String path, boolean value) {
         JSONPatch.CmdAdd cmd = new JSONPatch.CmdAdd();
         cmd.path = new JSONPointer(path);
-        cmd.value = JSON2.valueOf(value);
+        cmd.value = JSON.valueOf(value);
         patch.cmds.add(cmd);
         return this;
     }
@@ -111,7 +111,7 @@ public class JSONPatchBuilder implements JsonPatchBuilder {
     public JsonPatchBuilder replace(String path, JsonValue value) {
         JSONPatch.CmdReplace cmd = new JSONPatch.CmdReplace();
         cmd.path = new JSONPointer(path);
-        cmd.value = JSON2.valueOf(value);
+        cmd.value = JSON.valueOf(value);
         patch.cmds.add(cmd);
         return this;
     }
@@ -120,7 +120,7 @@ public class JSONPatchBuilder implements JsonPatchBuilder {
     public JsonPatchBuilder replace(String path, String value) {
         JSONPatch.CmdReplace cmd = new JSONPatch.CmdReplace();
         cmd.path = new JSONPointer(path);
-        cmd.value = JSON2.valueOf(value);
+        cmd.value = JSON.valueOf(value);
         patch.cmds.add(cmd);
         return this;
     }
@@ -129,7 +129,7 @@ public class JSONPatchBuilder implements JsonPatchBuilder {
     public JsonPatchBuilder replace(String path, int value) {
         JSONPatch.CmdReplace cmd = new JSONPatch.CmdReplace();
         cmd.path = new JSONPointer(path);
-        cmd.value = JSON2.valueOf(value);
+        cmd.value = JSON.valueOf(value);
         patch.cmds.add(cmd);
         return this;
     }
@@ -138,7 +138,7 @@ public class JSONPatchBuilder implements JsonPatchBuilder {
     public JsonPatchBuilder replace(String path, boolean value) {
         JSONPatch.CmdReplace cmd = new JSONPatch.CmdReplace();
         cmd.path = new JSONPointer(path);
-        cmd.value = JSON2.valueOf(value);
+        cmd.value = JSON.valueOf(value);
         patch.cmds.add(cmd);
         return this;
     }
@@ -165,7 +165,7 @@ public class JSONPatchBuilder implements JsonPatchBuilder {
     public JsonPatchBuilder test(String path, JsonValue value) {
         JSONPatch.CmdTest cmd = new JSONPatch.CmdTest();
         cmd.path = new JSONPointer(path);
-        cmd.value = JSON2.valueOf(value);
+        cmd.value = JSON.valueOf(value);
         patch.cmds.add(cmd);
         return this;
     }
@@ -174,7 +174,7 @@ public class JSONPatchBuilder implements JsonPatchBuilder {
     public JsonPatchBuilder test(String path, String value) {
         JSONPatch.CmdTest cmd = new JSONPatch.CmdTest();
         cmd.path = new JSONPointer(path);
-        cmd.value = JSON2.valueOf(value);
+        cmd.value = JSON.valueOf(value);
         patch.cmds.add(cmd);
         return this;
     }
@@ -183,7 +183,7 @@ public class JSONPatchBuilder implements JsonPatchBuilder {
     public JsonPatchBuilder test(String path, int value) {
         JSONPatch.CmdTest cmd = new JSONPatch.CmdTest();
         cmd.path = new JSONPointer(path);
-        cmd.value = JSON2.valueOf(value);
+        cmd.value = JSON.valueOf(value);
         patch.cmds.add(cmd);
         return this;
     }
@@ -192,7 +192,7 @@ public class JSONPatchBuilder implements JsonPatchBuilder {
     public JsonPatchBuilder test(String path, boolean value) {
         JSONPatch.CmdTest cmd = new JSONPatch.CmdTest();
         cmd.path = new JSONPointer(path);
-        cmd.value = JSON2.valueOf(value);
+        cmd.value = JSON.valueOf(value);
         patch.cmds.add(cmd);
         return this;
     }

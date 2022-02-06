@@ -1,9 +1,5 @@
 package net.siisise.json;
 
-import net.siisise.json.JSON2NULL;
-import net.siisise.json.JSON2Value;
-import net.siisise.json.JSON2Array;
-import net.siisise.json.JSON2;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.util.HashMap;
@@ -16,9 +12,9 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  *
  */
-public class JSON2Test {
+public class JSONTest {
 
-    public JSON2Test() {
+    public JSONTest() {
     }
 
     @Test
@@ -26,9 +22,9 @@ public class JSON2Test {
         Map obj = new HashMap();
         String abc = "[1,2,{\"a\":\"b\",\"c\":5}]";
         
-        System.out.println(JSON2.parseWrap(abc).toJSON(JSON2Value.NOBR));
+        System.out.println(JSON.parseWrap(abc).toJSON(JSONValue.NOBR));
         
-        List o = (JSON2Array) JSON2.parse(abc);
+        List o = (JSONArray) JSON.parse(abc);
         for ( Object v : o ) {
             System.out.println(v.getClass().getName());
             System.out.println(v);
@@ -39,8 +35,8 @@ public class JSON2Test {
     Object oval;
     Integer intval;
     JsonValue val;
-    JSON2Value j2val;
-    JSON2NULL n2val;
+    JSONValue j2val;
+    JSONNULL n2val;
     List<? extends Integer> lint;
     Integer[] aint;
     List<Integer>[] laint;
@@ -69,14 +65,14 @@ public class JSON2Test {
         System.out.println(aintt.getTypeName());
 //        System.out.println(aint.getType().getClass().getName());
         
-        System.out.println(JSON2NULL.NULL.typeMap(foval.getType()));
-        System.out.println(JSON2NULL.NULL.typeMap(fval.getType()).getClass().getName());
+        System.out.println(JSONNULL.NULL.typeMap(foval.getType()));
+        System.out.println(JSONNULL.NULL.typeMap(fval.getType()).getClass().getName());
         
-        assertNull(JSON2NULL.NULL.typeMap(foval.getType()));
-        assertNull(JSON2NULL.NULL.typeMap(fintval.getType()));
-        assertEquals(JSON2NULL.NULL.typeMap(fval.getType()), JsonValue.NULL);
-        assertEquals(JSON2NULL.NULL.typeMap(fj2val.getType()), JSON2NULL.NULL);
-        assertEquals(JSON2NULL.NULL.typeMap(fn2val.getType()), JSON2NULL.NULL);
-        JSON2NULL.NULL.typeMap(fn2val.getClass());
+        assertNull(JSONNULL.NULL.typeMap(foval.getType()));
+        assertNull(JSONNULL.NULL.typeMap(fintval.getType()));
+        assertEquals(JSONNULL.NULL.typeMap(fval.getType()), JsonValue.NULL);
+        assertEquals(JSONNULL.NULL.typeMap(fj2val.getType()), JSONNULL.NULL);
+        assertEquals(JSONNULL.NULL.typeMap(fn2val.getType()), JSONNULL.NULL);
+        JSONNULL.NULL.typeMap(fn2val.getClass());
     }
 }

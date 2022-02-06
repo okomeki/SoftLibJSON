@@ -1,8 +1,9 @@
 package net.siisise.json.parser;
 
 import net.siisise.abnf.ABNF;
-import net.siisise.abnf.ABNFReg;
 import net.siisise.abnf.parser5234.ABNF5234;
+import net.siisise.bnf.BNF;
+import net.siisise.bnf.BNFReg;
 import net.siisise.bnf.parser.BNFBaseParser;
 import net.siisise.io.FrontPacket;
 import net.siisise.lang.CodePoint;
@@ -12,7 +13,7 @@ import net.siisise.lang.CodePoint;
  */
 public class JSONCharP extends BNFBaseParser<Integer> {
 
-    public JSONCharP(ABNF rule, ABNFReg base) {
+    public JSONCharP(BNF rule, BNFReg base) {
         super(rule);
     }
 

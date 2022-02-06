@@ -1,10 +1,10 @@
 package net.siisise.json.mergepatch;
 
 import net.siisise.json.JSONMergePatch7396;
-import net.siisise.json.JSON2;
-import net.siisise.json.JSON2Value;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
+import net.siisise.json.JSON;
+import net.siisise.json.JSONValue;
 
 /**
  *
@@ -20,112 +20,112 @@ public class JSONMergePatchTest {
     @Test
     public void testAppendixA() {
         System.out.println("Appendix A.");
-        JSON2Value original;
-        JSON2Value patch;
-        JSON2Value expResult;
-        JSON2Value result;
+        JSONValue original;
+        JSONValue patch;
+        JSONValue expResult;
+        JSONValue result;
         
-        original = JSON2.parseWrap("{\"a\":\"b\"}");
-        patch = JSON2.parseWrap("{\"a\":\"c\"}");
-        expResult = JSON2.parseWrap("{\"a\":\"c\"}");
+        original = JSON.parseWrap("{\"a\":\"b\"}");
+        patch = JSON.parseWrap("{\"a\":\"c\"}");
+        expResult = JSON.parseWrap("{\"a\":\"c\"}");
         result = JSONMergePatch7396.mergePatch(original, patch);
         System.out.println(result);
         assertEquals(expResult, result);
 
-        original = JSON2.parseWrap("{\"a\":\"b\"}");
-        patch = JSON2.parseWrap("{\"b\":\"c\"}");
-        expResult = JSON2.parseWrap("{\"a\":\"b\",\"b\":\"c\"}");
+        original = JSON.parseWrap("{\"a\":\"b\"}");
+        patch = JSON.parseWrap("{\"b\":\"c\"}");
+        expResult = JSON.parseWrap("{\"a\":\"b\",\"b\":\"c\"}");
         result = JSONMergePatch7396.mergePatch(original, patch);
         System.out.println(result);
         assertEquals(expResult, result);
 
-        original = JSON2.parseWrap("{\"a\":\"b\"}");
-        patch = JSON2.parseWrap("{\"a\":null}");
-        expResult = JSON2.parseWrap("{}");
+        original = JSON.parseWrap("{\"a\":\"b\"}");
+        patch = JSON.parseWrap("{\"a\":null}");
+        expResult = JSON.parseWrap("{}");
         result = JSONMergePatch7396.mergePatch(original, patch);
         System.out.println(result);
         assertEquals(expResult, result);
 
-        original = JSON2.parseWrap("{\"a\":\"b\",\"b\":\"c\"}");
-        patch = JSON2.parseWrap("{\"a\":null}");
-        expResult = JSON2.parseWrap("{\"b\":\"c\"}");
+        original = JSON.parseWrap("{\"a\":\"b\",\"b\":\"c\"}");
+        patch = JSON.parseWrap("{\"a\":null}");
+        expResult = JSON.parseWrap("{\"b\":\"c\"}");
         result = JSONMergePatch7396.mergePatch(original, patch);
         System.out.println(result);
         assertEquals(expResult, result);
 
-        original = JSON2.parseWrap("{\"a\":[\"b\"]}");
-        patch = JSON2.parseWrap("{\"a\":\"c\"}");
-        expResult = JSON2.parseWrap("{\"a\":\"c\"}");
+        original = JSON.parseWrap("{\"a\":[\"b\"]}");
+        patch = JSON.parseWrap("{\"a\":\"c\"}");
+        expResult = JSON.parseWrap("{\"a\":\"c\"}");
         result = JSONMergePatch7396.mergePatch(original, patch);
         System.out.println(result);
         assertEquals(expResult, result);
 
-        original = JSON2.parseWrap("{\"a\":\"c\"}");
-        patch = JSON2.parseWrap("{\"a\":[\"b\"]}");
-        expResult = JSON2.parseWrap("{\"a\":[\"b\"]}");
+        original = JSON.parseWrap("{\"a\":\"c\"}");
+        patch = JSON.parseWrap("{\"a\":[\"b\"]}");
+        expResult = JSON.parseWrap("{\"a\":[\"b\"]}");
         result = JSONMergePatch7396.mergePatch(original, patch);
         System.out.println(result);
         assertEquals(expResult, result);
 
-        original = JSON2.parseWrap("{\"a\": {\"b\":\"c\"}}");
-        patch = JSON2.parseWrap("{\"a\": {\"b\": \"d\", \"c\": null}}");
-        expResult = JSON2.parseWrap("{\"a\": { \"b\": \"d\" }}");
+        original = JSON.parseWrap("{\"a\": {\"b\":\"c\"}}");
+        patch = JSON.parseWrap("{\"a\": {\"b\": \"d\", \"c\": null}}");
+        expResult = JSON.parseWrap("{\"a\": { \"b\": \"d\" }}");
         result = JSONMergePatch7396.mergePatch(original, patch);
         System.out.println(result);
         assertEquals(expResult, result);
 
-        original = JSON2.parseWrap("{\"a\":[ {\"b\":\"c\"}]}");
-        patch = JSON2.parseWrap("{\"a\": [1]}");
-        expResult = JSON2.parseWrap("{\"a\": [1]}");
+        original = JSON.parseWrap("{\"a\":[ {\"b\":\"c\"}]}");
+        patch = JSON.parseWrap("{\"a\": [1]}");
+        expResult = JSON.parseWrap("{\"a\": [1]}");
         result = JSONMergePatch7396.mergePatch(original, patch);
         System.out.println(result);
         assertEquals(expResult, result);
 
-        original = JSON2.parseWrap("[\"a\",\"b\"]");
-        patch = JSON2.parseWrap("[\"c\",\"d\"]");
-        expResult = JSON2.parseWrap("[\"c\",\"d\"]");
+        original = JSON.parseWrap("[\"a\",\"b\"]");
+        patch = JSON.parseWrap("[\"c\",\"d\"]");
+        expResult = JSON.parseWrap("[\"c\",\"d\"]");
         result = JSONMergePatch7396.mergePatch(original, patch);
         System.out.println(result);
         assertEquals(expResult, result);
 
-        original = JSON2.parseWrap("{\"a\":\"b\"}");
-        patch = JSON2.parseWrap("[\"c\"]");
-        expResult = JSON2.parseWrap("[\"c\"]");
+        original = JSON.parseWrap("{\"a\":\"b\"}");
+        patch = JSON.parseWrap("[\"c\"]");
+        expResult = JSON.parseWrap("[\"c\"]");
         result = JSONMergePatch7396.mergePatch(original, patch);
         System.out.println(result);
         assertEquals(expResult, result);
 
-        original = JSON2.parseWrap("{\"a\":\"foo\"}");
-        patch = JSON2.parseWrap("null");
-        expResult = JSON2.parseWrap("null");
+        original = JSON.parseWrap("{\"a\":\"foo\"}");
+        patch = JSON.parseWrap("null");
+        expResult = JSON.parseWrap("null");
         result = JSONMergePatch7396.mergePatch(original, patch);
         System.out.println(result);
         assertEquals(expResult, result);
 
-        original = JSON2.parseWrap("{\"a\":\"foo\"}");
-        patch = JSON2.parseWrap("\"bar\"");
-        expResult = JSON2.parseWrap("\"bar\"");
+        original = JSON.parseWrap("{\"a\":\"foo\"}");
+        patch = JSON.parseWrap("\"bar\"");
+        expResult = JSON.parseWrap("\"bar\"");
         result = JSONMergePatch7396.mergePatch(original, patch);
         System.out.println(result);
         assertEquals(expResult, result);
 
-        original = JSON2.parseWrap("{\"e\":null}");
-        patch = JSON2.parseWrap("{\"a\":1}");
-        expResult = JSON2.parseWrap("{\"e\":null,\"a\":1}");
+        original = JSON.parseWrap("{\"e\":null}");
+        patch = JSON.parseWrap("{\"a\":1}");
+        expResult = JSON.parseWrap("{\"e\":null,\"a\":1}");
         result = JSONMergePatch7396.mergePatch(original, patch);
         System.out.println(result);
         assertEquals(expResult, result);
 
-        original = JSON2.parseWrap("[1,2]");
-        patch = JSON2.parseWrap("{\"a\":\"b\",\"c\":null}");
-        expResult = JSON2.parseWrap("{\"a\":\"b\"}");
+        original = JSON.parseWrap("[1,2]");
+        patch = JSON.parseWrap("{\"a\":\"b\",\"c\":null}");
+        expResult = JSON.parseWrap("{\"a\":\"b\"}");
         result = JSONMergePatch7396.mergePatch(original, patch);
         System.out.println(result);
         assertEquals(expResult, result);
 
-        original = JSON2.parseWrap("{}");
-        patch = JSON2.parseWrap("{\"a\":{\"bb\":{\"ccc\":null}}}");
-        expResult = JSON2.parseWrap("{\"a\":{\"bb\":{}}}");
+        original = JSON.parseWrap("{}");
+        patch = JSON.parseWrap("{\"a\":{\"bb\":{\"ccc\":null}}}");
+        expResult = JSON.parseWrap("{\"a\":{\"bb\":{}}}");
         result = JSONMergePatch7396.mergePatch(original, patch);
         System.out.println(result);
         assertEquals(expResult, result);

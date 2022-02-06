@@ -6,12 +6,12 @@ import javax.json.JsonObject;
 import javax.json.JsonString;
 import javax.json.JsonValue;
 import net.siisise.json.JSONPointer;
-import net.siisise.json.JSON2Object;
+import net.siisise.json.JSONObject;
 
 /**
  * それっぽく互換性をかもしだしたもの
  */
-public class JSONPObject extends JSON2Object<JsonValue> implements JsonObject {
+public class JSONPObject extends JSONObject<JsonValue> implements JsonObject {
     
     public JSONPObject() {
     }
