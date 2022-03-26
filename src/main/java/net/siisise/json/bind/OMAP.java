@@ -43,6 +43,7 @@ import net.siisise.json.bind.target.OMAPConvert;
 import net.siisise.json.bind.target.StringConvert;
 import net.siisise.json.JSON;
 import net.siisise.json.JSONValue;
+import net.siisise.json.bind.target.MessagePackConvert;
 
 /**
  * JSON-B相当のObject Mapping。
@@ -76,6 +77,7 @@ public class OMAP {
         new JSONConvert(),
         new DateConvert(), // 別にしたい
         new StringConvert(),
+        new MessagePackConvert(),
         new JavaConvert() // なにもしない
     };
 
@@ -99,7 +101,7 @@ public class OMAP {
         List<OMConvert> nulls = new ArrayList();
         nulls.add(new JSONValueM());
         OMMAP.put(null, nulls);
-
+        
         for (MtoConvert cn : OUTTYPES) {
             CONVS.put(cn.targetClass(), cn);
         }

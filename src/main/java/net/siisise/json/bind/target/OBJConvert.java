@@ -14,6 +14,10 @@ import net.siisise.io.BASE64;
 import net.siisise.json.JSONArray;
 import net.siisise.json.bind.MtoConvert;
 
+/**
+ * 
+ * @param <T> 
+ */
 public abstract class OBJConvert<T> implements MtoConvert<T> {
 
     public static enum MapType {
