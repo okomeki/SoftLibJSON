@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.siisise</groupId>
     <artifactId>softlib-json</artifactId>
-    <version>1.1.4-SNAPSHOT</version>
+    <version>1.2.0</version>
     <packaging>jar</packaging>
     <name>SoftLibJSON</name>
     <description>JSON-P JSON-B JSON APIs Implements for Java</description>
@@ -92,13 +92,7 @@
         <dependency>
             <groupId>net.siisise</groupId>
             <artifactId>softlib-abnf</artifactId>
-            <version>1.1.5-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>net.siisise</groupId>
-            <artifactId>softlib</artifactId>
-            <version>1.1.6-SNAPSHOT</version>
-            <type>jar</type>
+            <version>1.2.0</version>
         </dependency>
         <dependency>
             <groupId>javax</groupId>
