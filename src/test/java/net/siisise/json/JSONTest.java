@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.json.JsonValue;
+import net.siisise.json.base.JSONBaseNULL;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -54,7 +55,7 @@ public class JSONTest {
         
         Type lintt = lint.getGenericType();
         Type aintt = aint.getGenericType();
-        
+
         System.out.println("type test");
         System.out.println(lintt.getClass().getName());
         System.out.println(lintt.getClass().isArray());
@@ -64,15 +65,15 @@ public class JSONTest {
         System.out.println(aintt.getClass().isArray()); // 配列
         System.out.println(aintt.getTypeName());
 //        System.out.println(aint.getType().getClass().getName());
-        
-        System.out.println(JSONNULL.NULL.typeMap(foval.getType()));
-        System.out.println(JSONNULL.NULL.typeMap(fval.getType()).getClass().getName());
-        
-        assertNull(JSONNULL.NULL.typeMap(foval.getType()));
-        assertNull(JSONNULL.NULL.typeMap(fintval.getType()));
-        assertEquals(JSONNULL.NULL.typeMap(fval.getType()), JsonValue.NULL);
-        assertEquals(JSONNULL.NULL.typeMap(fj2val.getType()), JSONNULL.NULL);
-        assertEquals(JSONNULL.NULL.typeMap(fn2val.getType()), JSONNULL.NULL);
-        JSONNULL.NULL.typeMap(fn2val.getClass());
+
+        System.out.println(JSONBaseNULL.NULL.typeMap(foval.getType()));
+        System.out.println(JSONBaseNULL.NULL.typeMap(fval.getType()).getClass().getName());
+
+        assertNull(JSONBaseNULL.NULL.typeMap(foval.getType()));
+        assertNull(JSONBaseNULL.NULL.typeMap(fintval.getType()));
+        assertEquals(JsonValue.NULL, JSONBaseNULL.NULL.typeMap(fval.getType()));
+        assertEquals(JSONBaseNULL.NULL, JSONBaseNULL.NULL.typeMap(fj2val.getType()));
+        assertEquals(JSONBaseNULL.NULL, JSONBaseNULL.NULL.typeMap(fn2val.getType()));
+        JSONBaseNULL.NULL.typeMap(fn2val.getClass());
     }
 }

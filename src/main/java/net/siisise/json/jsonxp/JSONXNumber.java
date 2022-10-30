@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Siisise Net
+ * Copyright 2022 okome.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,24 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.siisise.json;
+package net.siisise.json.jsonxp;
 
-import javax.json.JsonValue;
-import net.siisise.json.base.JSONBaseNULL;
+import javax.json.JsonNumber;
+import net.siisise.json.base.JSONBaseNumber;
 
 /**
- * JSON NULL.
- * 
+ * 互換要素
  */
-public class JSONNULL extends JSONBaseNULL implements JsonValue {
+public class JSONXNumber extends JSONBaseNumber implements JsonNumber {
 
-    public static JSONNULL NULL = new JSONNULL();
-    /**
-     * JsonValue互換要素.
-     * @return 
-     */
+    public JSONXNumber(Number num) {
+        super(num);
+    }
+
     @Override
     public ValueType getValueType() {
-        return ValueType.NULL;
+        return ValueType.NUMBER;
     }
 }

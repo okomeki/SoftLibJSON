@@ -16,8 +16,6 @@
 package net.siisise.cbor;
 
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
 import net.siisise.io.FrontPacket;
 import net.siisise.io.PacketA;
 import net.siisise.json.JSONArray;

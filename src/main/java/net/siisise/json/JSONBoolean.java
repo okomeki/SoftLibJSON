@@ -49,6 +49,11 @@ public class JSONBoolean implements JSONValue,JsonValue {
     }
     
     @Override
+    public javax.json.JsonValue toXJson() {
+        return bool ? javax.json.JsonValue.TRUE : javax.json.JsonValue.FALSE;
+    }
+    
+    @Override
     public String toString() {
         return toJSON();
     }

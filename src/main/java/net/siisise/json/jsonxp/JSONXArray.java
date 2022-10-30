@@ -1,4 +1,19 @@
-package net.siisise.json.jsonp;
+/*
+ * Copyright 2022 okome.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package net.siisise.json.jsonxp;
 
 import java.util.Collection;
 import java.util.List;
@@ -14,19 +29,18 @@ import net.siisise.json.JSONBoolean;
 import net.siisise.json.base.JSONBaseNULL;
 
 /**
- * JSON-P用 JSON Array.
- * 内部形式はJsonValue
+ * 互換要素
  */
-public class JSONPArray extends JSONArray<JsonValue> implements JsonArray {
+public class JSONXArray extends JSONArray<JsonValue> implements JsonArray {
 
-    public JSONPArray() {
+    public JSONXArray() {
         super(JsonValue.class);
     }
-
-    public JSONPArray(Collection<JsonValue> col) {
+    
+    public JSONXArray(Collection<JsonValue> col) {
         super(col);
     }
-
+    
     @Override
     public ValueType getValueType() {
         return ValueType.ARRAY;
@@ -37,23 +51,11 @@ public class JSONPArray extends JSONArray<JsonValue> implements JsonArray {
         return get(i) == JsonValue.NULL || get(i) instanceof JSONBaseNULL;
     }
 
-    /**
-     * JSON-P互換のためのJsonObjectを返す実装.
-     *
-     * @param i index
-     * @return JsonObject に該当するもの
-     */
     @Override
     public JsonObject getJsonObject(int i) {
         return (JsonObject) get(i);
     }
 
-    /**
-     * JSON-P互換のためのJsonArrayを返す実装.
-     *
-     * @param i index
-     * @return
-     */
     @Override
     public JsonArray getJsonArray(int i) {
         return (JsonArray) get(i);
@@ -100,7 +102,7 @@ public class JSONPArray extends JSONArray<JsonValue> implements JsonArray {
     @Override
     public boolean getBoolean(int i, boolean bln) {
         JsonValue val = get(i);
-        return (val == null) ? bln : val == JsonValue.TRUE;
+        return (val == null) ? bln : val == JsonValue.TRUE; 
     }
 
     /**
@@ -111,8 +113,8 @@ public class JSONPArray extends JSONArray<JsonValue> implements JsonArray {
      */
     @Override
     public <T extends JsonValue> List<T> getValuesAs(Class<T> type) {
-        // List<T> list = new ArrayList<>();
-        return (List<T>) stream().collect(Collectors.toList());
+       // List<T> list = new ArrayList<>();
+        return (List<T>)stream().collect(Collectors.toList());
         //this.forEach(val -> {
         //    list.add((T)val);
         //});
@@ -121,14 +123,12 @@ public class JSONPArray extends JSONArray<JsonValue> implements JsonArray {
 
     /**
      * JSONPArray互換の形式List&lt;JsonValue&gt;で格納する
-     *
      * @param <T> だいたいなんでもいけるかもしれない。
      * @return JSONP JsonArray対応型データ
      */
-    public static <T> Collector<T, ?, JSONPArray> collector() {
-        return Collector.of(
-                JSONPArray::new,
-                JSONPArray::addValue,
+    public static <T> Collector<T,?,JSONXArray> collector() {
+        return Collector.of(JSONXArray::new,
+                JSONXArray::addValue,
                 (ls, vals) -> {
                     vals.forEach(ls::addValue);
                     return ls;

@@ -7,6 +7,7 @@ import net.siisise.bnf.BNFReg;
 import net.siisise.bnf.parser.BNFBaseParser;
 import net.siisise.io.FrontPacket;
 import net.siisise.lang.CodePoint;
+import net.siisise.pac.ReadableBlock;
 
 /**
  * 文字解析用
@@ -19,8 +20,13 @@ public class JSONCharP extends BNFBaseParser<Integer> {
 
     static ABNF utf16 = JSON8259Reg.escape.pl(ABNF.bin(0x75), ABNF5234.HEXDIG.x(4, 4));
 
+    /**
+     * とりあえずUnicode コードポイントに変換する.
+     * @param pac
+     * @return unicode code point
+     */
     @Override
-    public Integer parse(FrontPacket pac) {
+    public Integer parse(ReadableBlock pac) {
         FrontPacket p = JSON8259Reg.unescaped.is(pac);
         if (p != null) {
             return CodePoint.utf8(p);
@@ -56,13 +62,11 @@ public class JSONCharP extends BNFBaseParser<Integer> {
                         }
                         return ch;
                     } else {
-                        pac.backWrite(0x75);
-                        pac.backWrite('\\');
+                        pac.back(2);
                         return null;
                     }
             }
         }
         return null;
     }
-
 }

@@ -4,6 +4,12 @@ ABNFで RFC 8259 JSON とRFC 6901 JSON Pointer, RFC 6902 JSON Patch, RFC 7396 JS
 Java API for JSON Processing (JSR-374)にも対応
 Object Mappingは適度に実装 (Java API for JSON Bindingもかぶせたが互換性は不明)
 
+## 概要
+
+便利なJSON Parserないかなと思い作ってみた。
+JavaのListやMap, Objectと相互変換で扱えれば便利やねということでJSON固有のいろいろは考えなくても自由に使える方向に尽力してみた。
+基本的にはListやMapとして扱えるJSON。JSON-Pとも互換性高め。
+
 ## なにができる?
 
 - ABNFを利用したJSONのパース
@@ -94,7 +100,7 @@ JSONをparseしてJava Objcetに変換する
     byte[] json; UTF-8限定 または String json;
 
     JSONValue val = JSON.parseWrap(json); JSONValue型 (JSONArray,JSONObject, JSONStrign, JSONNumber, JSONBooleanなど)として受けたい場合
-    Objcet obj = val.map();
+    Objcet obj = val.typeMap( 該当class); // JSONB の fromJson() 相当
     Object obj = JSON.parse(json); Object型 (ListやMap,String,Integer,Booleanなど)として直接結果を受けたい場合
 
 Java由来のものをJSONに変換する

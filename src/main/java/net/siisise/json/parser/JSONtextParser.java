@@ -5,7 +5,8 @@ import net.siisise.bnf.BNFReg;
 import net.siisise.bnf.parser.BNFSelect;
 
 /**
- *
+ * JSON-textのParser.
+ * JSON-text = vs value vs なので、中からBNFSelectでvalueを抽出するだけ
  */
 public class JSONtextParser extends BNFSelect<Object> {
     

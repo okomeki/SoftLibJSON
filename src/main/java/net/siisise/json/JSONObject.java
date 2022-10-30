@@ -28,6 +28,7 @@ import javax.json.JsonObject;
 import javax.json.JsonValue;
 import net.siisise.json.jsonp.JSONPObject;
 import net.siisise.json.bind.OMAP;
+import net.siisise.json.jsonxp.JSONXObject;
 
 /**
  * JSON Object.
@@ -119,6 +120,19 @@ public class JSONObject<V> extends LinkedHashMap<String, V> implements JSONColle
             JSONPObject obj = new JSONPObject();
             forEach((k, v) -> {
                 obj.put(k, OMAP.valueOf(v, JsonValue.class));
+            });
+            return obj;
+        }
+    }
+    
+    @Override
+    public javax.json.JsonObject toXJson() {
+        if (isEmpty()) {
+            return javax.json.JsonValue.EMPTY_JSON_OBJECT;
+        } else {
+            JSONXObject obj = new JSONXObject();
+            forEach((k, v) -> {
+                obj.put(k, OMAP.valueOf(v, javax.json.JsonValue.class));
             });
             return obj;
         }

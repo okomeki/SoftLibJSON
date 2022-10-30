@@ -3,11 +3,11 @@ package net.siisise.json.pojo;
 import java.util.Set;
 import net.siisise.json.JSONArray;
 import net.siisise.json.JSONBoolean;
-import net.siisise.json.JSONNULL;
-import net.siisise.json.JSONNumber;
 import net.siisise.json.JSONObject;
 import net.siisise.json.JSONString;
 import net.siisise.json.JSONValue;
+import net.siisise.json.base.JSONBaseNULL;
+import net.siisise.json.base.JSONBaseNumber;
 
 /**
  * そういうのもあるといいのかもしれず 仮
@@ -49,9 +49,9 @@ public class PojoSrcBuilder {
             return toClassName(name) + " " + name;
         } else if (obj instanceof JSONString) {
             return "String " + name;
-        } else if (obj instanceof JSONNumber) {
+        } else if (obj instanceof JSONBaseNumber) {
             return "Number " + name;
-        } else if (obj instanceof JSONNULL) {
+        } else if (obj instanceof JSONBaseNULL) {
             return "Object " + name;
         }
         throw new UnsupportedOperationException("未定義型");

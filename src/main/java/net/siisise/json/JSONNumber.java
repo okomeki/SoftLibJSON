@@ -15,12 +15,9 @@
  */
 package net.siisise.json;
 
-import java.lang.reflect.Type;
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import javax.json.JsonNumber;
-import javax.json.JsonValue;
-import net.siisise.json.bind.OMAP;
+import javax.json.JsonValue.ValueType;
+import net.siisise.json.base.JSONBaseNumber;
 
 /**
  * JSON Number.
@@ -29,105 +26,21 @@ import net.siisise.json.bind.OMAP;
  * データ型は特定のものを想定していないのでいろいろ。
  * これもNumver型になれるので多重ラップしないよう注意。
  */
-public class JSONNumber extends Number implements JSONValue,JsonNumber {
-    
-    private final Number number;
+public class JSONNumber extends JSONBaseNumber implements JSONValue,JsonNumber {
     
     public JSONNumber(Number num) {
-        number = num;
+        super(num);
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
-    public Number numberValue() {
-        return number;
-    }
-
-    @Override
-    public int intValue() {
-        return number.intValue();
-    }
-
-    @Override
-    public long longValue() {
-        return number.longValue();
-    }
-
-    @Override
-    public float floatValue() {
-        return number.floatValue();
-    }
-
-    @Override
-    public double doubleValue() {
-        return number.doubleValue();
-    }
-
-    @Override
-    public <T> T typeMap(Type type) {
-        return (T) OMAP.typeNumber(number, type);
-    }
-
-    @Override
-    public JsonValue toJson() {
+    public JSONNumber toJson() {
         return this;
     }
     
-    @Override
-    public String toString() {
-        return number.toString();
-    }
-    
-    @Override
-    public String toJSON() {
-        return number.toString();
-    }
-
-    @Override
-    public String toJSON(JSONFormat format) {
-        return toJSON();
-    }
-
-    @Override
-    public <T> T map() {
-        return (T)number;
-    }
-
-    @Override
-    public boolean isIntegral() {
-        if (number instanceof Integer || number instanceof Long || number instanceof Short || number instanceof Byte || number instanceof BigInteger) {
-            return true;
-        }
-        if (number instanceof Float || number instanceof Double || number instanceof BigDecimal) {
-            return false;
-        }
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public int intValueExact() {
-        return ((BigDecimal)typeMap(BigDecimal.class)).intValueExact();
-    }
-
-    @Override
-    public long longValueExact() {
-        return ((BigDecimal)typeMap(BigDecimal.class)).longValueExact();
-    }
-
-    @Override
-    public BigInteger bigIntegerValue() {
-        return typeMap(BigInteger.class);
-    }
-
-    @Override
-    public BigInteger bigIntegerValueExact() {
-        return ((BigDecimal)typeMap(BigDecimal.class)).toBigIntegerExact();
-    }
-
-    @Override
-    public BigDecimal bigDecimalValue() {
-        return typeMap(BigDecimal.class);
-    }
-
     @Override
     public ValueType getValueType() {
         return ValueType.NUMBER;
@@ -135,8 +48,8 @@ public class JSONNumber extends Number implements JSONValue,JsonNumber {
     
     @Override
     public boolean equals(Object o) {
-        if ( o instanceof JSONNumber ) {
-            return toJSON().equals(((JSONValue)o).toJSON());
+        if ( o instanceof JSONBaseNumber ) {
+            return map().equals(((JSONValue)o).map());
         } else if ( o instanceof Number ) {
             return number.equals(o);
         }

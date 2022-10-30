@@ -1,5 +1,6 @@
-package net.siisise.json.jsonp;
+package net.siisise.json.jsonxp;
 
+import net.siisise.json.jsonp.*;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,15 +15,15 @@ import net.siisise.json.bind.OMAP;
 /**
  *
  */
-public class JSONPBuilderFactory implements JsonBuilderFactory {
+public class JSONXBuilderFactory implements JsonBuilderFactory {
 
-    public JSONPBuilderFactory(Map<String, ?> map) {
+    public JSONXBuilderFactory(Map<String, ?> map) {
 //        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
     public JsonObjectBuilder createObjectBuilder() {
-        return new JSONPObjectBuilder();
+        return new JSONXObjectBuilder();
     }
 
     @Override

@@ -234,7 +234,7 @@ public class JSONPointer implements JsonPointer {
      * @param path ASCII文字っぽい範囲で
      * @return 
      */
-    static String encode(String path) {
+    public static String encode(String path) {
         StringBuilder encoded = new StringBuilder(100);
         StringBuilder src = new StringBuilder(path);
         

@@ -17,6 +17,7 @@ package net.siisise.json;
 
 import java.util.stream.Collector;
 import net.siisise.io.FrontPacket;
+import net.siisise.json.base.JSONBaseNULL;
 import net.siisise.json.bind.OMAP;
 import net.siisise.json.parser.JSON8259Reg;
 
@@ -108,7 +109,8 @@ public interface JSON {
 
     /**
      * valueOf で結果が単体(primitive型)のときラップしてから返す
-     * srcがJSON2Valueのとき透過がいい
+     * srcがJSON2Valueのとき透過がいい.
+     * JSONB では toJson に相当するかもしれない.
      *
      * @param src
      * @return JSON2Valueな値
@@ -118,13 +120,13 @@ public interface JSON {
     }
 
     /**
-     * 
+     * JSONとして処理できる皮をかぶせる.
      * @param val
      * @return 
      */
     static JSONValue valueWrap(Object val) {
         if (val == null) {
-            return JSONNULL.NULL;
+            return JSONBaseNULL.NULL;
         } else if (val instanceof JSONValue) {
             return (JSONValue) val;
         } else if (val instanceof Boolean) {

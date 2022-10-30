@@ -20,7 +20,6 @@ import javax.json.JsonPatchBuilder;
 import javax.json.JsonPointer;
 import javax.json.JsonReader;
 import javax.json.JsonReaderFactory;
-import javax.json.JsonString;
 import javax.json.JsonStructure;
 import javax.json.JsonValue;
 import javax.json.JsonWriter;
@@ -144,7 +143,7 @@ public class JSONPProvider extends JsonProvider {
     @Override
     public JsonObjectBuilder createObjectBuilder(Map<String, Object> object) {
         if ( bf == null ) { createBuilderFactory(null); }
-        return bf.createObjectBuilder(object);
+        return bf.createObjectBuilder((Map<String,Object>)object);
     }
 
     @Override
@@ -166,6 +165,7 @@ public class JSONPProvider extends JsonProvider {
 
     /**
      * JSON Patch
+     * @return 
      */
     @Override
     public JsonPatchBuilder createPatchBuilder() {
@@ -174,6 +174,8 @@ public class JSONPProvider extends JsonProvider {
 
     /**
      * JSON Patch
+     * @param array
+     * @return 
      */
     @Override
     public JsonPatchBuilder createPatchBuilder(JsonArray array) {
@@ -228,17 +230,17 @@ public class JSONPProvider extends JsonProvider {
     }
 
     @Override
-    public JsonString createValue(String value) {
+    public JSONString createValue(String value) {
         return new JSONString(value);
     }
 
     @Override
-    public JsonNumber createValue(int value) {
+    public JSONNumber createValue(int value) {
         return new JSONNumber(value);
     }
 
     @Override
-    public JsonNumber createValue(long value) {
+    public JSONNumber createValue(long value) {
         return new JSONNumber(value);
     }
 

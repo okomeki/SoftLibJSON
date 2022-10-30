@@ -1,6 +1,5 @@
 package net.siisise.json.stream;
 
-import net.siisise.json.stream.JSONPParserFactory;
 import java.io.StringReader;
 import java.math.BigDecimal;
 import java.util.Map;
@@ -181,7 +180,7 @@ public class JSONPParserTest {
         String expResult = "123";
         instance.next();
         JsonObject result = (JsonObject) instance.getValue();
-        assertNotNull(expResult,result.getString("a"));
+        assertEquals(expResult,result.getString("a"));
     }
 
     /**
@@ -234,8 +233,11 @@ public class JSONPParserTest {
     public void testGetValueStream() {
         System.out.println("getValueStream");
         String json = "{\"a\": \"123\", \"b\": [2,\"s\"]}[4,5]{}4";
+//        String json = "{}4";
+        System.out.println(json.length());
         JsonParser instance = new JSONPParserFactory().createParser(new StringReader(json));
         int expResult = 4;
+//        int expResult = 2;
         instance.next();
         Stream<JsonValue> result = instance.getValueStream();
         assertEquals(expResult, result.count());

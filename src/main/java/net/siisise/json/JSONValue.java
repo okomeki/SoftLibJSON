@@ -85,9 +85,15 @@ public interface JSONValue {
     <T> T typeMap(Type type);
     
     /**
-     * JSONP系に準拠する.
-     * @return 
+     * Jakarta JSON-P系に準拠する.
+     * @return JSON-P 的なもの
      */
     JsonValue toJson();
+
+    /**
+     * 旧 javax系
+     * @return JSON-P的なもの 
+     */
+    javax.json.JsonValue toXJson();
 
 }

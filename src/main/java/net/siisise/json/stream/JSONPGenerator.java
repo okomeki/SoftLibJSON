@@ -12,11 +12,11 @@ import javax.json.JsonValue;
 import javax.json.stream.JsonGenerator;
 import net.siisise.json.JSONBoolean;
 import net.siisise.json.JSONFormat;
-import net.siisise.json.JSONNULL;
 import net.siisise.json.JSONNumber;
 import net.siisise.json.JSONString;
 import net.siisise.json.JSON;
 import net.siisise.json.JSONValue;
+import net.siisise.json.base.JSONBaseNULL;
 
 /**
  * タブ暫定対応
@@ -169,7 +169,7 @@ public class JSONPGenerator implements JsonGenerator {
 
     @Override
     public JsonGenerator writeNull(String name) {
-        write(name, (JSONValue) JSONNULL.NULL);
+        write(name, (JSONValue) JSONBaseNULL.NULL);
         return this;
     }
 
@@ -272,7 +272,7 @@ public class JSONPGenerator implements JsonGenerator {
 
     @Override
     public JsonGenerator writeNull() {
-        write((JSONValue) JSONNULL.NULL);
+        write((JSONValue) JSONBaseNULL.NULL);
         return this;
     }
 

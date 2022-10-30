@@ -32,7 +32,8 @@ import net.siisise.json.JSON;
 import net.siisise.json.JSONValue;
 
 /**
- * OMAPの該当機能を割り当てるだけ
+ * OMAPの該当機能を割り当てるだけ.
+ * closeは必要なら有効に戻す.
  */
 public class JSONB implements Jsonb {
     
@@ -52,6 +53,15 @@ public class JSONB implements Jsonb {
         
     }
     
+    /**
+     * JSON 文字列からオブジェクトの生成.
+     * JSON Objectに変換してからOMAPでJava Objectにする
+     * @param <T>
+     * @param str
+     * @param type
+     * @return
+     * @throws JsonbException 
+     */
     @Override
     public <T> T fromJson(String str, Class<T> type) throws JsonbException {
         Object json = JSON.parse(str);
@@ -59,7 +69,12 @@ public class JSONB implements Jsonb {
     }
 
     /**
-     * 
+     * JSON文字列から Java Objectに変換する.
+     * @param <T> 適度な型のJava Object
+     * @param str JSON データ
+     * @param runtimeType Java 型
+     * @return
+     * @throws JsonbException
      */
     @Override
     public <T> T fromJson(String str, Type runtimeType) throws JsonbException {
@@ -67,6 +82,15 @@ public class JSONB implements Jsonb {
         return OMAP.valueOf(json, runtimeType);
     }
 
+    /**
+     * JSON Reader列から Java Objectに変換する.
+     * 
+     * @param <T> 適度な型のJava Object
+     * @param reader
+     * @param type
+     * @return
+     * @throws JsonbException 
+     */
     @Override
     public <T> T fromJson(Reader reader, Class<T> type) throws JsonbException {
         FrontPacket fp = new StreamFrontPacket(reader);
@@ -105,11 +129,25 @@ public class JSONB implements Jsonb {
         return ((JSONValue)OMAP.valueOf(object, JSONValue.class)).toJSON();
     }
 
+    /**
+     * JSONValue系(JsonValue互換)に変換する
+     * @param object ソース
+     * @param runtimeType ソースの型 未使用
+     * @return JSONValue なJSON
+     * @throws JsonbException 未定
+     */
     @Override
     public String toJson(Object object, Type runtimeType) throws JsonbException {
         return ((JSONValue)OMAP.valueOf(object, JSONValue.class)).toJSON();
     }
 
+    /**
+     * Java Object をJSONにしてWriterに書き出す。
+     * 
+     * @param object java object
+     * @param writer 出力先
+     * @throws JsonbException 出力先のエラー
+     */
     @Override
     public void toJson(Object object, Writer writer) throws JsonbException {
         try {
@@ -121,6 +159,13 @@ public class JSONB implements Jsonb {
         }
     }
 
+    /**
+     * Java Object をJSONにしてWriterに書き出す。
+     * @param object object
+     * @param runtimeType ソースの型 未使用
+     * @param writer 出力先
+     * @throws JsonbException 
+     */
     @Override
     public void toJson(Object object, Type runtimeType, Writer writer) throws JsonbException {
         try {

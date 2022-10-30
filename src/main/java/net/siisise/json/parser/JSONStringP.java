@@ -15,6 +15,11 @@ public class JSONStringP extends BNFList<String, Integer> {
         super(rule, base, "char");
     }
     
+    /**
+     * parse済みのcharを繋げるだけ.
+     * @param val 文字 ucs-4
+     * @return Javaな文字列
+     */
     @Override
     protected String build(List<Integer> val) {
         StringBuilder sb = new StringBuilder();

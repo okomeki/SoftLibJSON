@@ -13,40 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.siisise.json;
+package net.siisise.json.jsonxp;
 
 import javax.json.JsonArray;
 import javax.json.JsonPatch;
 import javax.json.JsonStructure;
+import net.siisise.json.JSON;
+import net.siisise.json.JSONCollection;
+import net.siisise.json.JSONValue;
 import net.siisise.json.base.JSONBasePatch;
-import net.siisise.json.bind.OMAP;
 
 /**
- * RFC 6902 JavaScript Object Notation (JSON) Patch.
- * https://tools.ietf.org/html/rfc6902
+ *
  */
-public class JSONPatch extends JSONBasePatch implements JsonPatch {
-
-    public JSONPatch() {
-    }
-
-    public JSONPatch(JSONArray patchList) {
-        super(patchList);
-    }
-    /**
-     * エラー未実装
-     *
-     * @param <T> 型変換対策
-     * @param target 元は可変
-     * @return target処理後の複製? エラーっぽいときはnull
-     */
-    public <T extends JSONCollection> T apply(T target) {
-        target = (T) target.clone();
-        for (Patch cmd : cmds) {
-            target = cmd.apply(target);
-        }
-        return target;
-    }
+public class JSONXPatch extends JSONBasePatch implements JsonPatch {
 
     @Override
     public <T extends JsonStructure> T apply(T target) {
@@ -60,11 +40,18 @@ public class JSONPatch extends JSONBasePatch implements JsonPatch {
 
     @Override
     public JsonArray toJsonArray() {
-        return OMAP.valueOf(cmds, JsonArray.class);
+        return cmds.toXJson();
     }
-
-    public static JSONPatch diff(JSONValue source, JSONValue target) {
-        JSONPatch patch = new JSONPatch();
+    
+    /**
+     * add remove replace のみの差分を出力する move copy は未対応
+     *
+     * @param source
+     * @param target
+     * @return
+     */
+    public static JSONXPatch diff(JSONValue source, JSONValue target) {
+        JSONXPatch patch = new JSONXPatch();
         JSONBasePatch.diff(source, target, patch);
         return patch;
     }

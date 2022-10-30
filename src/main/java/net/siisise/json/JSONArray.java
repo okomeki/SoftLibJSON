@@ -27,22 +27,24 @@ import javax.json.JsonArray;
 import javax.json.JsonValue;
 import net.siisise.json.jsonp.JSONPArray;
 import net.siisise.json.bind.OMAP;
+import net.siisise.json.jsonxp.JSONXArray;
 
 /**
  * Listを拡張したJSONArray。
  * 一般のデータを保持してJSONにも変換可能なスタイル。
  * 配列、Listの他ObjectのコンストラクタにもtypeMap可能。
  * JSONP準拠のものはEをJsonValueにするといい。
- * 
+ *
  * j2Stream() を使うとJSON2Valueとして容易に扱える
- * 
+ *
  * JsonArray,JsonArrayBuilder,JsonStructure ではない
+ *
  * @param <E> 内部で保持する型。JSONではなくていい。
  */
 public class JSONArray<E> extends ArrayList<E> implements JSONCollection<E> {
 
     /**
-     * Eを参照したいので持っておく型
+     * Eを参照したいので持っておく型.
      * JsonArray用かもしれない
      */
     private final Class<E> def;
@@ -78,7 +80,7 @@ public class JSONArray<E> extends ArrayList<E> implements JSONCollection<E> {
             set(Integer.parseInt(key), val);
         }
     }
-    
+
     public void setJSON(int index, JSONValue obj) {
         E val = def == null ? obj.map() : obj.typeMap(def);
         set(index, val);
@@ -101,6 +103,7 @@ public class JSONArray<E> extends ArrayList<E> implements JSONCollection<E> {
 
     /**
      * 指定位置のデータを配列から取り除く
+     *
      * @param key 配列のindex相当文字列
      * @return 削除した値
      */
@@ -123,13 +126,19 @@ public class JSONArray<E> extends ArrayList<E> implements JSONCollection<E> {
      */
     public void addValue(Object val) {
         if (def != null) {
-            val = OMAP.valueOf(val,def);
+            val = OMAP.valueOf(val, def);
         } else {
             val = JSON.valueMap(val); // Object系に変換
         }
         add((E) val);
     }
 
+    /**
+     * JSON Bの fromJson相当.
+     * @param <T>
+     * @param type
+     * @return 
+     */
     @Override
     public <T> T typeMap(Type type) {
         return OMAP.typeList(this, type);
@@ -137,7 +146,8 @@ public class JSONArray<E> extends ArrayList<E> implements JSONCollection<E> {
 
     /**
      * forEachもここから
-     * @return 
+     *
+     * @return
      */
     Stream<JSONValue> j2Stream() {
         return parallelStream().map(JSON::valueOf);
@@ -147,9 +157,9 @@ public class JSONArray<E> extends ArrayList<E> implements JSONCollection<E> {
     void j2forEach(java.util.function.Consumer<? super JSON2Value> action) {
         j2Stream().forEach(action);
     } */
-    
     /**
      * データを適当な型に変換して納めるので変換可能な配列ならなんでもいい。
+     *
      * @param <T> aと互換性があればいい
      * @param a 抽出したい型の配列 0または必要数
      * @return
@@ -164,8 +174,9 @@ public class JSONArray<E> extends ArrayList<E> implements JSONCollection<E> {
     }
 
     /**
-     * JSON2な
-     * @return JsonArrayに 
+     * 変換補助. Java EE JSON2な
+     *
+     * @return JsonArrayに
      */
     @Override
     public JsonArray toJson() {
@@ -173,7 +184,22 @@ public class JSONArray<E> extends ArrayList<E> implements JSONCollection<E> {
             return JsonValue.EMPTY_JSON_ARRAY;
         }
         JSONPArray ar = new JSONPArray();
-        parallelStream().map(v -> (JsonValue)OMAP.valueOf(v, JsonValue.class)).forEach(ar::add);
+        parallelStream().map(v -> (JsonValue) OMAP.valueOf(v, JsonValue.class)).forEach(ar::add);
+        return ar;
+    }
+
+    /**
+     * 変換補助. Jakarta EE用に変更する予定.
+     *
+     * @return
+     */
+    @Override
+    public javax.json.JsonArray toXJson() {
+        if (isEmpty()) {
+            return javax.json.JsonValue.EMPTY_JSON_ARRAY;
+        }
+        JSONXArray ar = new JSONXArray();
+        parallelStream().map(v -> (javax.json.JsonValue) OMAP.valueOf(v, javax.json.JsonValue.class)).forEach(ar::add);
         return ar;
     }
 
@@ -181,7 +207,7 @@ public class JSONArray<E> extends ArrayList<E> implements JSONCollection<E> {
     public String toJSON() {
         return toJSON(NOBR);
     }
-    
+
     @Override
     public String toString() {
         return toJSON();
@@ -189,39 +215,41 @@ public class JSONArray<E> extends ArrayList<E> implements JSONCollection<E> {
 
     @Override
     public String toJSON(JSONFormat format) {
-        return j2Stream().map(val -> 
-            format.crlf + format.tab + tab(val.toJSON(format)))
-                .collect( Collectors.joining(",", "[", format.crlf +  "]"));
+        return j2Stream().map(val
+                -> format.crlf + format.tab + tab(val.toJSON(format)))
+                .collect(Collectors.joining(",", "[", format.crlf + "]"));
     }
 
     /**
      * ListっぽいJSON2Arrayの複製(表面のみ)で返す。
+     *
      * @param <T>
-     * @return 
+     * @return
      */
     @Override
     public <T> T map() {
-        return (T)new JSONArray(this);
+        return (T) new JSONArray(this);
     }
 
     /**
      * 雑な複製対応。
      * 可変なので複製する
+     *
      * @return 配列、オブジェクトは中まで複製したもの
      */
     @Override
     public JSONArray<E> clone() {
         JSONArray<E> array = (JSONArray<E>) super.clone();
         array.clear();
-        for ( E e : this ) {
-            if ( e == null ) {
-            } else if ( e instanceof ArrayList ) { // JSONArray っぽいもの
-                e = (E)((ArrayList)e).clone();
-            } else if ( e instanceof HashMap ) { // JSONObject っぽいもの
-                e = (E)((HashMap)e).clone();
-            } else if ( e instanceof JSONValue || e instanceof JsonValue ) { // 複製しなくていい
+        for (E e : this) {
+            if (e == null) {
+            } else if (e instanceof ArrayList) { // JSONArray っぽいもの
+                e = (E) ((ArrayList) e).clone();
+            } else if (e instanceof HashMap) { // JSONObject っぽいもの
+                e = (E) ((HashMap) e).clone();
+            } else if (e instanceof JSONValue || e instanceof JsonValue) { // 複製しなくていい
 
-            } else if ( e instanceof Cloneable ) {
+            } else if (e instanceof Cloneable) {
                 try {
                     Method cl = e.getClass().getMethod("clone");
                     e = (E) cl.invoke(e);
@@ -229,7 +257,7 @@ public class JSONArray<E> extends ArrayList<E> implements JSONCollection<E> {
 //                    Logger.getLogger(JSONArray.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-            array.add((E)e);
+            array.add((E) e);
         }
         return array;
     }

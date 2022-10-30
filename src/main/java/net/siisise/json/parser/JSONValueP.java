@@ -5,6 +5,10 @@ import net.siisise.bnf.BNFReg;
 import net.siisise.bnf.parser.BNFSelect;
 import net.siisise.io.FrontPacket;
 
+/**
+ * valueに該当する型で返す.
+ * true, false, null はJSONValue型に変換する、他は変換済みなのでそのまま通す.
+ */
 public class JSONValueP extends BNFSelect<Object> {
     
     public JSONValueP(BNF rule, BNFReg base) {

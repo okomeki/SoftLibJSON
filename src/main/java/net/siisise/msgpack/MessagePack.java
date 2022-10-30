@@ -175,6 +175,12 @@ public class MessagePack {
         return data;
     }
     
+    /**
+     * 
+     * @param len 長さ
+     * @param pac
+     * @return 
+     */
     Object ext(int len, FrontPacket pac) {
         JSONArray ex = new JSONArray();
         int type = pac.read();

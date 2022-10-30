@@ -19,6 +19,8 @@ import java.util.HashSet;
 import java.util.Set;
 import javax.json.JsonMergePatch;
 import javax.json.JsonValue;
+import net.siisise.json.base.JSONBaseNULL;
+import net.siisise.json.bind.OMAP;
 
 /**
  * RFC 7396 JSON Merge Patch.
@@ -55,7 +57,7 @@ public class JSONMergePatch7396 implements JsonMergePatch {
             }
             for ( String name : ((JSONObject<?>)patch).keySet() ) {
                 JSONValue v = ((JSONObject) patch).getJSON(name);
-                if ( v instanceof JSONNULL ) {
+                if ( v instanceof JSONBaseNULL ) {
                     if ( ((JSONObject<?>)target).get(name) != null ) {
                         ((JSONObject<?>)target).remove(name);
                     }
@@ -95,7 +97,7 @@ public class JSONMergePatch7396 implements JsonMergePatch {
                 skeyset.remove(tkey);
             }
             for ( String skey : skeyset ) {
-                diff.putJSON(skey, JSONNULL.NULL);
+                diff.putJSON(skey, JSONBaseNULL.NULL);
             }
             return diff;
         } else { // targetがObjectではなかった
@@ -105,12 +107,12 @@ public class JSONMergePatch7396 implements JsonMergePatch {
 
     @Override
     public JsonValue apply(JsonValue target) {
-        return mergePatch(JSON.valueOf(target), patch).toJson();
+        return OMAP.valueOf( mergePatch(JSON.valueOf(target), patch), JsonValue.class);
     }
 
     @Override
     public JsonValue toJsonValue() {
-        return patch.toJson();
+        return OMAP.valueOf(patch, JsonValue.class);
     }
     
     public JSONValue toJSON() {

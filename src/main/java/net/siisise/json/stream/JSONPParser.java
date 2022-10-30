@@ -17,6 +17,7 @@ import javax.json.JsonValue;
 import javax.json.stream.JsonLocation;
 import javax.json.stream.JsonParser;
 import javax.json.stream.JsonParsingException;
+import net.siisise.bnf.AbstractBNF;
 import net.siisise.io.FrontPacket;
 import net.siisise.io.Packet;
 import net.siisise.io.StreamFrontPacket;
@@ -119,7 +120,7 @@ public class JSONPParser implements JsonParser {
     }
 
     /**
-     * 
+     * parse object. 
      * @param step nexts START_OBJECT の次から
      * @return 
      */

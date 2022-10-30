@@ -15,6 +15,7 @@
  */
 package net.siisise.json.bind;
 
+import net.siisise.json.bind.target.JsonxpConvert;
 import net.siisise.json.bind.target.JavaConvert;
 import net.siisise.json.bind.target.JSONConvert;
 import net.siisise.json.bind.target.JsonpConvert;
@@ -72,6 +73,7 @@ public class OMAP {
      * 出力別
      */
     static final MtoConvert[] OUTTYPES = {
+        new JsonxpConvert(),
         new JsonpConvert(),
         new JsonValueTypeConvert(),
         new JSONConvert(),
@@ -89,7 +91,7 @@ public class OMAP {
     /**
      * 型別に整理したOUTTYPES
      */
-    public static Map<Type, MtoConvert> CONVS = new HashMap();
+    public static final Map<Type, MtoConvert> CONVS = new HashMap();
 
     static {
         for (OMConvert om : OMDS) {

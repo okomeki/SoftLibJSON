@@ -1,4 +1,4 @@
-package net.siisise.json.jsonp;
+package net.siisise.json.jsonxp;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -6,31 +6,23 @@ import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonValue;
-import net.siisise.json.JSONNumber;
-import net.siisise.json.JSONString;
 
 /**
  * びるだー
  */
-public class JSONPObjectBuilder implements JsonObjectBuilder {
+public class JSONXObjectBuilder implements JsonObjectBuilder {
 
-    JSONPObject obj = new JSONPObject();
+    JSONXObject obj = new JSONXObject();
 
-    JSONPObjectBuilder() {
-        obj = new JSONPObject();
+    JSONXObjectBuilder() {
+        obj = new JSONXObject();
     }
 
-    JSONPObjectBuilder(JsonObject src) {
-        obj = new JSONPObject();
+    JSONXObjectBuilder(JsonObject src) {
+        obj = new JSONXObject();
         src.forEach((key,val) -> obj.put(key, val));
     }
 
-    /**
-     *
-     * @param name
-     * @param value
-     * @return
-     */
     @Override
     public JsonObjectBuilder add(String name, JsonValue value) {
         obj.put(name, value);
@@ -39,37 +31,37 @@ public class JSONPObjectBuilder implements JsonObjectBuilder {
 
     @Override
     public JsonObjectBuilder add(String name, String value) {
-        obj.put(name, new JSONString(value));
+        obj.put(name, new JSONXString(value));
         return this;
     }
 
     @Override
     public JsonObjectBuilder add(String name, BigInteger value) {
-        obj.put(name, new JSONNumber(value));
+        obj.put(name, new JSONXNumber(value));
         return this;
     }
 
     @Override
     public JsonObjectBuilder add(String name, BigDecimal value) {
-        obj.put(name, new JSONNumber(value));
+        obj.put(name, new JSONXNumber(value));
         return this;
     }
 
     @Override
     public JsonObjectBuilder add(String name, int value) {
-        obj.put(name, new JSONNumber(value));
+        obj.put(name, new JSONXNumber(value));
         return this;
     }
 
     @Override
     public JsonObjectBuilder add(String name, long value) {
-        obj.put(name, new JSONNumber(value));
+        obj.put(name, new JSONXNumber(value));
         return this;
     }
 
     @Override
     public JsonObjectBuilder add(String name, double value) {
-        obj.put(name, new JSONNumber(value));
+        obj.put(name, new JSONXNumber(value));
         return this;
     }
 

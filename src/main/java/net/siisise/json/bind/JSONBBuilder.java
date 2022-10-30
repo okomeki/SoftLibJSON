@@ -20,7 +20,7 @@ import javax.json.bind.JsonbConfig;
 import javax.json.spi.JsonProvider;
 
 /**
- * JsonbBuilder のなんとなくの実装
+ * JsonbBuilder のなんとなくの実装.
  */
 public class JSONBBuilder implements JsonbBuilder {
     
