@@ -18,7 +18,6 @@ package net.siisise.json.base;
 import java.lang.reflect.Type;
 import java.util.stream.IntStream;
 import net.siisise.abnf.AbstractABNF;
-import net.siisise.io.FrontPacket;
 import net.siisise.json.JSONFormat;
 import net.siisise.json.JSONString;
 import net.siisise.json.JSONValue;

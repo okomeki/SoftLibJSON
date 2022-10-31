@@ -17,9 +17,8 @@ import javax.json.JsonValue;
 import javax.json.stream.JsonLocation;
 import javax.json.stream.JsonParser;
 import javax.json.stream.JsonParsingException;
-import net.siisise.bnf.AbstractBNF;
+import net.siisise.abnf.ABNF;
 import net.siisise.io.FrontPacket;
-import net.siisise.io.Packet;
 import net.siisise.io.StreamFrontPacket;
 import net.siisise.json.parser.JSON8259Reg;
 import net.siisise.json.JSONArray;
@@ -27,6 +26,7 @@ import net.siisise.json.JSONNumber;
 import net.siisise.json.JSONObject;
 import net.siisise.json.bind.OMAP;
 import net.siisise.json.JSON;
+import net.siisise.pac.ReadableBlock;
 
 /**
  * ABNF Parserを使っているのでこちらは軽く実装.
@@ -43,16 +43,18 @@ public class JSONPParser implements JsonParser {
         }
     }
 
-    private FrontPacket stream;
-    
+    private ReadableBlock stream; 
+    /**
+     * object をばらしたときは全部格納するのでList
+     */
     private List<Next> nexts = new ArrayList<>();
     
     public JSONPParser(Reader reader) {
-        stream = new StreamFrontPacket(reader);
+        stream = ReadableBlock.wrap(new StreamFrontPacket(reader));
     }
 
     public JSONPParser(InputStream reader) {
-        stream = new StreamFrontPacket(reader);
+        stream = ReadableBlock.wrap(new StreamFrontPacket(reader));
     }
     
     public JSONPParser(Object json) {
@@ -155,24 +157,31 @@ public class JSONPParser implements JsonParser {
         }
         return obj;
     }
+    
+    static ABNF stringsp = JSON8259Reg.string.pl(JSON8259Reg.name_separator);
 
     /**
      * streamからはそれっぽくパースするがステートレスなので全体的な正しさは保証しない。
-     * @return
+     * カンマ区切りが苦手.
+     * 数値、文字列などは別でparseしているので is のみで完結しているわけではない。
+     * @return 次のデータがある
      * @throws JsonParsingException 
      */
     @Override
     public boolean hasNext() throws JsonParsingException {
         if (nexts.isEmpty() && stream != null && stream.size() > 0) {
-            Packet p;
-            Next nextb;
-            //nexts = nexts(JSON.parseWrap(stream));
+            FrontPacket p;
+            Next nextb = null;
             if ( JSON8259Reg.value_separator.is(stream) != null ) { // JsonParserでは扱っていないので変な位置にでてこないようチェック
-                if ( current == null || current.state == Event.START_ARRAY || current.state == Event.START_OBJECT || current.state == Event.KEY_NAME ) {
+                if ( current == null
+                    || current.state == Event.START_ARRAY
+                    || current.state == Event.START_OBJECT
+                    || current.state == Event.KEY_NAME ) {
                     // エラーにするといい
                     throw new JsonParsingException("カンマな位置が", getLocation());
                 } else {
                     // 読み飛ばす
+                    nextb = new Next(',',null);
                 }
             }
             if ( JSON8259Reg.begin_array.is(stream) != null ) {
@@ -180,10 +189,16 @@ public class JSONPParser implements JsonParser {
             } else if ( JSON8259Reg.begin_object.is(stream) != null ) {
                 nextb = new Next(null, Event.START_OBJECT);
             } else if ( JSON8259Reg.end_array.is(stream) != null ) {
+                if ( nextb != null ) {
+                    throw new JsonParsingException("カンマな位置が", getLocation());
+                }
                 nextb = new Next(null, Event.END_ARRAY);
             } else if ( JSON8259Reg.end_object.is(stream) != null ) {
+                if ( nextb != null ) {
+                    throw new JsonParsingException("カンマな位置が", getLocation());
+                }
                 nextb = new Next(null, Event.END_OBJECT);
-            } else if ( (p = JSON8259Reg.string.pl(JSON8259Reg.name_separator).is(stream)) != null ) {
+            } else if ( (p = stringsp.is(stream)) != null ) {
                 nextb = new Next(JSON8259Reg.parse("string", p), Event.KEY_NAME);
             } else if ( JSON8259Reg.FALSE.is(stream) != null ) {
                 nextb = new Next(false, Event.VALUE_FALSE);
@@ -205,6 +220,10 @@ public class JSONPParser implements JsonParser {
     
     private Next current;
 
+    /**
+     * 次のEvent
+     * @return 次のEvent
+     */
     @Override
     public Event next() {
         if (!hasNext()) {
@@ -279,7 +298,7 @@ public class JSONPParser implements JsonParser {
 
             @Override
             public long getStreamOffset() {
-                return -1l;
+                return stream != null ? stream.backSize() : -1;
             }
         };
     }

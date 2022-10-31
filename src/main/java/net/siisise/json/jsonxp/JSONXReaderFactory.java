@@ -1,6 +1,5 @@
 package net.siisise.json.jsonxp;
 
-import net.siisise.json.jsonp.*;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
