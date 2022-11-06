@@ -18,15 +18,14 @@ import javax.json.stream.JsonLocation;
 import javax.json.stream.JsonParser;
 import javax.json.stream.JsonParsingException;
 import net.siisise.abnf.ABNF;
+import net.siisise.block.ReadableBlock;
 import net.siisise.io.FrontPacket;
-import net.siisise.io.StreamFrontPacket;
 import net.siisise.json.parser.JSON8259Reg;
 import net.siisise.json.JSONArray;
 import net.siisise.json.JSONNumber;
 import net.siisise.json.JSONObject;
 import net.siisise.json.bind.OMAP;
 import net.siisise.json.JSON;
-import net.siisise.pac.ReadableBlock;
 
 /**
  * ABNF Parserを使っているのでこちらは軽く実装.
@@ -50,11 +49,11 @@ public class JSONPParser implements JsonParser {
     private List<Next> nexts = new ArrayList<>();
     
     public JSONPParser(Reader reader) {
-        stream = ReadableBlock.wrap(new StreamFrontPacket(reader));
+        stream = ReadableBlock.wrap(reader);
     }
 
     public JSONPParser(InputStream reader) {
-        stream = ReadableBlock.wrap(new StreamFrontPacket(reader));
+        stream = ReadableBlock.wrap(reader);
     }
     
     public JSONPParser(Object json) {

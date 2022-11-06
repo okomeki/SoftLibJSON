@@ -2,15 +2,16 @@ package net.siisise.json.parser;
 
 import net.siisise.abnf.ABNF;
 import net.siisise.abnf.parser5234.ABNF5234;
+import net.siisise.block.ReadableBlock;
 import net.siisise.bnf.BNF;
 import net.siisise.bnf.BNFReg;
 import net.siisise.bnf.parser.BNFBaseParser;
 import net.siisise.io.FrontPacket;
 import net.siisise.lang.CodePoint;
-import net.siisise.pac.ReadableBlock;
 
 /**
- * 文字解析用
+ * 文字解析用.
+ * intにデコードする.
  */
 public class JSONCharP extends BNFBaseParser<Integer> {
 

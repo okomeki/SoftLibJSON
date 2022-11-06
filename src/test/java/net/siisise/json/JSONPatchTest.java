@@ -35,7 +35,7 @@ public class JSONPatchTest {
     /**
      * Test of run method, of class JSONPatch.
      */
-    @org.junit.jupiter.api.Test
+    @Test
     public void testRun() {
         System.out.println("Test");
         JSONObject obj = (JSONObject) JSON.parse("{ \"foo\":\"\"}");
@@ -49,7 +49,7 @@ public class JSONPatchTest {
     /**
      * Test of run method, of class JSONPatch.
      */
-    @org.junit.jupiter.api.Test
+    @Test
     public void testRunA1() {
         System.out.println("A.1.");
         JSONObject obj = (JSONObject) JSON.parseWrap("{ \"foo\":\"bar\"}");
@@ -65,7 +65,7 @@ public class JSONPatchTest {
         System.out.println("A.1.diff " + diff.toJSON().toJSON());
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     public void testRunA2() {
         System.out.println("A.2.");
         JSONObject obj = (JSONObject) JSON8259Reg.parse("{ \"foo\": [ \"bar\", \"baz\" ] }");
@@ -82,7 +82,7 @@ public class JSONPatchTest {
         System.out.println("A.2.diff " + diff.toJSON().toJSON());
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     public void testRunA3() {
         System.out.println("A.3.");
         JSONObject obj = (JSONObject) JSON.parseWrap("{  \"baz\": \"qux\",\n  \"foo\": \"bar\" }");
@@ -99,7 +99,7 @@ public class JSONPatchTest {
         System.out.println("A.3.diff " + diff.toJSON().toJSON());
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     public void testRunA4() {
         System.out.println("A.4.");
         JSONObject<?> obj = (JSONObject) JSON8259Reg.parse("{ \"foo\": [ \"bar\", \"qux\", \"baz\" ] }");
@@ -115,7 +115,7 @@ public class JSONPatchTest {
         System.out.println("A.4.diff " + diff.toJSON().toJSON());
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     public void testRunA5() {
         System.out.println("A.5.");
         JSONObject obj = (JSONObject) JSON8259Reg.parse("{  \"baz\": \"qux\",  \"foo\": \"bar\"}");
@@ -131,7 +131,7 @@ public class JSONPatchTest {
         System.out.println("A.5.diff " + diff.toJSON().toJSON());
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     public void testRunA6() {
         System.out.println("A.6.");
         JSONObject obj = (JSONObject) JSON8259Reg.parse("{\r\n"
