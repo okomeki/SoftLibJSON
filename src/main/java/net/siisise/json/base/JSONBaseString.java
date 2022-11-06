@@ -18,6 +18,7 @@ package net.siisise.json.base;
 import java.lang.reflect.Type;
 import java.util.stream.IntStream;
 import net.siisise.abnf.AbstractABNF;
+import net.siisise.block.ReadableBlock;
 import net.siisise.json.JSONFormat;
 import net.siisise.json.JSONString;
 import net.siisise.json.JSONValue;
@@ -25,7 +26,6 @@ import static net.siisise.json.JSONValue.NOBR;
 import net.siisise.json.bind.OMAP;
 import net.siisise.json.jsonxp.JSONXString;
 import net.siisise.lang.CodePoint;
-import net.siisise.pac.ReadableBlock;
 
 /**
  * 両方対応する元
