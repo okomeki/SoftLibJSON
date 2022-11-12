@@ -1,7 +1,15 @@
 # SoftLibJSON for Java
 
-ABNFで RFC 8259 JSON とRFC 6901 JSON Pointer, RFC 6902 JSON Patch, RFC 7396 JSON Merge Patchを実装してみたもの
+ABNFで
+ - RFC 8259 JSON
+ - RFC 6901 JSON Pointer
+ - RFC 6902 JSON Patch
+ - RFC 7396 JSON Merge Patch
+
+を実装してみたもの
+
 Java API for JSON Processing (JSR-374)にも対応
+
 Object Mappingは適度に実装 (Java API for JSON Bindingもかぶせたが互換性は不明)
 
 ## 概要
