@@ -25,9 +25,9 @@ public class JSONNumberP extends BNFBuildParser<Number, Packet> {
         List f = ret.get("frac"); // 小数点
         List e = ret.get("exp"); // 浮動小数点
         if (f != null || e != null) {
-            return new BigDecimal(str(ret.ret));
+            return new BigDecimal(str(ret.sub));
         } else { // 整数
-            return new BigInteger(str(ret.ret));
+            return new BigInteger(str(ret.sub));
         }
     }
     

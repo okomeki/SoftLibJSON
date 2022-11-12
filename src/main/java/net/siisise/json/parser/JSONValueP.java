@@ -1,9 +1,9 @@
 package net.siisise.json.parser;
 
+import net.siisise.block.ReadableBlock;
 import net.siisise.bnf.BNF;
 import net.siisise.bnf.BNFReg;
 import net.siisise.bnf.parser.BNFSelect;
-import net.siisise.io.FrontPacket;
 
 /**
  * valueに該当する型で返す.
@@ -16,8 +16,8 @@ public class JSONValueP extends BNFSelect<Object> {
     }
     
     @Override
-    protected Object other(FrontPacket pac) {
-        FrontPacket p = JSON8259Reg.FALSE.is(pac);
+    protected Object other(ReadableBlock pac) {
+        ReadableBlock p = JSON8259Reg.FALSE.is(pac);
         if (p != null) {
             return Boolean.FALSE;
         }

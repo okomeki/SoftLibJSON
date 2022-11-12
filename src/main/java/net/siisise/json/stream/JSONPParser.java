@@ -19,7 +19,6 @@ import javax.json.stream.JsonParser;
 import javax.json.stream.JsonParsingException;
 import net.siisise.abnf.ABNF;
 import net.siisise.block.ReadableBlock;
-import net.siisise.io.FrontPacket;
 import net.siisise.json.parser.JSON8259Reg;
 import net.siisise.json.JSONArray;
 import net.siisise.json.JSONNumber;
@@ -169,7 +168,7 @@ public class JSONPParser implements JsonParser {
     @Override
     public boolean hasNext() throws JsonParsingException {
         if (nexts.isEmpty() && stream != null && stream.size() > 0) {
-            FrontPacket p;
+            ReadableBlock p;
             Next nextb = null;
             if ( JSON8259Reg.value_separator.is(stream) != null ) { // JsonParserでは扱っていないので変な位置にでてこないようチェック
                 if ( current == null

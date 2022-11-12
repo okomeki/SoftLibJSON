@@ -6,7 +6,6 @@ import net.siisise.block.ReadableBlock;
 import net.siisise.bnf.BNF;
 import net.siisise.bnf.BNFReg;
 import net.siisise.bnf.parser.BNFBaseParser;
-import net.siisise.io.FrontPacket;
 import net.siisise.lang.CodePoint;
 
 /**
@@ -28,7 +27,7 @@ public class JSONCharP extends BNFBaseParser<Integer> {
      */
     @Override
     public Integer parse(ReadableBlock pac) {
-        FrontPacket p = JSON8259Reg.unescaped.is(pac);
+        ReadableBlock p = JSON8259Reg.unescaped.is(pac);
         if (p != null) {
             return CodePoint.utf8(p);
         }
@@ -51,7 +50,7 @@ public class JSONCharP extends BNFBaseParser<Integer> {
                 case 0x74: // tab
                     return 0x09;
                 case 0x75: // CodePoint-16
-                    FrontPacket u = ABNF5234.HEXDIG.x(4, 4).is(pac);
+                    ReadableBlock u = ABNF5234.HEXDIG.x(4, 4).is(pac);
                     if (u != null) {
                         int ch = CodePoint.utf8(u);
                         if (Character.isHighSurrogate((char) ch)) {
