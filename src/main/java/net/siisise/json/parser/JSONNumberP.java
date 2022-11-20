@@ -20,7 +20,7 @@ public class JSONNumberP extends BNFBuildParser<Number, Packet> {
     }
 
     @Override
-    protected Number build(BNF.C<Packet> ret) {
+    protected Number build(BNF.Match<Packet> ret) {
 
         List f = ret.get("frac"); // 小数点
         List e = ret.get("exp"); // 浮動小数点

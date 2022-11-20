@@ -45,7 +45,7 @@ public class JSON8259Reg {
     public static final ABNF array = REG.rule("array", JSONArrayP.class, begin_array.pl(REG.ref("value").pl(value_separator.pl(REG.ref("value")).x()).c(), end_array));
     public static final ABNF member = REG.rule("member", JSONMemberP.class, string.pl(name_separator, REG.ref("value")));
     public static final ABNF object = REG.rule("object", JSONObjectP.class, begin_object.pl(member.pl(value_separator.pl(member).x()).c(), end_object));
-    public static final ABNF value = REG.rule("value", JSONValueP.class, FALSE.or(NULL, TRUE, object, array, number, string));
+    public static final ABNF value = REG.rule("value", JSONValueP.class, FALSE.or1(NULL, TRUE, object, array, number, string));
 
     public static final ABNF JSONtext = REG.rule("JSON-text", JSONtextParser.class, ws.pl(value, ws));
 
