@@ -43,10 +43,14 @@ SoftLibとSoftLibABNFとSoftLibJSONが必要です。
 <dependency>
   <groupId>net.siisise</groupId>
   <artifactId>softlib-json</artifaceId>
-  <version>1.2.0</version>
+  <version>1.2.1</version>
   <type>jar</type>
 </dependency>
 ~~~
+
+リリース版 1.2.1 ぐらい。
+次版 1.2.2-SNAPSHOT
+
 ## 型情報
 
 JavaとJSONの変換をするに当たって該当オブジェクトの中間型をとりあえず設けています。

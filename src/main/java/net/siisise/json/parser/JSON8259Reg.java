@@ -18,7 +18,7 @@ public class JSON8259Reg {
     public static final ABNF FALSE = REG.rule("false", "%x66.61.6c.73.65");
     public static final ABNF NULL = REG.rule("null", "%x6e.75.6c.6c");
     public static final ABNF TRUE = REG.rule("true", "%x74.72.75.65");
-    static final ABNF ws = REG.rule("ws", "*( %x20 / %x09 / %x0A / %x0D )");
+    static final ABNF ws = REG.rule("ws", ABNF.list("\u0020\u0009\r\n").x());
 
     public static final ABNF begin_array = REG.rule("begin-array", ws.pl(ABNF.bin(0x5b), ws)); // [
     public static final ABNF begin_object = REG.rule("begin-object", ws.pl(ABNF.bin(0x7b), ws)); // {
@@ -27,12 +27,12 @@ public class JSON8259Reg {
     public static final ABNF name_separator = REG.rule("name-separator", ws.pl(ABNF.bin(0x3A), ws)); // :
     public static final ABNF value_separator = REG.rule("value-separator", ws.pl(ABNF.bin(0x2C), ws)); // ,
 
-    public static final ABNF unescaped = REG.rule("unescaped", "%x20-21 / %x23-5B / %x5D-10FFFF");
+    public static final ABNF unescaped = REG.rule("unescaped", ABNF.range(0x20,0x21).or1(ABNF.range(0x23,0x5b), ABNF.range(0x5d,0x10ffff)));
     public static final ABNF escape = REG.rule("escape", ABNF.bin(0x5c));
     static final ABNF quotation_mark = REG.rule("quotation-mark", ABNF.bin(0x22));
-    public static final ABNF CHAR = REG.rule("char", JSONCharP.class, "unescaped / escape ( %x22 / %x5C / %x2F / %x62 / %x66 / %x6E / %x72 / %x74 / %x75 4HEXDIG )");
+    public static final ABNF CHAR = REG.rule("char", JSONCharP.class, unescaped.or1(escape.pl(ABNF.list("\"\\/bfnrt").or1(ABNF.bin(0x75).pl(ABNF5234.HEXDIG.x(4,4))))));
     public static final ABNF string = REG.rule("string", JSONStringP.class, quotation_mark.pl(CHAR.x(), quotation_mark));
-    static final ABNF e = REG.rule("e", "%x65 / %x45");
+    static final ABNF e = REG.rule("e", ABNF.bin(0x65).or1(ABNF.bin(0x45)));
     static final ABNF minus = REG.rule("minus", ABNF.bin(0x2d));
     static final ABNF plus = REG.rule("plus", ABNF.bin(0x2b));
     public static final ABNF exp = REG.rule("exp", "e [ minus / plus ] 1*DIGIT");
