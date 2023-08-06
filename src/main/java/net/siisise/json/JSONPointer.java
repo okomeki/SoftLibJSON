@@ -59,10 +59,10 @@ public class JSONPointer implements JsonPointer {
     }
 
     /**
-     * wrap いらないかも
+     * 追加する.
      *
-     * @param target
-     * @param value
+     * @param target 位置
+     * @param value 値
      */
     public void add(JSONCollection target, JSONValue value) {
         ColKey<JSONCollection> vp = step(target);
@@ -72,8 +72,8 @@ public class JSONPointer implements JsonPointer {
     /**
      * 追加する
      * @param <T> targetの型
-     * @param target
-     * @param value
+     * @param target 位置
+     * @param value 値
      * @return target に valueを追加した複製 
      */
     @Override

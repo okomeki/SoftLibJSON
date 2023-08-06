@@ -1,2 +1,2 @@
-net.siisise.json2.jsonp.spi.SLJsonProvider
+net.siisise.json.spi.JSONPProvider
 

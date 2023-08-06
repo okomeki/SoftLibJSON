@@ -13,33 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.siisise.json.bind.source;
+package net.siisise.json.unbind;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
+import java.lang.reflect.Type;
+import net.siisise.bind.TypeUnbind;
+import net.siisise.bind.format.TypeFormat;
 import net.siisise.json.JSONNumber;
-import net.siisise.json.bind.MtoConvert;
-import net.siisise.json.bind.OMConvert;
 
 /**
- *
+ * JSON Number を Number にする変換.
  */
-public class JSONNumberM implements OMConvert {
+public class UnbindJSONNumber implements TypeUnbind {
 
     @Override
-    public Class[] getSrcClasses() {
-        return new Class[]{javax.json.JsonNumber.class, javax.json.JsonNumber.class, JSONNumber.class, Number.class, Integer.class, Long.class, Float.class, Short.class, BigInteger.class, Double.class, BigDecimal.class};
+    public Type[] getSrcTypes() {
+        return new Type[]{javax.json.JsonNumber.class, JSONNumber.class};
     }
 
     @Override
-    public Object valueOf(Object obj, MtoConvert target) {
+    public Object valueOf(Object obj, TypeFormat target) {
         if (obj instanceof javax.json.JsonNumber) { // JSONNumber , JSON2Number も該当
-            obj = ((javax.json.JsonNumber) obj).numberValue();
-        } else if (obj instanceof javax.json.JsonNumber) {
             obj = ((javax.json.JsonNumber) obj).numberValue();
         }
         if (obj instanceof Number) {
-            return target.numberValue((Number) obj);
+            return target.numberFormat((Number) obj);
         }
         return this;
     }

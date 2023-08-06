@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Siisise Net
+ * Copyright 2023 okome.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,27 +16,17 @@
 package net.siisise.json;
 
 import java.util.stream.Collector;
-import javax.json.JsonValue;
-import net.siisise.bind.Rebind;
-import net.siisise.bind.format.TypeFormat;
 import net.siisise.io.FrontPacket;
 import net.siisise.json.base.JSONBaseNULL;
-import net.siisise.json.bind.target.JSONConvert;
+import net.siisise.json.bind.OMAP;
 import net.siisise.json.bind.target.JSONFormat;
-import net.siisise.json.bind.target.JsonpConvert;
-import net.siisise.json.parser.JSON8259Reg;
+import net.siisise.json.parser.JSONCReg;
 
 /**
- * JSONの操作盤.
- * <a href="https://datatracker.ietf.org/doc/html/rfc8259">RFC 8259 The JavaScript Object Notation (JSON) Data Interchange Format</a>
- 中間形式をListとMap対応にして実質なくした版
- JSON文字列 toJSON()
- JSON2Object valueOf()
- List/Mapプリミティブ列 map()
- JavaObjectマップ typeMap()
- JSONP toJson()
+ * Microsoft 拡張のJSONC のコメント追加だけしたもの.
+ * Java / C っぽいコメントが可能。
  */
-public interface JSON {
+interface JSONC extends JSON {
 
     /**
      * JSON文字列からObjectにパースする.
@@ -45,7 +35,7 @@ public interface JSON {
      * @return Number, String, Boolean, List, Map, null などかな
      */
     static Object parse(String json) {
-        return JSON8259Reg.parse(json);
+        return JSONCReg.parse(json);
     }
 
     /**
@@ -56,7 +46,7 @@ public interface JSON {
      * @return JSON2Valueな値
      */
     public static JSONValue parseWrap(String json) {
-        return valueWrap(JSON8259Reg.parse(json));
+        return valueWrap(JSONCReg.parse(json));
     }
 
     /**
@@ -66,7 +56,7 @@ public interface JSON {
      * @return Java Objects
      */
     static Object parse(byte[] json) {
-        return JSON8259Reg.parse(json);
+        return JSONCReg.parse(json);
     }
 
     /**
@@ -76,7 +66,7 @@ public interface JSON {
      * @return JSON2Valueな値
      */
     public static JSONValue parseWrap(byte[] json) {
-        return valueWrap(JSON8259Reg.parse(json));
+        return valueWrap(JSONCReg.parse(json));
     }
 
     /**
@@ -86,7 +76,7 @@ public interface JSON {
      * @return java objects
      */
     static Object parse(FrontPacket json) {
-        return JSON8259Reg.parse(json);
+        return JSONCReg.parse(json);
     }
 
     /**
@@ -96,7 +86,7 @@ public interface JSON {
      * @return JSON2Valueな値
      */
     public static JSONValue parseWrap(FrontPacket json) {
-        return valueWrap(JSON8259Reg.parse(json));
+        return valueWrap(JSONCReg.parse(json));
     }
 
     public static final JSONFormat NOBR = new JSONFormat("","", true);
@@ -104,8 +94,15 @@ public interface JSON {
     public static final JSONFormat NOBR_MINESC = new JSONFormat("","", false);
     public static final JSONFormat TAB_MINESC = new JSONFormat("\r\n","  ", false);
 
-    public static final TypeFormat<JSONValue> JSON = new JSONConvert();
-    public static final TypeFormat<JsonValue> JSONP = new JsonpConvert();
+    /**
+     * JSON中間型(風) Listまたは Map型で返す。
+     *
+     * @param src
+     * @return JSON2系ListとMapのJavaっぽいデータ
+     */
+    public static Object valueMap(Object src) {
+        return OMAP.valueOf(src, Object.class);
+    }
 
     /**
      * valueOf で結果が単体(primitive型)のときラップしてから返す
@@ -116,7 +113,7 @@ public interface JSON {
      * @return JSON2Valueな値
      */
     public static JSONValue valueOf(Object src) {
-        return Rebind.valueOf(src, JSON);
+        return OMAP.valueOf(src, JSONValue.class);
     }
 
     /**

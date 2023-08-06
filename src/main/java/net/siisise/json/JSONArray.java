@@ -25,9 +25,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.json.JsonArray;
 import javax.json.JsonValue;
+import net.siisise.bind.Rebind;
+import net.siisise.bind.format.TypeFormat;
 import net.siisise.json.jsonp.JSONPArray;
-import net.siisise.json.bind.OMAP;
-import net.siisise.json.jsonxp.JSONXArray;
 
 /**
  * Listを拡張したJSONArray。
@@ -73,7 +73,7 @@ public class JSONArray<E> extends ArrayList<E> implements JSONCollection<E> {
 
     @Override
     public void setJSON(String key, JSONValue obj) {
-        E val = def == null ? obj.map() : obj.typeMap(def);
+        E val = def == null ? obj.map() : Rebind.valueOf(obj, def);
         if (key.equals("-")) {
             add(val);
         } else {
@@ -82,13 +82,13 @@ public class JSONArray<E> extends ArrayList<E> implements JSONCollection<E> {
     }
 
     public void setJSON(int index, JSONValue obj) {
-        E val = def == null ? obj.map() : obj.typeMap(def);
+        E val = def == null ? obj.map() : Rebind.valueOf(obj, def);
         set(index, val);
     }
 
     @Override
     public void addJSON(String key, JSONValue obj) {
-        E val = def == null ? obj.map() : obj.typeMap(def);
+        E val = def == null ? obj.map() : Rebind.valueOf(obj, def);
         if (key.equals("-")) {
             add(val);
         } else {
@@ -97,7 +97,7 @@ public class JSONArray<E> extends ArrayList<E> implements JSONCollection<E> {
     }
 
     public void addJSON(int index, JSONValue obj) {
-        E val = def == null ? obj.map() : obj.typeMap(def);
+        E val = def == null ? obj.map() : Rebind.valueOf(obj, def);
         add(index, val);
     }
 
@@ -120,15 +120,16 @@ public class JSONArray<E> extends ArrayList<E> implements JSONCollection<E> {
     }
 
     /**
+     * Stram Collector 用かな
      * primitive に変える
      *
      * @param val
      */
     public void addValue(Object val) {
         if (def != null) {
-            val = OMAP.valueOf(val, def);
+            val = Rebind.valueOf(val, def);
         } else {
-            val = JSON.valueMap(val); // Object系に変換
+            val = Rebind.valueOf(val, Object.class); // Object系に変換
         }
         add((E) val);
     }
@@ -141,7 +142,7 @@ public class JSONArray<E> extends ArrayList<E> implements JSONCollection<E> {
      */
     @Override
     public <T> T typeMap(Type type) {
-        return OMAP.typeList(this, type);
+        return Rebind.typeList(this, type);
     }
 
     /**
@@ -149,7 +150,7 @@ public class JSONArray<E> extends ArrayList<E> implements JSONCollection<E> {
      *
      * @return
      */
-    Stream<JSONValue> j2Stream() {
+    public Stream<JSONValue> j2Stream() {
         return parallelStream().map(JSON::valueOf);
     }
 
@@ -170,11 +171,11 @@ public class JSONArray<E> extends ArrayList<E> implements JSONCollection<E> {
         if (def != null && contentType == def) {
             return (T[]) toArray();
         }
-        return parallelStream().map(v -> OMAP.valueOf(v, contentType)).collect(Collectors.toList()).toArray(a);
+        return parallelStream().map(v -> Rebind.valueOf(v, contentType)).collect(Collectors.toList()).toArray(a);
     }
 
     /**
-     * 変換補助. Java EE JSON2な
+     * 変換補助. Java EE JSON
      *
      * @return JsonArrayに
      */
@@ -184,40 +185,18 @@ public class JSONArray<E> extends ArrayList<E> implements JSONCollection<E> {
             return JsonValue.EMPTY_JSON_ARRAY;
         }
         JSONPArray ar = new JSONPArray();
-        parallelStream().map(v -> (JsonValue) OMAP.valueOf(v, JsonValue.class)).forEach(ar::add);
+        parallelStream().map(v -> (JsonValue) Rebind.valueOf(v, JsonValue.class)).forEach(ar::add);
         return ar;
-    }
-
-    /**
-     * 変換補助. Jakarta EE用に変更する予定.
-     *
-     * @return
-     */
-    @Override
-    public javax.json.JsonArray toXJson() {
-        if (isEmpty()) {
-            return javax.json.JsonValue.EMPTY_JSON_ARRAY;
-        }
-        JSONXArray ar = new JSONXArray();
-        parallelStream().map(v -> (javax.json.JsonValue) OMAP.valueOf(v, javax.json.JsonValue.class)).forEach(ar::add);
-        return ar;
-    }
-
-    @Override
-    public String toJSON() {
-        return toJSON(NOBR);
     }
 
     @Override
     public String toString() {
-        return toJSON();
+        return JSONValue.NOBR_MINESC.listFormat(this);
     }
 
     @Override
-    public String toJSON(JSONFormat format) {
-        return j2Stream().map(val
-                -> format.crlf + format.tab + tab(val.toJSON(format)))
-                .collect(Collectors.joining(",", "[", format.crlf + "]"));
+    public <V> V toJSON(TypeFormat<V> format) {
+        return format.listFormat(this);
     }
 
     /**

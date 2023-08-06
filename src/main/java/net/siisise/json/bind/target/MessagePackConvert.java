@@ -15,31 +15,29 @@
  */
 package net.siisise.json.bind.target;
 
-import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.time.Clock;
 import java.time.Instant;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
+import net.siisise.bind.Rebind;
 import net.siisise.io.PacketA;
-import net.siisise.json.JSONNumber;
-import net.siisise.json.bind.MtoConvert;
 import net.siisise.json.bind.OMAP;
 import net.siisise.lang.Bin;
-import net.siisise.msgpack.MessagePack;
+import net.siisise.bind.format.BindObject;
+import net.siisise.bind.format.ContentBind;
 
 /**
  * MessagePack encoder
  */
-public class MessagePackConvert implements MtoConvert {
+public class MessagePackConvert implements ContentBind<byte[]>, BindObject<byte[]> {
 
     @Override
-    public Type targetClass() {
-        return MessagePack.class;
+    public String contentType() {
+        return "application/x-msgpack";
     }
     
     byte[] NULL  = new byte[] { (byte)0xc0 };
@@ -49,20 +47,17 @@ public class MessagePackConvert implements MtoConvert {
     byte DOUBLE = (byte) 0xcb;
 
     @Override
-    public byte[] nullValue() {
+    public byte[] nullFormat() {
         return NULL;
     }
 
     @Override
-    public byte[] booleanValue(Boolean bool) {
+    public byte[] booleanFormat(boolean bool) {
         return bool ? TRUE : FALSE;
     }
 
     @Override
-    public byte[] numberValue(Number num) {
-        while ( num instanceof JSONNumber ) { // ラップ
-            num = ((JSONNumber)num).numberValue();
-        }
+    public byte[] numberFormat(Number num) {
 
         long lv;
         
@@ -139,8 +134,8 @@ public class MessagePackConvert implements MtoConvert {
     }
 
     @Override
-    public byte[] stringValue(CharSequence str) {
-        byte[] v = str.toString().getBytes(StandardCharsets.UTF_8);
+    public byte[] stringFormat(String str) {
+        byte[] v = str.getBytes(StandardCharsets.UTF_8);
         byte[] r;
         if ( v.length < 32) {
             r = new byte[v.length+1];
@@ -170,7 +165,7 @@ public class MessagePackConvert implements MtoConvert {
     }
 
     @Override
-    public byte[] listValue(Collection list) {
+    public byte[] collectionFormat(Collection list) {
         int size = list.size();
         PacketA pac = new PacketA();
         if ( size < 16 ) {
@@ -184,27 +179,13 @@ public class MessagePackConvert implements MtoConvert {
             pac.dwrite(Bin.toByte(size));
         }
         for ( Object val : list ) {
-            pac.dwrite((byte[])OMAP.valueOf(val, this));
+            pac.dwrite((byte[])Rebind.valueOf(val, this));
         }
         return pac.toByteArray();
     }
 
     @Override
-    public byte[] arrayValue(Object array) {
-        // byte array
-        Class c = array.getClass();
-        if ( c.isArray() ) {
-            Class<?> ct = c.getComponentType();
-            if ( ct == Byte.TYPE ) {
-                return bin((byte[])array);
-            }
-        }
-        
-        // その他
-        return listValue(Arrays.asList(array));
-    }
-    
-    byte[] bin(byte[] bin) {
+    public byte[] byteArrayFormat(byte[] bin) {
         PacketA pac = new PacketA();
         if ( bin.length < 0x100 ) {
             pac.write(0xc4);
@@ -222,7 +203,7 @@ public class MessagePackConvert implements MtoConvert {
     }
 
     @Override
-    public byte[] mapValue(Map map) {
+    public byte[] mapFormat(Map map) {
         int size = map.size();
         PacketA pac = new PacketA();
         if ( size < 16 ) {
@@ -236,14 +217,14 @@ public class MessagePackConvert implements MtoConvert {
             pac.write(Bin.toByte(size));
         }
         for ( Map.Entry<?,?> entry : ((Map<String,?>)map).entrySet() ) {
-            pac.dwrite((byte[])stringValue((String)entry.getKey()));
+            pac.dwrite((byte[])stringFormat((String)entry.getKey()));
             pac.dwrite((byte[])OMAP.valueOf(entry.getValue(),this));
         }
         return pac.toByteArray();
     }
 
     @Override
-    public Object objectValue(Object obj) {
+    public byte[] objectFormat(Object obj) {
         if ( obj instanceof Date) { // 時間系
             Instant inst = Instant.ofEpochMilli(((Date) obj).getTime());  // GMTとUTCの差があるかもしれない
             return time(inst);
@@ -251,7 +232,7 @@ public class MessagePackConvert implements MtoConvert {
             Instant inst = Instant.now((Clock) obj);
             return time(inst);
         }
-        return mapValue(OMAP.valueOf(obj, Map.class));
+        return mapFormat(OMAP.valueOf(obj, Map.class));
     }
     
     private byte[] time(Instant inst) {

@@ -1,0 +1,3 @@
+net.siisise.json.bind.target.JSONFormat
+net.siisise.json.bind.target.JsonpConvert
+net.siisise.json.bind.target.MessagePackConvert

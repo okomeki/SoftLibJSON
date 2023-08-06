@@ -179,20 +179,27 @@ public class JSONBasePatch {
 
         String op = (String) patch.get("op");
         Class<?> cls;
-        if (op.equals("add")) {
-            cls = CmdAdd.class;
-        } else if (op.equals("remove")) {
-            cls = CmdRemove.class;
-        } else if (op.equals("replace")) {
-            cls = CmdReplace.class;
-        } else if (op.equals("move")) {
-            cls = CmdMove.class;
-        } else if (op.equals("copy")) {
-            cls = CmdCopy.class;
-        } else if (op.equals("test")) {
-            cls = CmdTest.class;
-        } else {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        switch (op) {
+            case "add":
+                cls = CmdAdd.class;
+                break;
+            case "remove":
+                cls = CmdRemove.class;
+                break;
+            case "replace":
+                cls = CmdReplace.class;
+                break;
+            case "move":
+                cls = CmdMove.class;
+                break;
+            case "copy":
+                cls = CmdCopy.class;
+                break;
+            case "test":
+                cls = CmdTest.class;
+                break;
+            default:
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
         return (Patch) patch.typeMap(cls);
     }

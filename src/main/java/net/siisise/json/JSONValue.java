@@ -17,6 +17,8 @@ package net.siisise.json;
 
 import java.lang.reflect.Type;
 import javax.json.JsonValue;
+import net.siisise.bind.format.TypeFormat;
+import net.siisise.json.bind.target.JSONFormat;
 
 /**
  * 要素的なJSON。
@@ -35,33 +37,38 @@ import javax.json.JsonValue;
 public interface JSONValue {
     
     /**
-     * JSON (JavaのString)として出力する.
-     * 主な用途はデータ交換なので改行などは省略したい。
-     * 改行などつけたい場合はJSON2Formatをつける
-     * JsonValue系がtoJson() を利用するのと分けておく
-     * @return JSON文字列
-     */
-    String toJSON();
-    
-    /**
      * JSONではなくていいのでプリミティブ型に近い文字列として
      * 特に指定の書式がなければJSONとして出力する
      * @return 文字表現
      */
     @Override
     String toString();
-    
 
-    public static final JSONFormat NOBR = new JSONFormat("","");
-    public static final JSONFormat TAB = new JSONFormat("\r\n","  ");
+    public static final JSONFormat NOBR = new JSONFormat("","", true);
+    public static final JSONFormat TAB = new JSONFormat("\r\n","  ", true);
+    public static final JSONFormat NOBR_MINESC = new JSONFormat("","", false);
+    public static final JSONFormat TAB_MINESC = new JSONFormat("\r\n","  ", false);
 
     /**
-     * 書式を指定してJSONとして出力する.
+     * 書式を指定してJSONなどとして出力する.
+     * JSONFormat 側に書式を移動する予定.
      *
+     * @param <T>
      * @param format
      * @return
      */
-    String toJSON(JSONFormat format);
+    <T> T toJSON(TypeFormat<T> format);
+    
+    /**
+     * JSON (JavaのString)として出力する.
+     * 主な用途はデータ交換なので改行などは省略したい。
+     * 改行などつけたい場合はJSON2Formatをつける
+     * JsonValue系がtoJson() を利用するのと分けておく
+     * @return JSON文字列
+     */
+    default String toJSON() {
+        return toJSON(NOBR_MINESC);
+    }
 
     /**
      * 固定のJava寄りの型に変換する。
@@ -78,6 +85,7 @@ public interface JSONValue {
      * List,Map,配列,Java Object, Genericなどまで可
      * JSON-B では fromJson 相当
      * 
+     * @deprecated OMAP にする
      * @param <T>
      * @param type Classの他、Fieldから取得できる型情報ParameterizedTypeに対応する
      * @return 
@@ -85,15 +93,9 @@ public interface JSONValue {
     <T> T typeMap(Type type);
     
     /**
-     * Jakarta JSON-P系に準拠する.
+     * 旧 javax系
      * @return JSON-P 的なもの
      */
     JsonValue toJson();
-
-    /**
-     * 旧 javax系
-     * @return JSON-P的なもの 
-     */
-    javax.json.JsonValue toXJson();
 
 }

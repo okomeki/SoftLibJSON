@@ -43,7 +43,7 @@ public class JSONPParserFactory implements JsonParserFactory {
 
     @Override
     public Map<String, ?> getConfigInUse() {
-        return new HashMap();
+        return new HashMap<>();
     }
     
 }

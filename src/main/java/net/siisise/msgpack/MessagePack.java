@@ -20,10 +20,10 @@ import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.Date;
 import java.util.Map;
+import net.siisise.bind.Rebind;
 import net.siisise.io.FrontPacket;
 import net.siisise.json.JSONArray;
 import net.siisise.json.JSONObject;
-import net.siisise.json.bind.OMAP;
 
 /**
  * MessagePack の仮Parser
@@ -276,7 +276,7 @@ public class MessagePack {
     }
     
     public static byte[] build(Object obj) {
-        return OMAP.valueOf(obj, MessagePack.class);
+        return Rebind.valueOf(obj, "application/x-msgpack");
     }
     
 }

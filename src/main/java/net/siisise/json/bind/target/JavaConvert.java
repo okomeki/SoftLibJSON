@@ -2,13 +2,15 @@ package net.siisise.json.bind.target;
 
 import java.util.Collection;
 import java.util.Map;
-import net.siisise.json.bind.MtoConvert;
+import net.siisise.bind.format.TypeFallFormat;
+import net.siisise.bind.format.BindObject;
+import net.siisise.bind.format.TypeBind;
 
 /**
  * Java Object を Java Object にするので何もしないかもしれない。
  * 特定型に変換するにはOMAPConvert などを使用する
  */
-public class JavaConvert implements MtoConvert {
+public class JavaConvert extends TypeFallFormat implements TypeBind,BindObject {
 
     @Override
     public Class targetClass() {
@@ -16,42 +18,42 @@ public class JavaConvert implements MtoConvert {
     }
 
     @Override
-    public Object nullValue() {
+    public Object nullFormat() {
         return null;
     }
 
     @Override
-    public Object booleanValue(Boolean bool) {
+    public Object booleanFormat(boolean bool) {
         return bool;
     }
 
     @Override
-    public Object numberValue(Number num) {
+    public Object numberFormat(Number num) {
         return num;
     }
 
     @Override
-    public Object stringValue(CharSequence str) {
-        return str.toString();
+    public Object stringFormat(String str) {
+        return str;
     }
 
     @Override
-    public Object arrayValue(Object array) {
+    public Object arrayFormat(Object array) {
         return array;
     }
 
     @Override
-    public Object listValue(Collection list) {
+    public Object collectionFormat(Collection list) {
         return list;
     }
 
     @Override
-    public Object mapValue(Map map) {
+    public Object mapFormat(Map map) {
         return map;
     }
 
     @Override
-    public Object objectValue(Object obj) {
+    public Object objectFormat(Object obj) {
         return obj;
     }
     

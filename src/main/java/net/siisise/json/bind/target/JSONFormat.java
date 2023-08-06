@@ -1,0 +1,242 @@
+/*
+ * Copyright 2022 Siisise Net
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package net.siisise.json.bind.target;
+
+import java.util.Collection;
+import java.util.Map;
+import java.util.stream.Collectors;
+import net.siisise.bind.Rebind;
+import net.siisise.bind.format.ContentBind;
+import net.siisise.block.ReadableBlock;
+import net.siisise.lang.CodePoint;
+
+/**
+ * 改行をなんとかするだけだったが出力書式全般に対応しておく。
+ * JSONStringConvert も同じようなことしてる
+ * JSONValue#toString(TextFormat) で使う
+ */
+public class JSONFormat extends OBJConvert<String> implements ContentBind<String> {
+
+    public final String crlf;
+    public final String tab;
+    final boolean max;
+
+    /**
+     * 改行やタブを入れるか省略するか決める要素
+     * @param crlf 改行コードに相当する部分
+     * @param tab タブに相当する部分
+     * @param full
+     */
+    public JSONFormat(String crlf, String tab, boolean full) {
+        this.crlf = crlf;
+        this.tab = tab;
+        max = full;
+    }
+    
+    public JSONFormat() {
+        this("", "", false);
+    }
+
+    @Override
+    public String contentType() {
+        return "application/json";
+    }
+
+    /**
+     * 最小限のエスケープのみにする。
+     * 0x2f をエスケープしないだけ
+     * 使用できない場面もあるかも
+     * @param val
+     * @return 
+     */
+    protected String esc(String val) {
+        StringBuilder sb = new StringBuilder();
+        ReadableBlock pac = ReadableBlock.wrap(val);
+        int ch;
+        while (pac.length() > 0) {
+            ch = CodePoint.utf8(pac);
+            switch (ch) {
+                case 0x2f: // solidus /
+                    if ( !max ) {
+                        sb.append(ch);
+                        break;
+                    }
+                case 0x22: // quotation mark " *必須
+                case 0x5c: // reverse solidus \ *必須
+                    sb.append((char) 0x5c);
+                    sb.append((char) ch);
+                    break;
+                case 0x08: // backspace \b
+                    sb.append((char) 0x5c);
+                    sb.append((char) 0x62);
+                    break;
+                case 0x0c: // form feed \f
+                    sb.append((char) 0x5c);
+                    sb.append((char) 0x66);
+                    break;
+                case 0x0a: // line feed \n
+                    sb.append((char) 0x5c);
+                    sb.append((char) 0x6e);
+                    break;
+                case 0x0d: // carriage return \r
+                    sb.append((char) 0x5c);
+                    sb.append((char) 0x72);
+                    break;
+                case 0x09: // tab \t
+                    sb.append((char) 0x5c);
+                    sb.append((char) 0x74);
+                    break;
+                default:
+                    /* if ( ch > 0xffff) {
+                        char[] l = Character.toChars(ch);
+                        String a = Integer.toHexString(0x10000 + l[0]).substring(1);
+                        String b = Integer.toHexString(0x10000 + l[0]).substring(1);
+                        sb.append((char)0x5c);
+                        sb.append((char)0x75);
+                        sb.append(a);
+                        sb.append((char)0x5c);
+                        sb.append((char)0x75);
+                        sb.append(b);
+                    } else */ if (ch < 0x20) { // escape 必須
+                        String a = Integer.toHexString(0x10000 + ch).substring(1);
+                        sb.append((char) 0x5c);
+                        sb.append((char) 0x75);
+                        sb.append(a);
+                    } else {
+                        sb.appendCodePoint(ch);
+                    }
+                    break;
+            }
+        }
+        return sb.toString();
+    }
+/*
+    private String esc(CharSequence val) {
+        StringBuilder sb = new StringBuilder();
+        int[] cps = val.codePoints().toArray();
+        for ( int ch : cps ) {
+            switch (ch) {
+                case 0x2f: // solidus /
+                    if ( !max ) {
+                        sb.append(ch);
+                        break;
+                    }
+                case 0x22: // quotation mark " *必須
+                case 0x5c: // reverse solidus \ *必須
+                    sb.append((char) 0x5c);
+                    sb.append((char) ch);
+                    break;
+                case 0x08: // backspace \b
+                    sb.append((char) 0x5c);
+                    sb.append((char) 0x62);
+                    break;
+                case 0x0c: // form feed \f
+                    sb.append((char) 0x5c);
+                    sb.append((char) 0x66);
+                    break;
+                case 0x0a: // line feed \n
+                    sb.append((char) 0x5c);
+                    sb.append((char) 0x6e);
+                    break;
+                case 0x0d: // carriage return \r
+                    sb.append((char) 0x5c);
+                    sb.append((char) 0x72);
+                    break;
+                case 0x09: // tab \t
+                    sb.append((char) 0x5c);
+                    sb.append((char) 0x74);
+                    break;
+                default:
+    */
+                    /* if ( ch > 0xffff) {
+                        char[] l = Character.toChars(ch);
+                        String a = Integer.toHexString(0x10000 + l[0]).substring(1);
+                        String b = Integer.toHexString(0x10000 + l[0]).substring(1);
+                        sb.append((char)0x5c);
+                        sb.append((char)0x75);
+                        sb.append(a);
+                        sb.append((char)0x5c);
+                        sb.append((char)0x75);
+                        sb.append(b);
+                    } else */
+    /*
+                            if (ch < 0x20) { // escape 必須
+                        String a = Integer.toHexString(0x10000 + ch).substring(1);
+                        sb.append((char) 0x5c);
+                        sb.append((char) 0x75);
+                        sb.append(a);
+                    } else {
+                        sb.appendCodePoint(ch);
+                    }
+                    break;
+            }
+        }
+        return sb.toString();
+    }
+    */
+
+    @Override
+    public String nullFormat() {
+        return "null";
+    }
+    
+    @Override
+    public String booleanFormat(boolean bool) {
+        return Boolean.toString(bool);
+    }
+    
+    /**
+     * 注意 JSON な数値のみ. (判定はしていない)
+     * JSONではNaNやInfinityは扱えない.
+     * @param num 数値
+     * @return っぽい文字列
+     */
+    @Override
+    public String numberFormat(Number num) {
+        if ( num instanceof Float && (((Float)num).isNaN() || ((Float)num).isInfinite())) {
+            throw new IllegalStateException("JSON not support NaN of Infinitie");
+        }
+        if ( num instanceof Double && (((Double)num).isNaN() || ((Double)num).isInfinite())) {
+            throw new IllegalStateException("JSON not support NaN or Infinitie");
+        }
+        return num.toString();
+    }
+
+    @Override
+    public String stringFormat(String val) {
+        return "\"" + esc(val) + "\"";
+    }
+
+    @Override
+    public String collectionFormat(Collection list) {
+        return (String)list.parallelStream().map(val
+                -> crlf + tab + tab((String)Rebind.valueOf(val, this)))
+                .collect(Collectors.joining(",", "[", crlf + "]"));
+    }
+
+    @Override
+    public String mapFormat(Map map) {
+        String m = ((Map<?,?>)map).entrySet().parallelStream().map(e -> {
+            return crlf + tab + (String)stringFormat((String)e.getKey()) + ":"
+                    + tab(Rebind.valueOf(e.getValue(),this));
+        }).collect(Collectors.joining(",", "{", crlf + "}"));
+        return m;
+    }
+
+    private static String tab(String val) {
+        return val.replace("\r\n", "\r\n  ");
+    }
+}

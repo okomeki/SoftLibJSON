@@ -11,12 +11,12 @@ import java.util.logging.Logger;
 import javax.json.JsonValue;
 import javax.json.stream.JsonGenerator;
 import net.siisise.json.JSONBoolean;
-import net.siisise.json.JSONFormat;
 import net.siisise.json.JSONNumber;
 import net.siisise.json.JSONString;
 import net.siisise.json.JSON;
 import net.siisise.json.JSONValue;
 import net.siisise.json.base.JSONBaseNULL;
+import net.siisise.json.bind.target.JSONFormat;
 
 /**
  * タブ暫定対応
@@ -44,8 +44,7 @@ public class JSONPGenerator implements JsonGenerator {
             tabin("{","}");
             return this;
         } catch (IOException ex) {
-            Logger.getLogger(JSONPGenerator.class.getName()).log(Level.SEVERE, null, ex);
-            throw new UnsupportedOperationException();
+            throw new IllegalStateException(ex);
         }
     }
 
@@ -57,8 +56,7 @@ public class JSONPGenerator implements JsonGenerator {
             tabin("{","}");
             return this;
         } catch (IOException ex) {
-            Logger.getLogger(JSONPGenerator.class.getName()).log(Level.SEVERE, null, ex);
-            throw new UnsupportedOperationException();
+            throw new IllegalStateException(ex);
         }
     }
 
@@ -79,8 +77,7 @@ public class JSONPGenerator implements JsonGenerator {
             out.write(": ");
             return this;
         } catch (IOException ex) {
-            Logger.getLogger(JSONPGenerator.class.getName()).log(Level.SEVERE, null, ex);
-            throw new UnsupportedOperationException();
+            throw new IllegalStateException(ex);
         }
     }
 
@@ -91,8 +88,7 @@ public class JSONPGenerator implements JsonGenerator {
             tabin("[","]");
             return this;
         } catch (IOException ex) {
-            Logger.getLogger(JSONPGenerator.class.getName()).log(Level.SEVERE, null, ex);
-            throw new UnsupportedOperationException();
+            throw new IllegalStateException(ex);
         }
     }
 
@@ -104,8 +100,7 @@ public class JSONPGenerator implements JsonGenerator {
             tabin("[","]");
             return this;
         } catch (IOException ex) {
-            Logger.getLogger(JSONPGenerator.class.getName()).log(Level.SEVERE, null, ex);
-            throw new UnsupportedOperationException();
+            throw new IllegalStateException(ex);
         }
     }
 
@@ -121,7 +116,7 @@ public class JSONPGenerator implements JsonGenerator {
             writeKey(name);
             tab(value.toJSON(format));
         } catch (IOException ex) {
-            Logger.getLogger(JSONPGenerator.class.getName()).log(Level.SEVERE, null, ex);
+            throw new IllegalStateException(ex);
         }
     }
 
@@ -208,8 +203,7 @@ public class JSONPGenerator implements JsonGenerator {
             tabout();
             return this;
         } catch (IOException ex) {
-            Logger.getLogger(JSONPGenerator.class.getName()).log(Level.SEVERE, null, ex);
-            throw new UnsupportedOperationException();
+            throw new IllegalStateException(ex);
         }
     }
 
@@ -223,8 +217,7 @@ public class JSONPGenerator implements JsonGenerator {
         try {
             tab(value.toJSON(format));
         } catch (IOException ex) {
-            Logger.getLogger(JSONPGenerator.class.getName()).log(Level.SEVERE, null, ex);
-            throw new UnsupportedOperationException();
+            throw new IllegalStateException(ex);
         }
     }
 
@@ -281,7 +274,7 @@ public class JSONPGenerator implements JsonGenerator {
         try {
             out.close();
         } catch (IOException ex) {
-            Logger.getLogger(JSONPGenerator.class.getName()).log(Level.SEVERE, null, ex);
+            throw new IllegalStateException(ex);
         }
     }
 
@@ -290,7 +283,7 @@ public class JSONPGenerator implements JsonGenerator {
         try {
             out.flush();
         } catch (IOException ex) {
-            Logger.getLogger(JSONPGenerator.class.getName()).log(Level.SEVERE, null, ex);
+            throw new IllegalStateException(ex);
         }
     }
 

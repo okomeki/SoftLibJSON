@@ -8,8 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Stream;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
@@ -18,13 +16,13 @@ import javax.json.stream.JsonLocation;
 import javax.json.stream.JsonParser;
 import javax.json.stream.JsonParsingException;
 import net.siisise.abnf.ABNF;
+import net.siisise.bind.Rebind;
 import net.siisise.block.ReadableBlock;
 import net.siisise.json.parser.JSON8259Reg;
 import net.siisise.json.JSONArray;
 import net.siisise.json.JSONNumber;
 import net.siisise.json.JSONObject;
 import net.siisise.json.bind.OMAP;
-import net.siisise.json.JSON;
 
 /**
  * ABNF Parserを使っているのでこちらは軽く実装.
@@ -58,14 +56,14 @@ public class JSONPParser implements JsonParser {
     public JSONPParser(Object json) {
         nexts = nexts(json);
     }
-    
+
     /**
      * object の分解
      * @param src
      * @return 
      */
     static List<Next> nexts(Object src) {
-        Object obj = JSON.valueMap(src);
+        Object obj = OMAP.valueOf(src, Object.class);
         List<Next> nexts = new ArrayList<>();
         if ( obj == null ) {
             nexts.add(new Next(obj, Event.VALUE_NULL));
@@ -91,7 +89,9 @@ public class JSONPParser implements JsonParser {
         }
         return nexts;
     }
-    
+
+    private Next current;
+
     /**
      * OBJECT, ARRAYは再構築する
      * @param step nexts 
@@ -216,8 +216,6 @@ public class JSONPParser implements JsonParser {
         return !nexts.isEmpty();
     }
     
-    private Next current;
-
     /**
      * 次のEvent
      * @return 次のEvent
@@ -304,7 +302,7 @@ public class JSONPParser implements JsonParser {
     @Override
     public JsonObject getObject() {
         if ( current.state == Event.START_OBJECT ) {
-            return OMAP.valueOf(parseObject(), JsonValue.class);
+            return Rebind.valueOf(parseObject(), JsonValue.class);
         }
         throw new IllegalStateException();
     }
@@ -312,7 +310,7 @@ public class JSONPParser implements JsonParser {
     @Override
     public JsonArray getArray() {
         if ( current.state == Event.START_ARRAY ) {
-            return OMAP.valueOf(parseArray(), JsonArray.class);
+            return Rebind.valueOf(parseArray(), JsonArray.class);
         }
         throw new IllegalStateException();
     }
@@ -360,7 +358,7 @@ public class JSONPParser implements JsonParser {
                 stream.getInputStream().close();
                 stream = null;
             } catch (IOException ex) {
-                Logger.getLogger(JSONPParser.class.getName()).log(Level.SEVERE, null, ex);
+                throw new IllegalStateException(ex);
             }
         }
     }

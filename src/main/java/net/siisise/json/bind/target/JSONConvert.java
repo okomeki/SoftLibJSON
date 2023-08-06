@@ -2,6 +2,7 @@ package net.siisise.json.bind.target;
 
 import java.util.Collection;
 import java.util.Map;
+import net.siisise.bind.format.TypeBind;
 import net.siisise.json.JSONArray;
 import net.siisise.json.JSONBoolean;
 import net.siisise.json.JSONNumber;
@@ -12,9 +13,10 @@ import net.siisise.json.JSONValue;
 import net.siisise.json.base.JSONBaseNULL;
 
 /**
- * List,Mapは表面をJSON2系にラップするだけと、中もprimitive系に更新するのと2種類想定するかもしれない
+ * JSON抽象系からJSON各実装への変換.
+ * List,Mapは表面をJSON系にラップするだけと、中もprimitive系に更新するのと2種類想定するかもしれない
  */
-public class JSONConvert extends OBJConvert<JSONValue> {
+public class JSONConvert extends OBJConvert<JSONValue> implements TypeBind<JSONValue> {
 
     @Override
     public Class<JSONValue> targetClass() {
@@ -22,22 +24,22 @@ public class JSONConvert extends OBJConvert<JSONValue> {
     }
 
     @Override
-    public JSONBaseNULL nullValue() {
+    public JSONBaseNULL nullFormat() {
         return JSONBaseNULL.NULL;
     }
 
     @Override
-    public JSONBoolean booleanValue(Boolean bool) {
+    public JSONBoolean booleanFormat(boolean bool) {
         return bool ? JSONBoolean.TRUE : JSONBoolean.FALSE;
     }
 
     @Override
-    public JSONNumber numberValue(Number num) {
+    public JSONNumber numberFormat(Number num) {
         return new JSONNumber(num);
     }
 
     @Override
-    public JSONString stringValue(CharSequence str) {
+    public JSONValue stringFormat(String str) {
         return new JSONString(str);
     }
 
@@ -47,7 +49,7 @@ public class JSONConvert extends OBJConvert<JSONValue> {
      * @return 
      */
     @Override
-    public JSONArray listValue(Collection list) {
+    public JSONArray collectionFormat(Collection list) {
         if ( list instanceof JSONArray ) {
             return (JSONArray) list;
         }
@@ -60,12 +62,12 @@ public class JSONConvert extends OBJConvert<JSONValue> {
      * @return 
      */
     @Override
-    public JSONObject mapValue(Map map) {
+    public JSONObject mapFormat(Map map) {
         if ( map instanceof JSONObject ) {
             return (JSONObject) map;
         }
         JSONObject obj = new JSONObject();
-        ((Map<Object,Object>)map).forEach((k,v) -> {
+        ((Map<?,?>)map).forEach((k,v) -> {
             obj.put(k.toString(), v);
         });
         return obj;
@@ -77,12 +79,12 @@ public class JSONConvert extends OBJConvert<JSONValue> {
      * @return 
      */
     @Override
-    public JSONValue objectValue(Object obj) {
+    public JSONValue objectFormat(Object obj) {
         // toJSON メソッドで変換
         JSONValue json = OMAP.toJSON(obj);
         if ( json != null ) {
             return json;
         }
-        return super.objectValue(obj);
+        return super.objectFormat(obj);
     }
 }

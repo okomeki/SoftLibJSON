@@ -17,6 +17,7 @@ package net.siisise.json;
 
 import java.lang.reflect.Type;
 import javax.json.JsonValue;
+import net.siisise.bind.format.TypeFormat;
 import net.siisise.json.bind.OMAP;
 
 /**
@@ -49,23 +50,13 @@ public class JSONBoolean implements JSONValue,JsonValue {
     }
     
     @Override
-    public javax.json.JsonValue toXJson() {
-        return bool ? javax.json.JsonValue.TRUE : javax.json.JsonValue.FALSE;
-    }
-    
-    @Override
     public String toString() {
         return toJSON();
     }
     
     @Override
-    public String toJSON() {
-        return Boolean.toString(bool);
-    }
-    
-    @Override
-    public String toJSON(JSONFormat format) {
-        return Boolean.toString(bool);
+    public <V> V toJSON(TypeFormat<V> format) {
+        return format.booleanFormat(bool);
     }
 
     @Override
@@ -87,7 +78,7 @@ public class JSONBoolean implements JSONValue,JsonValue {
         } else if ( obj == JsonValue.FALSE ) {
             return !bool;
 //        } else if ( obj instanceof Boolean ) {
-//            return bool == ((Boolean)obj).booleanValue();
+//            return bool == ((Boolean)obj).booleanFormat();
         }
         return false;
     }

@@ -11,12 +11,15 @@ ABNFで
 Java API for JSON Processing (JSR-374)にも対応
 
 Object Mappingは適度に実装 (Java API for JSON Bindingもかぶせたが互換性は不明)
+データ型各種の変換機能に化ける予定
 
 ## 概要
 
 便利なJSON Parserないかなと思い作ってみた。
 JavaのListやMap, Objectと相互変換で扱えれば便利やねということでJSON固有のいろいろは考えなくても自由に使える方向に尽力してみた。
 基本的にはListやMapとして扱えるJSON。JSON-Pとも互換性高め。
+
+JSON-B 的なものはOMAP というclass にまとめてあるが、JavaとJSONの他、CBOR, YAMLなどにも対応したいので拡張して独立させる。
 
 ## なにができる?
 
@@ -26,7 +29,7 @@ JavaのListやMap, Objectと相互変換で扱えれば便利やねというこ�
 - JSON Pointer
 - JSON Patch と diff
 - JSON Merge Patch と diff
-- JSON Binding
+- JSON Binding 的なものをJSON以外にもざっくり対応する。
 
 などがつかえるよ?
 
@@ -49,7 +52,7 @@ SoftLibとSoftLibABNFとSoftLibJSONが必要です。
 ~~~
 
 リリース版 1.2.2 ぐらい。
-次版 1.2.3-SNAPSHOT
+次版 1.3.0-SNAPSHOT
 
 ## 型情報
 

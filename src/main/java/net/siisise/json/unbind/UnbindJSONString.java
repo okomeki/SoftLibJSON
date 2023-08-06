@@ -13,31 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.siisise.json.jsonxp;
+package net.siisise.json.unbind;
 
-import javax.json.JsonValue.ValueType;
-import net.siisise.json.base.JSONBaseString;
+import java.lang.reflect.Type;
+import net.siisise.bind.TypeUnbind;
+import net.siisise.bind.format.TypeFormat;
+import net.siisise.json.JSONString;
 
 /**
- * 互換要素
+ * JSON String を String にする処理.
  */
-public class JSONXString extends JSONBaseString implements javax.json.JsonString {
+public class UnbindJSONString implements TypeUnbind {
 
-    public JSONXString(CharSequence str) {
-        super(str);
-    }
-    
-    public JSONXString(String str) {
-        super(str);
+    @Override
+    public Type[] getSrcTypes() {
+        return new Type[]{ javax.json.JsonString.class, JSONString.class };
     }
 
     @Override
-    public ValueType getValueType() {
-        return ValueType.STRING;
-    }
-    
-    @Override
-    public javax.json.JsonValue toXJson() {
+    public Object valueOf(Object obj, TypeFormat format) {
+        if ( obj instanceof javax.json.JsonString ) { // JSONString も該当
+            return ((javax.json.JsonString)obj).getString();
+        }
         return this;
     }
+    
 }

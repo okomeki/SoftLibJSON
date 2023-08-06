@@ -41,6 +41,7 @@ import java.util.logging.Logger;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
+import net.siisise.bind.format.TypeBind;
 import net.siisise.io.BASE64;
 import net.siisise.json.jsonp.JSONPArray;
 import net.siisise.json.JSONArray;
@@ -53,9 +54,8 @@ import net.siisise.json.JSONValue;
 /**
  * String Integer, 継承関係型 JSON2NULL など継承、未解決型への変換.
  * あとで分ける
- * @param <T>
  */
-public class OMAPConvert<T> extends OBJConvert<T> {
+public class OMAPConvert extends OBJConvert<Object> implements TypeBind<Object> {
     
     Type type;
     
@@ -69,12 +69,12 @@ public class OMAPConvert<T> extends OBJConvert<T> {
     }
 
     @Override
-    public Object nullValue() {
+    public Object nullFormat() {
         return null;
     }
 
     @Override
-    public Object booleanValue(Boolean bool) {
+    public Object booleanFormat(boolean bool) {
         if ( type instanceof Class ) {
             Class cls = (Class) type;
             if ( cls.isAssignableFrom(Boolean.class) || cls == Boolean.TYPE ) {
@@ -83,21 +83,23 @@ public class OMAPConvert<T> extends OBJConvert<T> {
                 return Boolean.toString(bool);
             } else if ( cls.isAssignableFrom(JSONBoolean.class) ) {
                 return (bool ? JSONBoolean.TRUE : JSONBoolean.FALSE);
-            } else if ( cls.isAssignableFrom(Integer.class) ) {
-                return Integer.valueOf( bool ? 1 : 0 );
-            } else if ( cls.isAssignableFrom(Byte.class) ) {
-                return Byte.valueOf( bool ? (byte)1 : (byte)0 );
-            } else if ( cls.isAssignableFrom(Short.class) ) {
-                return Short.valueOf( bool ? (short)1 : (short)0 );
-            } else if ( cls.isAssignableFrom(Long.class) ) {
-                return Long.valueOf( bool ? 1l : 0l );
+//            } else if ( cls.isAssignableFrom(Integer.class) ) {
+//                return Integer.valueOf( bool ? 1 : 0 );
+            } else if ( cls.isAssignableFrom(Number.class)) {
+                return numberFormat( Integer.valueOf( bool ? 1 : 0 ) );
+//            } else if ( cls.isAssignableFrom(Byte.class) ) {
+//                return Byte.valueOf( bool ? (byte)1 : (byte)0 );
+//            } else if ( cls.isAssignableFrom(Short.class) ) {
+//                return Short.valueOf( bool ? (short)1 : (short)0 );
+//            } else if ( cls.isAssignableFrom(Long.class) ) {
+//                return Long.valueOf( bool ? 1l : 0l );
             }
         }
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public Object numberValue(Number number) {
+    public Object numberFormat(Number number) {
         if ( !(type instanceof Class) ) {
             throw new UnsupportedOperationException("まだ");
         }
@@ -135,10 +137,15 @@ public class OMAPConvert<T> extends OBJConvert<T> {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    /**
+     * CharSequence に変えても使えるように残す
+     * @param value
+     * @return 
+     */
     @Override
-    public Object stringValue(CharSequence value) {
+    public Object stringFormat(String value) {
         if (value == null) {
-            return nullValue();
+            return nullFormat();
         }
         Class ocls = value.getClass();
         String val;
@@ -195,7 +202,7 @@ public class OMAPConvert<T> extends OBJConvert<T> {
      * @return 
      */
     @Override
-    public Object listValue(Collection list) {
+    public Object collectionFormat(Collection list) {
         if (type instanceof Class) {
             return listClassCast(list, (Class)type);
         } else if ( type instanceof ParameterizedType ) { // List<Generic>
@@ -352,7 +359,7 @@ public class OMAPConvert<T> extends OBJConvert<T> {
      * @return 
      */
     @Override
-    public Object mapValue(Map map) {
+    public Object mapFormat(Map map) {
         if (type instanceof Class) {
             return mapClassCast(map, (Class)type);
         } else if ( type instanceof ParameterizedType ) {

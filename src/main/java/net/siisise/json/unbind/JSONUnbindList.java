@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 okome.
+ * Copyright 2023 okome.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,19 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.siisise.json.jsonxp;
+package net.siisise.json.unbind;
 
-import javax.json.JsonValue;
-import net.siisise.json.base.JSONBaseNULL;
+import net.siisise.bind.TypeUnbind;
+import net.siisise.bind.UnbindList;
+import net.siisise.json.map.JSONDateM;
 
 /**
- * 互換要素
+ *
  */
-public class JSONXNULL extends JSONBaseNULL implements JsonValue {
+public class JSONUnbindList implements UnbindList {
+
+    static final TypeUnbind[] JSONUNBINDS = {
+        new UnbindJSONValue(),
+        new UnbindJSONNumber(),
+//        new UnbindUUID(),
+        new JSONDateM(),
+        new UnbindJSONString()
+    };
 
     @Override
-    public ValueType getValueType() {
-        return JsonValue.ValueType.NULL;
+    public TypeUnbind[] getList() {
+        return JSONUNBINDS;
     }
+
+    
     
 }

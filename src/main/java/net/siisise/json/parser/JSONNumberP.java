@@ -15,7 +15,14 @@ import net.siisise.io.Packet;
  */
 public class JSONNumberP extends BNFBuildParser<Number, Packet> {
 
-    public JSONNumberP(BNF rule, BNFReg base) {
+    static final BigInteger MAX_SHORT = BigInteger.valueOf(Short.MAX_VALUE);
+    static final BigInteger MIN_SHORT = BigInteger.valueOf(Short.MIN_VALUE);
+    static final BigInteger MAX_INTEGER = BigInteger.valueOf(Integer.MAX_VALUE);
+    static final BigInteger MIN_INTEGER = BigInteger.valueOf(Integer.MIN_VALUE);
+    static final BigInteger MAX_LONG = BigInteger.valueOf(Long.MAX_VALUE);
+    static final BigInteger MIN_LONG = BigInteger.valueOf(Long.MIN_VALUE);
+
+            public JSONNumberP(BNF rule, BNFReg base) {
         super(rule, base, "frac", "exp");
     }
 
@@ -27,7 +34,16 @@ public class JSONNumberP extends BNFBuildParser<Number, Packet> {
         if (f != null || e != null) {
             return new BigDecimal(str(ret.sub));
         } else { // 整数
-            return new BigInteger(str(ret.sub));
+            BigInteger bi = new BigInteger(str(ret.sub));
+
+            if ( bi.compareTo(MAX_SHORT) <= 0 && bi.compareTo(MIN_SHORT) >= 0) {
+                return bi.shortValue();
+            } else if ( bi.compareTo(MAX_INTEGER) <= 0 && bi.compareTo(MIN_INTEGER) >= 0) {
+                return bi.intValue();
+            } else if ( bi.compareTo(MAX_LONG) <= 0 && bi.compareTo(MIN_LONG) >= 0) {
+                return bi.longValue();
+            }
+            return bi;
         }
     }
     

@@ -23,12 +23,11 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
-import java.util.stream.Collectors;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
+import net.siisise.bind.format.TypeFormat;
 import net.siisise.json.jsonp.JSONPObject;
 import net.siisise.json.bind.OMAP;
-import net.siisise.json.jsonxp.JSONXObject;
 
 /**
  * JSON Object.
@@ -126,34 +125,13 @@ public class JSONObject<V> extends LinkedHashMap<String, V> implements JSONColle
     }
     
     @Override
-    public javax.json.JsonObject toXJson() {
-        if (isEmpty()) {
-            return javax.json.JsonValue.EMPTY_JSON_OBJECT;
-        } else {
-            JSONXObject obj = new JSONXObject();
-            forEach((k, v) -> {
-                obj.put(k, OMAP.valueOf(v, javax.json.JsonValue.class));
-            });
-            return obj;
-        }
-    }
-
-    @Override
     public String toString() {
-        return toJSON(NOBR);
+        return toJSON(NOBR_MINESC);
     }
     
     @Override
-    public String toJSON() {
-        return toJSON(NOBR);
-    }
-
-    @Override
-    public String toJSON(JSONFormat format) {
-        return keySet().stream().map(key -> {
-            return format.crlf + format.tab + new JSONString(key).toJSON(format) + ":"
-                    + tab(getJSON(key).toJSON(format));
-        }).collect(Collectors.joining(",", "{", format.crlf + "}"));
+    public <T> T toJSON(TypeFormat<T> format) {
+        return format.mapFormat(this);
     }
 
     /**

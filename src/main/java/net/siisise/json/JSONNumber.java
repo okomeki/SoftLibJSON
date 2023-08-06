@@ -27,6 +27,8 @@ import net.siisise.json.base.JSONBaseNumber;
  * これもNumver型になれるので多重ラップしないよう注意。
  */
 public class JSONNumber extends JSONBaseNumber implements JSONValue,JsonNumber {
+
+    private static final long serialVersionUID = 1L;
     
     public JSONNumber(Number num) {
         super(num);

@@ -1,63 +1,69 @@
 package net.siisise.json.bind.target;
 
-import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.Map;
-import net.siisise.json.bind.MtoConvert;
+import java.util.stream.Collectors;
+import net.siisise.bind.Rebind;
+import net.siisise.bind.format.TypeFallFormat;
+import net.siisise.bind.format.BindObject;
+import net.siisise.bind.format.ContentBind;
 
 /**
- *
+ * エスケープしないJSONっぽいもの.
+ * @deprecated 使い処が見つからない
  */
-public class StringConvert implements MtoConvert<String> {
+public class StringConvert extends TypeFallFormat<String> implements BindObject<String>, ContentBind<String> {
 
     @Override
-    public Type targetClass() {
-        return String.class;
+    public String contentType() {
+        return "text/plain";
+    }
+    
+    @Override
+    public String nullFormat() {
+        return "null";
     }
 
     @Override
-    public String nullValue() {
-        return null;
-    }
-
-    @Override
-    public String booleanValue(Boolean bool) {
+    public String booleanFormat(boolean bool) {
         return Boolean.toString(bool);
     }
 
     @Override
-    public String numberValue(Number num) {
+    public String numberFormat(Number num) {
         return num.toString();
     }
 
     @Override
-    public String stringValue(CharSequence str) {
-        return str.toString();
+    public String stringFormat(String str) {
+        return str;
     }
 
     @Override
-    public String arrayValue(Object array) {
+    public String arrayFormat(Object array) {
         Class cls = array.getClass();
         Class componentClass = cls.getComponentType();
         if ( componentClass == Character.TYPE ) {
-            return new String((char[])array);
+            return String.valueOf((char[])array);
         }
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public Object listValue(Collection list) {
-        return list.toString();
+    public String collectionFormat(Collection list) {
+        return (String)list.stream().map(v -> { return Rebind.valueOf(v, this);})
+                .collect( Collectors.joining(",", "[", "]"));
     }
 
     @Override
-    public Object mapValue(Map map) {
-        return map.toString();
+    public String mapFormat(Map map) {
+        StringBuilder mapsb = new StringBuilder();
+        ((Map<?,?>)map).forEach((k,v) -> { mapsb.append(Rebind.valueOf(k, this)).append(Rebind.valueOf(v, this));});
+        return mapsb.toString();
     }
 
     @Override
-    public Object objectValue(Object obj) {
+    public String objectFormat(Object obj) {
         return obj.toString();
     }
-    
 }

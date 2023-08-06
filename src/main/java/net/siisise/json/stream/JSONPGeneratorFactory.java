@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.json.stream.JsonGenerator;
 import javax.json.stream.JsonGeneratorFactory;
-import net.siisise.json.JSONFormat;
+import net.siisise.json.bind.target.JSONFormat;
 import net.siisise.json.JSON;
 
 /**

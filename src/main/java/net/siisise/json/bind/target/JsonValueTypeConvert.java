@@ -4,11 +4,13 @@ import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.Map;
 import javax.json.JsonValue;
+import net.siisise.bind.format.TypeBind;
 
 /**
- *
+ * JsonValueのValueType っぽいのにする.
+ * 使う?
  */
-public class JsonValueTypeConvert extends OBJConvert<JsonValue.ValueType> {
+public class JsonValueTypeConvert extends OBJConvert<JsonValue.ValueType> implements TypeBind<JsonValue.ValueType> {
 
     @Override
     public Type targetClass() {
@@ -16,33 +18,33 @@ public class JsonValueTypeConvert extends OBJConvert<JsonValue.ValueType> {
     }
 
     @Override
-    public JsonValue.ValueType nullValue() {
+    public JsonValue.ValueType nullFormat() {
         return JsonValue.ValueType.NULL;
     }
 
     @Override
-    public JsonValue.ValueType booleanValue(Boolean bool) {
+    public JsonValue.ValueType booleanFormat(boolean bool) {
         return bool ? JsonValue.ValueType.TRUE : JsonValue.ValueType.FALSE;
     }
 
     @Override
-    public JsonValue.ValueType numberValue(Number num) {
+    public JsonValue.ValueType numberFormat(Number num) {
         return JsonValue.ValueType.NUMBER;
     }
 
     @Override
-    public JsonValue.ValueType stringValue(CharSequence str) {
+    public JsonValue.ValueType stringFormat(String str) {
         return JsonValue.ValueType.STRING;
     }
 
     @Override
-    public JsonValue.ValueType listValue(Collection list) {
+    public JsonValue.ValueType collectionFormat(Collection list) {
         return JsonValue.ValueType.ARRAY;
     }
 
     @Override
-    public JsonValue.ValueType mapValue(Map map) {
+    public JsonValue.ValueType mapFormat(Map map) {
         return JsonValue.ValueType.OBJECT;
     }
-    
+
 }

@@ -26,10 +26,10 @@ import java.util.LinkedList;
 import javax.json.bind.Jsonb;
 import javax.json.bind.JsonbConfig;
 import javax.json.bind.JsonbException;
+import net.siisise.bind.Rebind;
 import net.siisise.io.FrontPacket;
 import net.siisise.io.StreamFrontPacket;
 import net.siisise.json.JSON;
-import net.siisise.json.JSONValue;
 
 /**
  * OMAPの該当機能を割り当てるだけ.
@@ -55,7 +55,7 @@ public class JSONB implements Jsonb {
     
     /**
      * JSON 文字列からオブジェクトの生成.
-     * JSON Objectに変換してからOMAPでJava Objectにする
+     * JSON Objectに変換してからBindでJava Objectにする
      * @param <T>
      * @param str
      * @param type
@@ -65,7 +65,7 @@ public class JSONB implements Jsonb {
     @Override
     public <T> T fromJson(String str, Class<T> type) throws JsonbException {
         Object json = JSON.parse(str);
-        return OMAP.valueOf(json, type);
+        return Rebind.valueOf(json, type);
     }
 
     /**
@@ -79,7 +79,7 @@ public class JSONB implements Jsonb {
     @Override
     public <T> T fromJson(String str, Type runtimeType) throws JsonbException {
         Object json = JSON.parse(str);
-        return OMAP.valueOf(json, runtimeType);
+        return Rebind.valueOf(json, runtimeType);
     }
 
     /**
@@ -96,7 +96,7 @@ public class JSONB implements Jsonb {
         FrontPacket fp = new StreamFrontPacket(reader);
         Object json = JSON.parse(fp);
         readers.add(reader);
-        return OMAP.valueOf(json, type);
+        return Rebind.valueOf(json, type);
         
     }
 
@@ -105,7 +105,7 @@ public class JSONB implements Jsonb {
         FrontPacket fp = new StreamFrontPacket(reader);
         Object json = JSON.parse(fp);
         readers.add(reader);
-        return OMAP.valueOf(json, runtimeType);
+        return Rebind.valueOf(json, runtimeType);
     }
 
     @Override
@@ -113,7 +113,7 @@ public class JSONB implements Jsonb {
         FrontPacket fp = new StreamFrontPacket(stream);
         Object json = JSON.parse(fp);
         ins.add(stream);
-        return OMAP.valueOf(json, type);
+        return Rebind.valueOf(json, type);
     }
 
     @Override
@@ -121,12 +121,12 @@ public class JSONB implements Jsonb {
         FrontPacket fp = new StreamFrontPacket(stream);
         Object json = JSON.parse(fp);
         ins.add(stream);
-        return OMAP.valueOf(json, runtimeType);
+        return Rebind.valueOf(json, runtimeType);
     }
 
     @Override
     public String toJson(Object object) throws JsonbException {
-        return ((JSONValue)OMAP.valueOf(object, JSONValue.class)).toJSON();
+        return Rebind.valueOf(object, JSON.NOBR);
     }
 
     /**
@@ -138,7 +138,7 @@ public class JSONB implements Jsonb {
      */
     @Override
     public String toJson(Object object, Type runtimeType) throws JsonbException {
-        return ((JSONValue)OMAP.valueOf(object, JSONValue.class)).toJSON();
+        return Rebind.valueOf(object, JSON.NOBR);
     }
 
     /**

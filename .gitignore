@@ -1,2 +1,5 @@
 /target/
 /nbproject/
+/.idea/
+/nb-configuration.xml
+/nbactions.xml

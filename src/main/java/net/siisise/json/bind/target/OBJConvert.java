@@ -1,24 +1,23 @@
 package net.siisise.json.bind.target;
 
-import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.siisise.io.BASE64;
-import net.siisise.json.JSONArray;
-import net.siisise.json.bind.MtoConvert;
+import net.siisise.bind.format.TypeFallFormat;
+import net.siisise.bind.format.BindObject;
 
 /**
+ * JSON 系への変換ベース.
+ * 配列をString系、ObjectをMap系に変換する.
  * 
  * @param <T> 
  */
-public abstract class OBJConvert<T> implements MtoConvert<T> {
+public abstract class OBJConvert<T> extends TypeFallFormat<T> implements BindObject<T> {
 
     public static enum MapType {
         FIELD,
@@ -31,33 +30,7 @@ public abstract class OBJConvert<T> implements MtoConvert<T> {
      * 他未検証.
      */
     final MapType type = MapType.FIELD;
-
-    /**
-     * 文字の配列は文字に、データ列はBAES64にしてしまう。
-     * @param array
-     * @return 
-     */
-    @Override
-    public T arrayValue(Object array) {
-        Class cpType = array.getClass().getComponentType();
-        
-        if ( cpType.isPrimitive() ) {
-            if ( cpType == Byte.TYPE ) {
-                BASE64 b64 = new BASE64(BASE64.URL, 0);
-                return stringValue(b64.encode((byte[])array));
-            } else if ( cpType == Character.TYPE ) {
-                return stringValue(new String((char[])array));
-            }
-            JSONArray cnv = new JSONArray();
-            int len = Array.getLength(array);
-            for ( int i = 0; i < len; i++ ) {
-                cnv.add(Array.get(array,i));
-            }
-            return listValue(cnv);
-        } else {
-            return listValue(Arrays.asList(array));
-        }
-    }
+    
     /**
      * Java Objectの公開フィールドを取得してJSONObjectに変換する
      * toJSON() がある場合には対応する
@@ -66,11 +39,11 @@ public abstract class OBJConvert<T> implements MtoConvert<T> {
      * @return
      */
     @Override
-    public T objectValue(Object obj) {
-        return objectValue(obj, type);
+    public T objectFormat(Object obj) {
+        return objectFormat(obj, type);
     }
 
-    public T objectValue(Object obj, MapType type) {
+    public T objectFormat(Object obj, MapType type) {
         Map<String, Object> objmap;
 
         switch (type) {
@@ -87,10 +60,10 @@ public abstract class OBJConvert<T> implements MtoConvert<T> {
                 objmap = null;
         }
 //        if ( objmap.isEmpty() ) { // 仮
-//            return stringValue(obj.toJSON());
+//            return stringFormat(obj.toJSON());
 //        }
 
-        return mapValue(objmap);
+        return mapFormat(objmap);
     }
 
     public static Map<String, Object> fieldsToMap(Object obj) {

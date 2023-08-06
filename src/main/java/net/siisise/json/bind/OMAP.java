@@ -15,7 +15,6 @@
  */
 package net.siisise.json.bind;
 
-import net.siisise.json.bind.target.JsonxpConvert;
 import net.siisise.json.bind.target.JavaConvert;
 import net.siisise.json.bind.target.JSONConvert;
 import net.siisise.json.bind.target.JsonpConvert;
@@ -31,13 +30,21 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.json.JsonValue;
+import net.siisise.bind.TypeUnbind;
+import net.siisise.bind.format.TypeFormat;
+import net.siisise.bind.unbind.java.UnbindArray;
+import net.siisise.bind.unbind.java.UnbindBoolean;
+import net.siisise.bind.unbind.java.UnbindCollection;
+import net.siisise.bind.unbind.java.UnbindMap;
+import net.siisise.bind.unbind.java.UnbindNull;
+import net.siisise.bind.unbind.java.UnbindNumber;
+import net.siisise.bind.unbind.java.UnbindObject;
+import net.siisise.bind.unbind.java.UnbindString;
 import net.siisise.json.map.JSONDateM;
-import net.siisise.json.map.JSONUUIDM;
-import net.siisise.json.bind.source.JSONArrayM;
-import net.siisise.json.bind.source.JSONNumberM;
-import net.siisise.json.bind.source.JSONObjectM;
-import net.siisise.json.bind.source.JSONStringM;
-import net.siisise.json.bind.source.JSONValueM;
+import net.siisise.bind.unbind.java.UnbindUUID;
+import net.siisise.json.unbind.UnbindJSONNumber;
+import net.siisise.json.unbind.UnbindJSONString;
+import net.siisise.json.unbind.UnbindJSONValue;
 import net.siisise.json.bind.target.DateConvert;
 import net.siisise.json.bind.target.JsonValueTypeConvert;
 import net.siisise.json.bind.target.OMAPConvert;
@@ -45,6 +52,8 @@ import net.siisise.json.bind.target.StringConvert;
 import net.siisise.json.JSON;
 import net.siisise.json.JSONValue;
 import net.siisise.json.bind.target.MessagePackConvert;
+import net.siisise.bind.format.BindObject;
+import net.siisise.bind.format.TypeBind;
 
 /**
  * JSON-B相当のObject Mapping。
@@ -59,21 +68,27 @@ public class OMAP {
     /**
      * 中間 Java/JSON型振り分け
      */
-    static final OMConvert[] OMDS = {
-        new JSONValueM(),
-        new JSONNumberM(),
-        new JSONUUIDM(),
+    static final TypeUnbind[] UNBINDS = {
+        new UnbindNull(),
+        new UnbindBoolean(),
+        new UnbindJSONValue(),
+        new UnbindJSONNumber(),
+        new UnbindNumber(),
+        new UnbindUUID(),
         new JSONDateM(),
-        new JSONStringM(),
-        new JSONArrayM(),
-        new JSONObjectM()
+        new UnbindString(),
+        new UnbindJSONString(),
+        new UnbindArray(),
+        new UnbindCollection(),
+        new UnbindMap(),
+        new UnbindObject()
     };
 
     /**
      * 出力別
      */
-    static final MtoConvert[] OUTTYPES = {
-        new JsonxpConvert(),
+    static final TypeFormat[] OUTTYPES = {
+//        new JsonxpConvert(),
         new JsonpConvert(),
         new JsonValueTypeConvert(),
         new JSONConvert(),
@@ -86,26 +101,28 @@ public class OMAP {
     /**
      * 型別に整理したOMDS
      */
-    public static final Map<Class, List<OMConvert>> OMMAP = new HashMap<>();
+    public static final Map<Type, List<TypeUnbind>> UNBINDMAP = new HashMap<>();
 
     /**
      * 型別に整理したOUTTYPES
      */
-    public static final Map<Type, MtoConvert> CONVS = new HashMap();
+    public static final Map<Type, TypeFormat> CONVS = new HashMap();
 
     static {
-        for (OMConvert om : OMDS) {
-            Class[] srcs = om.getSrcClasses();
-            for (Class src : srcs) {
-                putOMS(src, om);
+        for (TypeUnbind ub : UNBINDS) {
+            Type[] srcs = ub.getSrcTypes();
+            for (Type src : srcs) {
+                putOMS(src, ub);
             }
         }
-        List<OMConvert> nulls = new ArrayList();
-        nulls.add(new JSONValueM());
-        OMMAP.put(null, nulls);
+        List<TypeUnbind> nulls = new ArrayList();
+        nulls.add(new UnbindJSONValue());
+        UNBINDMAP.put(null, nulls);
         
-        for (MtoConvert cn : OUTTYPES) {
-            CONVS.put(cn.targetClass(), cn);
+        for (TypeFormat cn : OUTTYPES) {
+            if ( cn instanceof TypeBind ) {
+                CONVS.put(((TypeBind) cn).targetClass(), cn);
+            }
         }
     }
     
@@ -123,14 +140,14 @@ public class OMAP {
      * @param type 親クラスだとはやい
      * @return 出力先変換器
      */
-    static MtoConvert convert(Type type) {
-        MtoConvert pjc = CONVS.get(type);
+    static TypeFormat convert(Type type) {
+        TypeFormat pjc = CONVS.get(type);
         if (pjc == null ) {
             Type rawClass = toClass(type);
             
             if ( rawClass instanceof Class ) {
-                CONVS.entrySet().stream().filter(e -> (e.getKey() instanceof Class));
-                for ( Map.Entry<Type, MtoConvert> e : CONVS.entrySet() ) {
+//                CONVS.entrySet().stream().filter(e -> (e.getKey() instanceof Class));
+                for ( Map.Entry<Type, TypeFormat> e : CONVS.entrySet() ) {
                     Type key = e.getKey();
                     if ( key instanceof Class && key != Object.class ) { // 何もしないJavaConvertだけ除外
                         Class<?> cnvClass = (Class<?>)key;
@@ -147,8 +164,12 @@ public class OMAP {
     }
 
     public static <T> T valueOf(Object src, Type target) {
-        MtoConvert<T> pjc = convert(target);
-        return valueOf(src, pjc);
+        TypeFormat<T> format = convert(target);
+        return valueOf(src, format);
+    }
+    
+    public static <T> T valueOf(Object src, TypeFormat<T> format) {
+        return valueOf(src, format, UNBINDS);
     }
 
     /**
@@ -156,15 +177,16 @@ public class OMAP {
      * @param <T>
      * @param src
      * @param pjc 出力型変換器
+     * @param omds
      * @return 
      */
-    public static <T> T valueOf(Object src, MtoConvert<T> pjc) {
-        List<OMConvert> omcs;
-        synchronized (OMMAP) {
-            omcs = OMMAP.get(src == null ? null : src.getClass());
+    static <T> T valueOf(Object src, TypeFormat<T> pjc, TypeUnbind[] omds) {
+        List<TypeUnbind> omcs;
+        synchronized (UNBINDMAP) {
+            omcs = UNBINDMAP.get(src == null ? null : src.getClass());
         }
         if (omcs != null) {
-            for (OMConvert om : omcs) { // ソースから変換可能なOMCを探す
+            for (TypeUnbind om : omcs) { // ソースから変換可能なOMCを探す
                 T val = om.valueOf(src, pjc);
                 if (val != om) { // omが返れば未対応 srcから変換可能なので抜ける
                     return val;
@@ -172,14 +194,14 @@ public class OMAP {
             }
         }
         // ヒットしないので一から探すすもしれない
-        for (OMConvert ps : OMDS) {
+        for (TypeUnbind ps : omds) {
             T val = ps.valueOf(src, pjc);
             if (val != ps) {
                 putOMS(src == null ? null : src.getClass(), ps);
                 return val;
             }
         }
-        // JSONObjectM で必ず何か返す
+        // UnbindJSONObject で必ず何か返す
         throw new UnsupportedOperationException();
     }
 
@@ -188,12 +210,12 @@ public class OMAP {
      * @param cls nullあり
      * @param om 
      */
-    private static void putOMS(Class cls, OMConvert om) {
-        synchronized (OMMAP) {
-            List<OMConvert> oms = OMMAP.get(cls);
+    private static void putOMS(Type cls, TypeUnbind om) {
+        synchronized (UNBINDMAP) {
+            List<TypeUnbind> oms = UNBINDMAP.get(cls);
             if (oms == null) {
                 oms = new ArrayList<>();
-                OMMAP.put(cls, oms);
+                UNBINDMAP.put(cls, oms);
             }
             if (!oms.contains(om)) {
                 oms.add(om);
@@ -208,8 +230,8 @@ public class OMAP {
      * @return nullに該当する概念
      */
     public static <T> T typeNull(Type type) {
-        MtoConvert<T> cnv = convert(type);
-        return cnv.nullValue();
+        TypeFormat<T> cnv = convert(type);
+        return cnv.nullFormat();
     }
 
     /**
@@ -220,8 +242,8 @@ public class OMAP {
      * @return booleanっぽいもの
      */
     public static <T> T typeBoolean(boolean bool, Type type) {
-        MtoConvert<T> cnv = convert(type);
-        return cnv.booleanValue(bool);
+        TypeFormat<T> cnv = convert(type);
+        return cnv.booleanFormat(bool);
     }
 
     /**
@@ -232,28 +254,35 @@ public class OMAP {
      * @return type型のnumberっぽいもの
      */
     public static <T> T typeNumber(Number number, Type type) {
-        MtoConvert<T> cnv = convert(type);
-        return cnv.numberValue(number);
+        TypeFormat<T> format = convert(type);
+        return format.numberFormat(number);
+    }
+
+    public static <T> T typeString(String value, Type type) {
+        TypeFormat cnv = convert(type);
+        return (T) cnv.stringFormat(value);
     }
 
     public static <T> T typeList(Collection value, Type type) {
-        MtoConvert cnv = convert(type);
-        return (T) cnv.listValue(value);
+        TypeFormat format = convert(type);
+        return (T) format.collectionFormat(value);
     }
 
     public static <T> T typeMap(Map value, Type type) {
-        MtoConvert cnv = convert(type);
-        return (T) cnv.mapValue(value);
+        TypeFormat cnv = convert(type);
+        return (T) cnv.mapFormat(value);
     }
 
     public static <T> T typeObject(Object value, Type type) {
-        MtoConvert cnv = convert(type);
-        return (T) cnv.objectValue(value);
-    }
-
-    public static <T> T typeString(CharSequence value, Type type) {
-        MtoConvert cnv = convert(type);
-        return (T) cnv.stringValue(value);
+        TypeFormat format = convert(type);
+        if ( format instanceof BindObject ) {
+            return (T) ((BindObject) format).objectFormat(value);
+        }
+        JSONValue json = toJSON(value);
+        if ( json != null ) {
+            return (T)OMAP.valueOf(json, format);
+        }
+        return (T) new UnbindObject().valueOf(value, format);
     }
 
     /**

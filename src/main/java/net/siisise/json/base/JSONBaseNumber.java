@@ -18,7 +18,7 @@ package net.siisise.json.base;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import net.siisise.json.JSONFormat;
+import net.siisise.bind.format.TypeFormat;
 import net.siisise.json.JSONValue;
 import net.siisise.json.bind.OMAP;
 
@@ -26,6 +26,8 @@ import net.siisise.json.bind.OMAP;
  * 両方対応する元
  */
 public class JSONBaseNumber extends Number implements JSONValue {
+
+    private static final long serialVersionUID = 1L;
     
     protected final Number number;
     
@@ -73,18 +75,8 @@ public class JSONBaseNumber extends Number implements JSONValue {
     }
 
     @Override
-    public javax.json.JsonNumber toXJson() {
-        return OMAP.typeNumber(number, javax.json.JsonNumber.class);
-    }
-    
-    @Override
-    public String toJSON() {
-        return number.toString();
-    }
-
-    @Override
-    public String toJSON(JSONFormat format) {
-        return toJSON();
+    public <V> V toJSON(TypeFormat<V> format) {
+        return format.numberFormat(number);
     }
 
     @Override

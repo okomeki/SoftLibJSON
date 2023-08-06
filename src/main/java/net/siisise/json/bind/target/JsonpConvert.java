@@ -6,17 +6,19 @@ import javax.json.JsonArray;
 import javax.json.JsonNumber;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
+import net.siisise.bind.Rebind;
+import net.siisise.bind.format.TypeBind;
 import net.siisise.json.JSONNumber;
 import net.siisise.json.JSONString;
 import net.siisise.json.jsonp.JSONPArray;
 import net.siisise.json.bind.OMAP;
 import net.siisise.json.JSONValue;
-import net.siisise.json.jsonxp.JSONXObject;
+import net.siisise.json.jsonp.JSONPObject;
 
 /**
  *
  */
-public class JsonpConvert extends OBJConvert<JsonValue> {
+public class JsonpConvert extends OBJConvert<JsonValue> implements TypeBind<JsonValue> {
 
     @Override
     public Class<JsonValue> targetClass() {
@@ -24,27 +26,27 @@ public class JsonpConvert extends OBJConvert<JsonValue> {
     }
 
     @Override
-    public JsonValue nullValue() {
+    public JsonValue nullFormat() {
         return JsonValue.NULL;
     }
 
     @Override
-    public JsonValue booleanValue(Boolean bool) {
+    public JsonValue booleanFormat(boolean bool) {
         return bool ? JsonValue.TRUE : JsonValue.FALSE;
     }
 
     @Override
-    public JsonNumber numberValue(Number number) {
+    public JsonNumber numberFormat(Number number) {
         return new JSONNumber(number);
     }
 
     @Override
-    public JsonValue stringValue(CharSequence str) {
+    public JsonValue stringFormat(String str) {
         return new JSONString(str);
     }
 
     @Override
-    public JsonArray listValue(Collection list) {
+    public JsonArray collectionFormat(Collection list) {
         if ( list.isEmpty() ) {
             return JsonValue.EMPTY_JSON_ARRAY;
         }
@@ -52,16 +54,16 @@ public class JsonpConvert extends OBJConvert<JsonValue> {
     }
 
     @Override
-    public JsonObject mapValue(Map map) {
+    public JsonObject mapFormat(Map map) {
         if ( map.isEmpty() ) {
             return JsonValue.EMPTY_JSON_OBJECT;
         } else {
-            JSONXObject obj = new JSONXObject();
+            JSONPObject obj = new JSONPObject();
             for ( Object e : map.entrySet() ) {
                 Object k = ((Map.Entry)e).getKey();
                 Object v = ((Map.Entry)e).getValue();
                 String n = (k instanceof String) ? (String)k : k.toString();
-                obj.put(n, OMAP.valueOf(v, javax.json.JsonValue.class));
+                obj.put(n, Rebind.valueOf(v, this));
             }
             return obj;
         }
@@ -73,12 +75,12 @@ public class JsonpConvert extends OBJConvert<JsonValue> {
      * @return 
      */
     @Override
-    public JsonValue objectValue(Object obj) {
+    public JsonValue objectFormat(Object obj) {
         // toJSON メソッドで変換
         JSONValue json = OMAP.toJSON(obj);
         if ( json != null ) {
-            return json.toJson();
+            return json.toJSON(this);
         }
-        return super.objectValue(obj);
+        return super.objectFormat(obj);
     }
 }
