@@ -10,7 +10,7 @@ import net.siisise.bind.format.TypeBind;
  * JsonValueのValueType っぽいのにする.
  * 使う?
  */
-public class JsonValueTypeConvert extends OBJConvert<JsonValue.ValueType> implements TypeBind<JsonValue.ValueType> {
+public class JsonValueTypeConvert implements TypeBind<JsonValue.ValueType> {
 
     @Override
     public Type targetClass() {

@@ -22,7 +22,6 @@ import net.siisise.json.parser.JSON8259Reg;
 import net.siisise.json.JSONArray;
 import net.siisise.json.JSONNumber;
 import net.siisise.json.JSONObject;
-import net.siisise.json.bind.OMAP;
 
 /**
  * ABNF Parserを使っているのでこちらは軽く実装.
@@ -63,7 +62,7 @@ public class JSONPParser implements JsonParser {
      * @return 
      */
     static List<Next> nexts(Object src) {
-        Object obj = OMAP.valueOf(src, Object.class);
+        Object obj = Rebind.valueOf(src, Object.class);
         List<Next> nexts = new ArrayList<>();
         if ( obj == null ) {
             nexts.add(new Next(obj, Event.VALUE_NULL));
@@ -258,7 +257,7 @@ public class JSONPParser implements JsonParser {
             return ((Number)current.json).intValue();
         }
         throw new IllegalStateException();
-//        return Integer.parseInt(current.json.toJSON());
+//        return Integer.parseInt(current.json.rebind());
     }
 
     @Override
@@ -267,7 +266,7 @@ public class JSONPParser implements JsonParser {
             return ((Number)current.json).longValue();
         }
         throw new IllegalStateException();
-//        return Long.parseLong(current.json.toJSON());
+//        return Long.parseLong(current.json.rebind());
     }
 
     @Override
@@ -276,7 +275,7 @@ public class JSONPParser implements JsonParser {
             return new JSONNumber((Number)current.json).bigDecimalValue();
         }
         throw new IllegalStateException();
-//        return new BigDecimal(current.json.toJSON());
+//        return new BigDecimal(current.json.rebind());
     }
 
     @Override
@@ -317,7 +316,7 @@ public class JSONPParser implements JsonParser {
     
     @Override
     public JsonValue getValue() {
-        return OMAP.valueOf(parseValue(), JsonValue.class);
+        return Rebind.valueOf(parseValue(), JsonValue.class);
     }
     
     @Override

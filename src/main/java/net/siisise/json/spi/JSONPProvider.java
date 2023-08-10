@@ -38,7 +38,6 @@ import net.siisise.json.jsonp.JSONPReaderFactory;
 import net.siisise.json.jsonp.JSONPWriterFactory;
 import net.siisise.json.stream.JSONPGeneratorFactory;
 import net.siisise.json.stream.JSONPParserFactory;
-import net.siisise.json.JSONArray;
 import net.siisise.json.JSONNumber;
 import net.siisise.json.JSONString;
 import net.siisise.json.JSON;
@@ -179,7 +178,7 @@ public class JSONPProvider extends JsonProvider {
      */
     @Override
     public JsonPatchBuilder createPatchBuilder(JsonArray array) {
-        return new JSONPatchBuilder((JSONArray) JSON.valueOf(array));
+        return new JSONPatchBuilder(array);
     }
     
     /**

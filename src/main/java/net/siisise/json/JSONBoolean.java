@@ -15,10 +15,8 @@
  */
 package net.siisise.json;
 
-import java.lang.reflect.Type;
 import javax.json.JsonValue;
 import net.siisise.bind.format.TypeFormat;
-import net.siisise.json.bind.OMAP;
 
 /**
  * JSON boolean.
@@ -40,22 +38,12 @@ public class JSONBoolean implements JSONValue,JsonValue {
     }
 
     @Override
-    public <T> T typeMap(Type type) {
-        return (T)OMAP.typeBoolean(bool, type);
-    }
-
-    @Override
-    public JsonValue toJson() {
-        return bool ? JsonValue.TRUE : JsonValue.FALSE;
-    }
-    
-    @Override
     public String toString() {
         return toJSON();
     }
     
     @Override
-    public <V> V toJSON(TypeFormat<V> format) {
+    public <V> V rebind(TypeFormat<V> format) {
         return format.booleanFormat(bool);
     }
 

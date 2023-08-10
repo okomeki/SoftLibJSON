@@ -27,8 +27,8 @@ public class JSONPointerReg {
 
     static ABNF escaped = REG.rule("escaped", "\"~\" ( \"0\" / \"1\" )");
     static ABNF unescaped = REG.rule("unescaped", "%x00-2E / %x30-7D / %x7F-10FFFF");
-    static ABNF referenceToken = REG.rule("reference-token", unescaped.or(escaped).x());
-    static ABNF jsonPointer = REG.rule("json-pointer", ABNF.bin('/').pl(referenceToken).x());
+    public static final ABNF referenceToken = REG.rule("reference-token", unescaped.or(escaped).x());
+    public static final ABNF jsonPointer = REG.rule("json-pointer", ABNF.bin('/').pl(referenceToken).x());
 
     static ABNF arrayIndex = REG.rule("array-index", "%x30 / ( %x31-39 *(%x30-39) )");
 }

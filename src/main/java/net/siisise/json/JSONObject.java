@@ -17,17 +17,13 @@ package net.siisise.json;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
-import javax.json.JsonObject;
 import javax.json.JsonValue;
 import net.siisise.bind.format.TypeFormat;
-import net.siisise.json.jsonp.JSONPObject;
-import net.siisise.json.bind.OMAP;
 
 /**
  * JSON Object.
@@ -39,10 +35,10 @@ import net.siisise.json.bind.OMAP;
  * @param <V> JSONに変換可能な型、または自由
  */
 public class JSONObject<V> extends LinkedHashMap<String, V> implements JSONCollection<V> {
-
+    
     public JSONObject() {
     }
-
+    
     public JSONObject(Map<?,V> map) {
         map.forEach((key, o) -> {
             if (key instanceof String) {
@@ -99,38 +95,13 @@ public class JSONObject<V> extends LinkedHashMap<String, V> implements JSONColle
         return this;
     }
 
-    /**
-     * 特定の型情報に変換できる場合は変換する。
-     * OMAP側に分けてある機能。
-     * @param <T> 型
-     * @param type 型情報
-     * @return 変換されたオブジェクト
-     */
     @Override
-    public <T> T typeMap(Type type) {
-        return OMAP.typeMap(this, type);
+    public String toString() {
+        return rebind(NOBR_MINESC);
     }
 
     @Override
-    public JsonObject toJson() {
-        if (isEmpty()) {
-            return JsonValue.EMPTY_JSON_OBJECT;
-        } else {
-            JSONPObject obj = new JSONPObject();
-            forEach((k, v) -> {
-                obj.put(k, OMAP.valueOf(v, JsonValue.class));
-            });
-            return obj;
-        }
-    }
-    
-    @Override
-    public String toString() {
-        return toJSON(NOBR_MINESC);
-    }
-    
-    @Override
-    public <T> T toJSON(TypeFormat<T> format) {
+    public <T> T rebind(TypeFormat<T> format) {
         return format.mapFormat(this);
     }
 
@@ -150,7 +121,9 @@ public class JSONObject<V> extends LinkedHashMap<String, V> implements JSONColle
                 v = (V)((ArrayList)v).clone();
             } else if ( v instanceof HashMap ) { // JSON2Object の素
                 v = (V)((HashMap)v).clone();
-            } else if ( v instanceof JSONValue || v instanceof JsonValue ) { // 複製不要
+            } else if ( v instanceof JsonValue ) { // 複製不要
+//            } else if ( v instanceof JSONValue ) {
+//                v = ((JSONValue)v).clone();
             } else if ( v instanceof Cloneable ) {
                 try {
                 Method cl = v.getClass().getMethod("clone");

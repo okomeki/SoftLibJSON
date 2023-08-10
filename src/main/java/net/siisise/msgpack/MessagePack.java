@@ -35,7 +35,7 @@ import net.siisise.json.JSONObject;
  * extはとりあえずJSONArray
  * 数値はNumberを継承した何か BigIntegerになっていることが多いかもしれない
  * boolean, null はJavaの型 Boolean と null
- * toJSON()系でとりあえずJSONも吐き出せるかもしれない
+ * rebind()系でとりあえずJSONも吐き出せるかもしれない
  * 
  */
 public class MessagePack {

@@ -9,7 +9,7 @@ import javax.json.JsonBuilderFactory;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonValue;
-import net.siisise.json.bind.OMAP;
+import net.siisise.bind.Rebind;
 
 /**
  *
@@ -17,7 +17,7 @@ import net.siisise.json.bind.OMAP;
 public class JSONPBuilderFactory implements JsonBuilderFactory {
 
     public JSONPBuilderFactory(Map<String, ?> map) {
-//        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+//        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
@@ -28,14 +28,14 @@ public class JSONPBuilderFactory implements JsonBuilderFactory {
     @Override
     public JsonObjectBuilder createObjectBuilder(JsonObject object) {
         JsonObjectBuilder ob = createObjectBuilder();
-        object.forEach((k,v) -> {ob.add(k, (JsonValue)OMAP.valueOf(v, JsonValue.class));});
+        object.forEach((k,v) -> {ob.add(k, (JsonValue)Rebind.valueOf(v, JsonValue.class));});
         return ob;
     }
 
     @Override
     public JsonObjectBuilder createObjectBuilder(Map<String, Object> object) {
         JsonObjectBuilder ob = createObjectBuilder();
-        object.forEach((k,v) -> {ob.add(k, (JsonValue)OMAP.valueOf(v, JsonValue.class));});
+        object.forEach((k,v) -> {ob.add(k, (JsonValue)Rebind.valueOf(v, JsonValue.class));});
         return ob;
     }
 
@@ -47,14 +47,14 @@ public class JSONPBuilderFactory implements JsonBuilderFactory {
     @Override
     public JsonArrayBuilder createArrayBuilder(JsonArray array) {
         JsonArrayBuilder ab = createArrayBuilder();
-        array.forEach(v -> ab.add((JsonValue)OMAP.valueOf(v, JsonValue.class)));
+        array.forEach(v -> ab.add((JsonValue)Rebind.valueOf(v, JsonValue.class)));
         return ab;
     }
 
     @Override
     public JsonArrayBuilder createArrayBuilder(Collection<?> collection) {
         JsonArrayBuilder ab = createArrayBuilder();
-        collection.forEach(v -> ab.add((JsonValue)OMAP.valueOf(v, JsonValue.class)));
+        collection.forEach(v -> ab.add((JsonValue)Rebind.valueOf(v, JsonValue.class)));
         return ab;
     }
 

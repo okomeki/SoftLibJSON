@@ -15,10 +15,8 @@
  */
 package net.siisise.json.base;
 
-import java.lang.reflect.Type;
 import net.siisise.bind.format.TypeFormat;
 import net.siisise.json.JSONValue;
-import net.siisise.json.bind.OMAP;
 
 /**
  * 両方対応する元
@@ -33,22 +31,12 @@ public class JSONBaseNULL implements JSONValue {
     }
 
     @Override
-    public Object typeMap(Type type) {
-        return OMAP.typeNull(type);
-    }
-
-    @Override
-    public javax.json.JsonValue toJson() {
-        return javax.json.JsonValue.NULL;
-    }
-    
-    @Override
     public String toString() {
         return toJSON();
     }
     
     @Override
-    public <V> V toJSON(TypeFormat<V> format) {
+    public <V> V rebind(TypeFormat<V> format) {
         return format.nullFormat();
     }
     

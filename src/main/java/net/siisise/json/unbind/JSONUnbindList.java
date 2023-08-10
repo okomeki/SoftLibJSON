@@ -29,7 +29,8 @@ public class JSONUnbindList implements UnbindList {
         new UnbindJSONNumber(),
 //        new UnbindUUID(),
         new JSONDateM(),
-        new UnbindJSONString()
+        new UnbindJSONString(),
+        new UnbindToJSON()
     };
 
     @Override

@@ -20,19 +20,24 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import net.siisise.bind.Rebind;
 import net.siisise.bind.format.ContentBind;
-import net.siisise.bind.format.TypeFormat;
 import net.siisise.block.ReadableBlock;
 import net.siisise.lang.CodePoint;
 
 /**
- *
+ * JSONFormat へまとめたり
  */
-public class JSONTextFormat implements TypeFormat<String>, ContentBind<String> {
+public class JSONTextFormat implements ContentBind<String> {
     
-    final String crlf;
-    final String tab;
+    public final String crlf;
+    public final String tab;
     final boolean max;
     
+    /**
+     * 改行やタブを入れるか省略するか決める要素
+     * @param crlf 改行コードに相当する部分
+     * @param tab タブに相当する部分
+     * @param escMax \\ エスケープするかどうか
+     */
     public JSONTextFormat(String crlf, String tab, boolean escMax) {
         this.crlf = crlf;
         this.tab = tab;
@@ -116,6 +121,70 @@ public class JSONTextFormat implements TypeFormat<String>, ContentBind<String> {
         }
         return sb.toString();
     }
+/*
+    private String esc(CharSequence val) {
+        StringBuilder sb = new StringBuilder();
+        int[] cps = val.codePoints().toArray();
+        for ( int ch : cps ) {
+            switch (ch) {
+                case 0x2f: // solidus /
+                    if ( !max ) {
+                        sb.append(ch);
+                        break;
+                    }
+                case 0x22: // quotation mark " *必須
+                case 0x5c: // reverse solidus \ *必須
+                    sb.append((char) 0x5c);
+                    sb.append((char) ch);
+                    break;
+                case 0x08: // backspace \b
+                    sb.append((char) 0x5c);
+                    sb.append((char) 0x62);
+                    break;
+                case 0x0c: // form feed \f
+                    sb.append((char) 0x5c);
+                    sb.append((char) 0x66);
+                    break;
+                case 0x0a: // line feed \n
+                    sb.append((char) 0x5c);
+                    sb.append((char) 0x6e);
+                    break;
+                case 0x0d: // carriage return \r
+                    sb.append((char) 0x5c);
+                    sb.append((char) 0x72);
+                    break;
+                case 0x09: // tab \t
+                    sb.append((char) 0x5c);
+                    sb.append((char) 0x74);
+                    break;
+                default:
+    */
+                    /* if ( ch > 0xffff) {
+                        char[] l = Character.toChars(ch);
+                        String a = Integer.toHexString(0x10000 + l[0]).substring(1);
+                        String b = Integer.toHexString(0x10000 + l[0]).substring(1);
+                        sb.append((char)0x5c);
+                        sb.append((char)0x75);
+                        sb.append(a);
+                        sb.append((char)0x5c);
+                        sb.append((char)0x75);
+                        sb.append(b);
+                    } else */
+    /*
+                            if (ch < 0x20) { // escape 必須
+                        String a = Integer.toHexString(0x10000 + ch).substring(1);
+                        sb.append((char) 0x5c);
+                        sb.append((char) 0x75);
+                        sb.append(a);
+                    } else {
+                        sb.appendCodePoint(ch);
+                    }
+                    break;
+            }
+        }
+        return sb.toString();
+    }
+    */
 
     @Override
     public String nullFormat() {
@@ -128,9 +197,10 @@ public class JSONTextFormat implements TypeFormat<String>, ContentBind<String> {
     }
 
     /**
+     * 注意 JSON な数値のみ. (判定はしていない)
      * JSONではNaNやInfinityは扱えない.
-     * @param num
-     * @return 
+     * @param num 数値
+     * @return っぽい文字列
      */
     @Override
     public String numberFormat(Number num) {
@@ -154,7 +224,7 @@ public class JSONTextFormat implements TypeFormat<String>, ContentBind<String> {
 
     @Override
     public String mapFormat(Map map) {
-        return (String) map.entrySet().stream().map(e -> {
+        return (String) ((Map<?,?>)map).entrySet().parallelStream().map(e -> {
             return ((String)Rebind.valueOf(((Map.Entry)e).getKey(), this)) + ":"
              + tab(Rebind.valueOf(((Map.Entry)e).getValue(), this));
         }).collect(Collectors.joining("," + crlf + tab, "{" + crlf + tab, crlf + "}"));

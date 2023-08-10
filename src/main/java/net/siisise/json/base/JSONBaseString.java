@@ -15,13 +15,10 @@
  */
 package net.siisise.json.base;
 
-import java.lang.reflect.Type;
 import java.util.Objects;
 import java.util.stream.IntStream;
 import net.siisise.bind.format.TypeFormat;
-import net.siisise.json.JSONString;
 import net.siisise.json.JSONValue;
-import net.siisise.json.bind.OMAP;
 
 /**
  * 両方対応する元
@@ -44,28 +41,15 @@ public class JSONBaseString implements JSONValue,CharSequence {
     }
 
     @Override
-    public <T> T typeMap(Type type) {
-//        if ( type == javax.json.JsonString.class || type == javax.json.JsonValue.class ) {
-//            return (T) toJson();
-//        }
-        return (T)OMAP.typeString(value, type);
-    }
-
-    @Override
     public String toString() {
         return value;
     }
 
     @Override
-    public <V> V toJSON(TypeFormat<V> format) {
+    public <V> V rebind(TypeFormat<V> format) {
         return format.stringFormat(value);
     }
     
-    @Override
-    public javax.json.JsonValue toJson() {
-        return new JSONString(value);
-    }
-
     public String getString() {
         return value;
     }

@@ -25,6 +25,7 @@ import javax.json.JsonPointer;
 import javax.json.JsonStructure;
 import javax.json.JsonValue;
 import net.siisise.abnf.AbstractABNF;
+import net.siisise.bind.Rebind;
 import net.siisise.io.FrontPacket;
 
 /**
@@ -103,7 +104,7 @@ public class JSONPointer implements JsonPointer {
     public <T extends JsonStructure> T remove(T target) {
         JSONCollection t2 = (JSONCollection) JSON.valueOf(target);
         remove(t2);
-        return (T) t2.toJson();
+        return (T) t2.typeMap(JsonValue.class);
     }
 
     /**
@@ -161,7 +162,8 @@ public class JSONPointer implements JsonPointer {
     }
     
     public String toJSON() {
-        return JSON.valueOf(toString()).toJSON();
+        return JSON.NOBR.stringFormat(toString());
+//        return JSON.valueOf(toString()).toJSON();
     }
 
     public String[] toDecodeString() {

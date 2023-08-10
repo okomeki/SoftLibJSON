@@ -15,11 +15,12 @@
  */
 package net.siisise.json;
 
+import java.util.List;
 import javax.json.JsonArray;
 import javax.json.JsonPatch;
 import javax.json.JsonStructure;
+import net.siisise.bind.Rebind;
 import net.siisise.json.base.JSONBasePatch;
-import net.siisise.json.bind.OMAP;
 
 /**
  * RFC 6902 JavaScript Object Notation (JSON) Patch.
@@ -30,9 +31,14 @@ public class JSONPatch extends JSONBasePatch implements JsonPatch {
     public JSONPatch() {
     }
 
-    public JSONPatch(JSONArray patchList) {
+    /**
+     * 
+     * @param patchList JSON Patch
+     */
+    public JSONPatch(List patchList) {
         super(patchList);
     }
+
     /**
      * エラー未実装
      *
@@ -55,12 +61,12 @@ public class JSONPatch extends JSONBasePatch implements JsonPatch {
         for (Patch cmd : cmds) {
             cp = cmd.apply(cp);
         }
-        return cp.typeMap(c);
+        return Rebind.valueOf(cp, c);
     }
 
     @Override
     public JsonArray toJsonArray() {
-        return OMAP.valueOf(cmds, JsonArray.class);
+        return Rebind.valueOf(cmds, JsonArray.class);
     }
 
     public static JSONPatch diff(JSONValue source, JSONValue target) {

@@ -8,7 +8,6 @@ import net.siisise.json.JSONBoolean;
 import net.siisise.json.JSONNumber;
 import net.siisise.json.JSONObject;
 import net.siisise.json.JSONString;
-import net.siisise.json.bind.OMAP;
 import net.siisise.json.JSONValue;
 import net.siisise.json.base.JSONBaseNULL;
 
@@ -16,7 +15,7 @@ import net.siisise.json.base.JSONBaseNULL;
  * JSON抽象系からJSON各実装への変換.
  * List,Mapは表面をJSON系にラップするだけと、中もprimitive系に更新するのと2種類想定するかもしれない
  */
-public class JSONConvert extends OBJConvert<JSONValue> implements TypeBind<JSONValue> {
+public class JSONConvert implements TypeBind<JSONValue> {
 
     @Override
     public Class<JSONValue> targetClass() {
@@ -73,18 +72,4 @@ public class JSONConvert extends OBJConvert<JSONValue> implements TypeBind<JSONV
         return obj;
     }
 
-    /**
-     * 表面のみ変換
-     * @param obj
-     * @return 
-     */
-    @Override
-    public JSONValue objectFormat(Object obj) {
-        // toJSON メソッドで変換
-        JSONValue json = OMAP.toJSON(obj);
-        if ( json != null ) {
-            return json;
-        }
-        return super.objectFormat(obj);
-    }
 }

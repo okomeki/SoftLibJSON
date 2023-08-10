@@ -2,10 +2,9 @@ package net.siisise.json;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import javax.json.JsonValue;
+import net.siisise.bind.Rebind;
 import net.siisise.json.base.JSONBaseNULL;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -20,10 +19,9 @@ public class JSONTest {
 
     @Test
     public void testValue() {
-        Map obj = new HashMap();
         String abc = "[1,2,{\"a\":\"b\",\"c\":5}]";
         
-        System.out.println(JSON.parseWrap(abc).toJSON(JSONValue.NOBR));
+        System.out.println(JSON.parseWrap(abc).rebind(JSONValue.NOBR));
         
         List o = (JSONArray) JSON.parse(abc);
         for ( Object v : o ) {
@@ -66,7 +64,7 @@ public class JSONTest {
         System.out.println(aintt.getTypeName());
 //        System.out.println(aint.getType().getClass().getName());
 
-        System.out.println(JSONBaseNULL.NULL.typeMap(foval.getType()));
+        System.out.println((Object)JSONBaseNULL.NULL.typeMap(foval.getType()));
         System.out.println(JSONBaseNULL.NULL.typeMap(fval.getType()).getClass().getName());
 
         assertNull(JSONBaseNULL.NULL.typeMap(foval.getType()));
@@ -75,5 +73,19 @@ public class JSONTest {
         assertEquals(JSONBaseNULL.NULL, JSONBaseNULL.NULL.typeMap(fj2val.getType()));
         assertEquals(JSONBaseNULL.NULL, JSONBaseNULL.NULL.typeMap(fn2val.getType()));
         JSONBaseNULL.NULL.typeMap(fn2val.getClass());
+    }
+    
+    @Test
+    public void testRebind() {
+        int[] a = {1,2,3};
+        int[][] b = {a};
+        String exa = "[1,2,3]";
+        String exb = "[[1,2,3]]";
+        
+        String ra = Rebind.valueOf(a, JSON.NOBR);
+        String rb = Rebind.valueOf(b, JSON.NOBR);
+        assertEquals(exa,ra);
+        assertEquals(exb,rb);
+        
     }
 }

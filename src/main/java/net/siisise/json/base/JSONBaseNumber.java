@@ -15,15 +15,15 @@
  */
 package net.siisise.json.base;
 
-import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import net.siisise.bind.format.TypeFormat;
 import net.siisise.json.JSONValue;
-import net.siisise.json.bind.OMAP;
 
 /**
- * 両方対応する元
+ * 
+ * 両方対応する元.
+ * 
  */
 public class JSONBaseNumber extends Number implements JSONValue {
 
@@ -55,13 +55,17 @@ public class JSONBaseNumber extends Number implements JSONValue {
         return number.doubleValue();
     }
 
-    @Override
-    public <T> T typeMap(Type type) {
-        return (T) OMAP.typeNumber(number, type);
-    }
-
     public Number numberValue() {
         return number;
+    }
+
+    public Number get() {
+        return number;
+    }
+
+    @Override
+    public <T> T map() {
+        return (T)number;
     }
 
     @Override
@@ -70,36 +74,27 @@ public class JSONBaseNumber extends Number implements JSONValue {
     }
     
     @Override
-    public javax.json.JsonNumber toJson() {
-        return OMAP.typeNumber(number, javax.json.JsonNumber.class);
-    }
-
-    @Override
-    public <V> V toJSON(TypeFormat<V> format) {
+    public <V> V rebind(TypeFormat<V> format) {
         return format.numberFormat(number);
     }
 
-    @Override
-    public <T> T map() {
-        return (T)number;
-    }
-
+    /**
+     * 整数か?
+     * @return 
+     */
     public boolean isIntegral() {
         if (number instanceof Integer || number instanceof Long || number instanceof Short || number instanceof Byte || number instanceof BigInteger) {
             return true;
         }
-        if (number instanceof Float || number instanceof Double || number instanceof BigDecimal) {
-            return false;
-        }
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return bigDecimalValue().scale() >= 0;
     }
 
     public int intValueExact() {
-        return ((BigDecimal)typeMap(BigDecimal.class)).intValueExact();
+        return bigDecimalValue().intValueExact();
     }
 
     public long longValueExact() {
-        return ((BigDecimal)typeMap(BigDecimal.class)).longValueExact();
+        return bigDecimalValue().longValueExact();
     }
 
     public BigInteger bigIntegerValue() {
@@ -107,7 +102,7 @@ public class JSONBaseNumber extends Number implements JSONValue {
     }
     
     public BigInteger bigIntegerValueExact() {
-        return ((BigDecimal)typeMap(BigDecimal.class)).toBigIntegerExact();
+        return bigDecimalValue().toBigIntegerExact();
     }
 
     public BigDecimal bigDecimalValue() {

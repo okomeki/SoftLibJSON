@@ -41,6 +41,7 @@ import java.util.logging.Logger;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
+import net.siisise.bind.Rebind;
 import net.siisise.bind.format.TypeBind;
 import net.siisise.io.BASE64;
 import net.siisise.json.jsonp.JSONPArray;
@@ -48,14 +49,13 @@ import net.siisise.json.JSONArray;
 import net.siisise.json.JSONBoolean;
 import net.siisise.json.JSONObject;
 import net.siisise.json.JSONString;
-import net.siisise.json.bind.OMAP;
 import net.siisise.json.JSONValue;
 
 /**
  * String Integer, 継承関係型 JSON2NULL など継承、未解決型への変換.
  * あとで分ける
  */
-public class OMAPConvert extends OBJConvert<Object> implements TypeBind<Object> {
+public class OMAPConvert implements TypeBind<Object> {
     
     Type type;
     
@@ -293,7 +293,7 @@ public class OMAPConvert extends OBJConvert<Object> implements TypeBind<Object> 
             if ( val instanceof JSONValue ) { // 中身はGeneric対応で変換
                 Array.set(array, i++, ((JSONValue) val).typeMap(componentType));
             } else {
-                Array.set(array, i++, OMAP.valueOf(val,componentType));
+                Array.set(array, i++, Rebind.valueOf(val,componentType));
             }
         }
         return array;
@@ -312,7 +312,7 @@ public class OMAPConvert extends OBJConvert<Object> implements TypeBind<Object> 
         if (argTypes.length == 0) { // 未検証
             list.forEach(col::add);
         } else {
-            list.stream().map(m -> OMAP.valueOf(m,argTypes[0])).forEach(col::add);
+            list.stream().map(m -> Rebind.valueOf(m,argTypes[0])).forEach(col::add);
         }
         return (T) col;
     }
@@ -340,7 +340,7 @@ public class OMAPConvert extends OBJConvert<Object> implements TypeBind<Object> 
                     if (o instanceof JSONValue) {
                         params[i] = ((JSONValue) o).typeMap(pt[i]);
                     } else {
-                        params[i] = OMAP.valueOf(o, pt[i]);
+                        params[i] = Rebind.valueOf(o, pt[i]);
                     }
                 }
                 return (T) c.newInstance(params);
@@ -379,8 +379,8 @@ public class OMAPConvert extends OBJConvert<Object> implements TypeBind<Object> 
             Type[] args = type.getActualTypeArguments();
             Map map = typeToMap((Class) raw);
             src.forEach((k,v) -> {
-                Object tkey = OMAP.valueOf(k, args[0]);
-                Object tval = OMAP.valueOf(v, args[1]);
+                Object tkey = Rebind.valueOf(k, args[0]);
+                Object tval = Rebind.valueOf(v, args[1]);
                 map.put(tkey, tval);
             });
             return map;
@@ -401,7 +401,7 @@ public class OMAPConvert extends OBJConvert<Object> implements TypeBind<Object> 
             return map;
         }
         if (cls.isAssignableFrom(JsonObject.class)) { // なし
-            return OMAP.typeMap(obj, JsonValue.class);
+            return Rebind.typeMap(obj, JsonValue.class);
         }
         return mapLc(obj, cls);
     }
@@ -421,7 +421,7 @@ public class OMAPConvert extends OBJConvert<Object> implements TypeBind<Object> 
                         c = c.getSuperclass();
                     }
                 }
-                field.set(obj, OMAP.valueOf((Object)es.getValue(), field.getGenericType()));
+                field.set(obj, Rebind.valueOf((Object)es.getValue(), field.getGenericType()));
             }
             return obj;
         } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {

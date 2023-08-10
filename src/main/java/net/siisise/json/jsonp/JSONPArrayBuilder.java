@@ -6,9 +6,9 @@ import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonValue;
+import net.siisise.bind.Rebind;
 import net.siisise.json.JSONNumber;
 import net.siisise.json.JSONString;
-import net.siisise.json.bind.OMAP;
 
 /**
  * JSON-P JsonArrayBuilder の実装.
@@ -67,7 +67,7 @@ public class JSONPArrayBuilder implements JsonArrayBuilder {
      */
     @Override
     public JsonArrayBuilder add(boolean val) {
-        array.add(OMAP.valueOf(val, JsonValue.class));
+        array.add(Rebind.valueOf(val, JsonValue.class));
         return this;
     }
 
@@ -91,6 +91,9 @@ public class JSONPArrayBuilder implements JsonArrayBuilder {
 
     @Override
     public JsonArray build() {
+        if ( array.isEmpty() ) {
+            return JsonValue.EMPTY_JSON_ARRAY;
+        }
         return array;
     }
 

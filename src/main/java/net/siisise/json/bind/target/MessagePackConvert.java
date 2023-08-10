@@ -25,7 +25,6 @@ import java.util.Date;
 import java.util.Map;
 import net.siisise.bind.Rebind;
 import net.siisise.io.PacketA;
-import net.siisise.json.bind.OMAP;
 import net.siisise.lang.Bin;
 import net.siisise.bind.format.BindObject;
 import net.siisise.bind.format.ContentBind;
@@ -218,7 +217,7 @@ public class MessagePackConvert implements ContentBind<byte[]>, BindObject<byte[
         }
         for ( Map.Entry<?,?> entry : ((Map<String,?>)map).entrySet() ) {
             pac.dwrite((byte[])stringFormat((String)entry.getKey()));
-            pac.dwrite((byte[])OMAP.valueOf(entry.getValue(),this));
+            pac.dwrite((byte[])Rebind.valueOf(entry.getValue(),this));
         }
         return pac.toByteArray();
     }
@@ -232,7 +231,7 @@ public class MessagePackConvert implements ContentBind<byte[]>, BindObject<byte[
             Instant inst = Instant.now((Clock) obj);
             return time(inst);
         }
-        return mapFormat(OMAP.valueOf(obj, Map.class));
+        return mapFormat(Rebind.valueOf(obj, Map.class));
     }
     
     private byte[] time(Instant inst) {

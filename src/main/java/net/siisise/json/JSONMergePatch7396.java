@@ -19,8 +19,8 @@ import java.util.HashSet;
 import java.util.Set;
 import javax.json.JsonMergePatch;
 import javax.json.JsonValue;
+import net.siisise.bind.Rebind;
 import net.siisise.json.base.JSONBaseNULL;
-import net.siisise.json.bind.OMAP;
 
 /**
  * RFC 7396 JSON Merge Patch.
@@ -107,12 +107,12 @@ public class JSONMergePatch7396 implements JsonMergePatch {
 
     @Override
     public JsonValue apply(JsonValue target) {
-        return OMAP.valueOf( mergePatch(JSON.valueOf(target), patch), JsonValue.class);
+        return Rebind.valueOf( mergePatch(JSON.valueOf(target), patch), JsonValue.class);
     }
 
     @Override
     public JsonValue toJsonValue() {
-        return OMAP.valueOf(patch, JsonValue.class);
+        return Rebind.valueOf(patch, JsonValue.class);
     }
     
     public JSONValue toJSON() {

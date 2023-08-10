@@ -21,12 +21,15 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
 import java.lang.reflect.Type;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
+import java.util.Optional;
 import javax.json.bind.Jsonb;
 import javax.json.bind.JsonbConfig;
 import javax.json.bind.JsonbException;
 import net.siisise.bind.Rebind;
+import net.siisise.bind.format.TypeFormat;
 import net.siisise.io.FrontPacket;
 import net.siisise.io.StreamFrontPacket;
 import net.siisise.json.JSON;
@@ -126,7 +129,14 @@ public class JSONB implements Jsonb {
 
     @Override
     public String toJson(Object object) throws JsonbException {
-        return Rebind.valueOf(object, JSON.NOBR);
+        TypeFormat<String> format = JSON.NOBR;
+        if ( conf != null ) {
+            Optional<Object> formatted = conf.getProperty("jsonb.to.json.formatted");
+            if ( formatted.isPresent() && formatted.get().equals(Boolean.TRUE)) {
+                format = JSON.TAB_MINESC;
+            }
+        }
+        return Rebind.valueOf(object, format);
     }
 
     /**
@@ -138,7 +148,7 @@ public class JSONB implements Jsonb {
      */
     @Override
     public String toJson(Object object, Type runtimeType) throws JsonbException {
-        return Rebind.valueOf(object, JSON.NOBR);
+        return toJson(object);
     }
 
     /**
@@ -180,23 +190,22 @@ public class JSONB implements Jsonb {
     @Override
     public void toJson(Object object, OutputStream stream) throws JsonbException {
         try {
-            stream.write(toJson(object).getBytes(StandardCharsets.UTF_8));
+            Charset charset = StandardCharsets.UTF_8;
+            Optional<Object> encopt = conf.getProperty("jsonb.to.json.encoding");
+            if ( encopt.isPresent() ) {
+                charset = Charset.forName((String)encopt.get());
+            }
+            stream.write(toJson(object).getBytes(charset));
             stream.flush();
             outs.add(stream);
-        } catch (IOException ex) {
-            throw new JsonbException(ex.getLocalizedMessage(),ex);
+        } catch (IOException e) {
+            throw new JsonbException(e.getLocalizedMessage(), e);
         }
     }
 
     @Override
     public void toJson(Object object, Type runtimeType, OutputStream stream) throws JsonbException {
-        try {
-            stream.write(toJson(object).getBytes(StandardCharsets.UTF_8));
-            stream.flush();
-            outs.add(stream);
-        } catch (IOException ex) {
-            throw new JsonbException(ex.getLocalizedMessage(),ex);
-        }
+        toJson(object, stream);
     }
 
     /**

@@ -118,6 +118,9 @@ public class JSONPObjectBuilder implements JsonObjectBuilder {
      */
     @Override
     public JsonObject build() {
+        if ( obj.isEmpty() ) {
+            return JsonValue.EMPTY_JSON_OBJECT;
+        }
         return obj;
     }
 

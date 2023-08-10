@@ -30,7 +30,7 @@ import net.siisise.json.parser.JSON8259Reg;
  * JSONの操作盤.
  * <a href="https://datatracker.ietf.org/doc/html/rfc8259">RFC 8259 The JavaScript Object Notation (JSON) Data Interchange Format</a>
  中間形式をListとMap対応にして実質なくした版
- JSON文字列 toJSON()
+ JSON文字列 rebind()
  JSON2Object valueOf()
  List/Mapプリミティブ列 map()
  JavaObjectマップ typeMap()

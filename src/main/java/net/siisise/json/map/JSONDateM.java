@@ -18,14 +18,16 @@ public class JSONDateM implements TypeUnbind {
     }
     /**
      *
+     * @param obj
+     * @param typeFormat
      * @return
      */
     @Override
-    public <T> T valueOf(Object obj, TypeFormat<T> outConvert) {
-        if (obj instanceof Date) { //&& outConvert.targetClass() == String.class) {
-            SimpleDateFormat format = new SimpleDateFormat(ISO2);
-            String s = format.format((Date) obj);
-            return outConvert.stringFormat(s);
+    public <T> T valueOf(Object obj, TypeFormat<T> typeFormat) {
+        if (obj instanceof Date) { //&& typeFormat.targetClass() == String.class) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat(ISO2);
+            String s = dateFormat.format((Date) obj);
+            return typeFormat.stringFormat(s);
         }
         return (T) this;
     }

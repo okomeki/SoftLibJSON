@@ -61,7 +61,10 @@ import net.siisise.bind.format.TypeBind;
  * REST準拠なデータを持つList(JSONArrayだったもの), Map(JSONObjectだったもの) から各種変換をする便利機能。
  *
  * ToDo: JSON2Stringなどで Stringがデータのみの場合と書式込みの場合をどうにかして分ける。
- * JSON 以外でも対応しているのでパッケージ位置は仮
+ * JSON 以外でも対応しているのでパッケージ位置は仮。
+ * Rebind としてやや拡張したのでこちらは削除予定。
+ * 
+ * @deprecated Rebind に置き換えたら消す
  */
 public class OMAP {
 
@@ -275,12 +278,12 @@ public class OMAP {
 
     public static <T> T typeObject(Object value, Type type) {
         TypeFormat format = convert(type);
-        if ( format instanceof BindObject ) {
-            return (T) ((BindObject) format).objectFormat(value);
-        }
         JSONValue json = toJSON(value);
         if ( json != null ) {
             return (T)OMAP.valueOf(json, format);
+        }
+        if ( format instanceof BindObject ) {
+            return (T) ((BindObject) format).objectFormat(value);
         }
         return (T) new UnbindObject().valueOf(value, format);
     }
@@ -288,6 +291,7 @@ public class OMAP {
     /**
      * toJSONメソッドがあればJSONに変換し、なければその他の方法で変換する
      * String のほか JSON2Value, JsonValue でも可
+     * @deprecated 使わなくてよくなったはず
      * @param obj null不可
      * @return 
      */
@@ -305,7 +309,7 @@ public class OMAP {
         } catch (NoSuchMethodException ex) {
             // 特にないので標準の変換へ
         } catch (SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
-            Logger.getLogger(JSONConvert.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(OMAP.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
     }

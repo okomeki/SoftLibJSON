@@ -114,7 +114,7 @@ public class JSONPGenerator implements JsonGenerator {
         try {
             writeSeparator();
             writeKey(name);
-            tab(value.toJSON(format));
+            tab(value.rebind(format));
         } catch (IOException ex) {
             throw new IllegalStateException(ex);
         }
@@ -215,7 +215,7 @@ public class JSONPGenerator implements JsonGenerator {
 
     void write(JSONValue value) {
         try {
-            tab(value.toJSON(format));
+            tab(value.rebind(format));
         } catch (IOException ex) {
             throw new IllegalStateException(ex);
         }

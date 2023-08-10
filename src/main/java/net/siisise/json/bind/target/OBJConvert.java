@@ -15,6 +15,7 @@ import net.siisise.bind.format.BindObject;
  * JSON 系への変換ベース.
  * 配列をString系、ObjectをMap系に変換する.
  * 
+ * @deprecated Unbind側に移行したので消える予定
  * @param <T> 
  */
 public abstract class OBJConvert<T> extends TypeFallFormat<T> implements BindObject<T> {

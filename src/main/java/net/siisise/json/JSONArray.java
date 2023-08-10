@@ -17,7 +17,6 @@ package net.siisise.json;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -48,18 +47,22 @@ public class JSONArray<E> extends ArrayList<E> implements JSONCollection<E> {
      * JsonArray用かもしれない
      */
     private final Class<E> def;
+    private final TypeFormat<E> cnv;
 
     public JSONArray() {
         def = null;
+        cnv = null;
     }
 
     protected JSONArray(Class<E> c) {
         def = c;
+        cnv = Rebind.s_convert(def);
     }
 
     public JSONArray(Collection<E> vals) {
         super(vals);
         def = null;
+        cnv = Rebind.s_convert(def);
     }
 
     @Override
@@ -73,7 +76,7 @@ public class JSONArray<E> extends ArrayList<E> implements JSONCollection<E> {
 
     @Override
     public void setJSON(String key, JSONValue obj) {
-        E val = def == null ? obj.map() : Rebind.valueOf(obj, def);
+        E val = cnv == null ? obj.map() : obj.rebind(cnv);
         if (key.equals("-")) {
             add(val);
         } else {
@@ -82,13 +85,13 @@ public class JSONArray<E> extends ArrayList<E> implements JSONCollection<E> {
     }
 
     public void setJSON(int index, JSONValue obj) {
-        E val = def == null ? obj.map() : Rebind.valueOf(obj, def);
+        E val = cnv == null ? obj.map() : obj.rebind(cnv);
         set(index, val);
     }
 
     @Override
     public void addJSON(String key, JSONValue obj) {
-        E val = def == null ? obj.map() : Rebind.valueOf(obj, def);
+        E val = cnv == null ? obj.map() : obj.rebind(cnv);
         if (key.equals("-")) {
             add(val);
         } else {
@@ -97,7 +100,7 @@ public class JSONArray<E> extends ArrayList<E> implements JSONCollection<E> {
     }
 
     public void addJSON(int index, JSONValue obj) {
-        E val = def == null ? obj.map() : Rebind.valueOf(obj, def);
+        E val = cnv == null ? obj.map() : obj.rebind(cnv);
         add(index, val);
     }
 
@@ -126,23 +129,12 @@ public class JSONArray<E> extends ArrayList<E> implements JSONCollection<E> {
      * @param val
      */
     public void addValue(Object val) {
-        if (def != null) {
-            val = Rebind.valueOf(val, def);
+        if (cnv != null) {
+            val = Rebind.valueOf(val, cnv);
         } else {
             val = Rebind.valueOf(val, Object.class); // Object系に変換
         }
         add((E) val);
-    }
-
-    /**
-     * JSON Bの fromJson相当.
-     * @param <T>
-     * @param type
-     * @return 
-     */
-    @Override
-    public <T> T typeMap(Type type) {
-        return Rebind.typeList(this, type);
     }
 
     /**
@@ -181,12 +173,7 @@ public class JSONArray<E> extends ArrayList<E> implements JSONCollection<E> {
      */
     @Override
     public JsonArray toJson() {
-        if (isEmpty()) {
-            return JsonValue.EMPTY_JSON_ARRAY;
-        }
-        JSONPArray ar = new JSONPArray();
-        parallelStream().map(v -> (JsonValue) Rebind.valueOf(v, JsonValue.class)).forEach(ar::add);
-        return ar;
+        return (JsonArray)JSON.JSONP.collectionFormat(this);
     }
 
     @Override
@@ -195,7 +182,7 @@ public class JSONArray<E> extends ArrayList<E> implements JSONCollection<E> {
     }
 
     @Override
-    public <V> V toJSON(TypeFormat<V> format) {
+    public <V> V rebind(TypeFormat<V> format) {
         return format.listFormat(this);
     }
 

@@ -26,9 +26,10 @@ import net.siisise.lang.CodePoint;
 /**
  * 改行をなんとかするだけだったが出力書式全般に対応しておく。
  * JSONStringConvert も同じようなことしてる
- * JSONValue#toString(TextFormat) で使う
+ * JSONValue#rebind(TextFormat) で使う
+ * OBJConvert に依存しない版 JSONTextFormat に一旦統合する予定
  */
-public class JSONFormat extends OBJConvert<String> implements ContentBind<String> {
+public class JSONFormat implements ContentBind<String> {
 
     public final String crlf;
     public final String tab;
@@ -220,11 +221,8 @@ public class JSONFormat extends OBJConvert<String> implements ContentBind<String
         return "\"" + esc(val) + "\"";
     }
 
-    @Override
-    public String collectionFormat(Collection list) {
-        return (String)list.parallelStream().map(val
-                -> crlf + tab + tab((String)Rebind.valueOf(val, this)))
-                .collect(Collectors.joining(",", "[", crlf + "]"));
+    private static String tab(String val) {
+        return val.replace("\r\n", "\r\n  ");
     }
 
     @Override
@@ -236,7 +234,10 @@ public class JSONFormat extends OBJConvert<String> implements ContentBind<String
         return m;
     }
 
-    private static String tab(String val) {
-        return val.replace("\r\n", "\r\n  ");
+    @Override
+    public String collectionFormat(Collection list) {
+        return (String)list.parallelStream().map(val
+                -> crlf + tab + tab((String)Rebind.valueOf(val, this)))
+                .collect(Collectors.joining(",", "[", crlf + "]"));
     }
 }

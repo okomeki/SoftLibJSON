@@ -15,6 +15,7 @@
  */
 package net.siisise.json;
 
+import java.util.List;
 import javax.json.JsonPatch;
 import javax.json.JsonPatchBuilder;
 import javax.json.JsonValue;
@@ -30,7 +31,11 @@ public class JSONPatchBuilder implements JsonPatchBuilder {
         patch = new JSONPatch();
     }
     
-    public JSONPatchBuilder(JSONArray array) {
+    /**
+     * Patch のもと
+     * @param array 
+     */
+    public JSONPatchBuilder(List array) {
         patch = new JSONPatch(array);
     }
 

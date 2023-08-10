@@ -11,14 +11,12 @@ import net.siisise.bind.format.TypeBind;
 import net.siisise.json.JSONNumber;
 import net.siisise.json.JSONString;
 import net.siisise.json.jsonp.JSONPArray;
-import net.siisise.json.bind.OMAP;
-import net.siisise.json.JSONValue;
 import net.siisise.json.jsonp.JSONPObject;
 
 /**
  *
  */
-public class JsonpConvert extends OBJConvert<JsonValue> implements TypeBind<JsonValue> {
+public class JsonpConvert implements TypeBind<JsonValue> {
 
     @Override
     public Class<JsonValue> targetClass() {
@@ -50,7 +48,7 @@ public class JsonpConvert extends OBJConvert<JsonValue> implements TypeBind<Json
         if ( list.isEmpty() ) {
             return JsonValue.EMPTY_JSON_ARRAY;
         }
-        return (JsonArray) list.stream().collect(JSONPArray.collector());
+        return (JsonArray) list.parallelStream().collect(JSONPArray.collector());
     }
 
     @Override
@@ -67,20 +65,5 @@ public class JsonpConvert extends OBJConvert<JsonValue> implements TypeBind<Json
             }
             return obj;
         }
-    }
-
-    /**
-     * 表面のみ変換
-     * @param obj
-     * @return 
-     */
-    @Override
-    public JsonValue objectFormat(Object obj) {
-        // toJSON メソッドで変換
-        JSONValue json = OMAP.toJSON(obj);
-        if ( json != null ) {
-            return json.toJSON(this);
-        }
-        return super.objectFormat(obj);
     }
 }

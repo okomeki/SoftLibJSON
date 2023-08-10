@@ -16,9 +16,9 @@
 package net.siisise.json;
 
 import java.util.stream.Collector;
+import net.siisise.bind.Rebind;
 import net.siisise.io.FrontPacket;
 import net.siisise.json.base.JSONBaseNULL;
-import net.siisise.json.bind.OMAP;
 import net.siisise.json.bind.target.JSONFormat;
 import net.siisise.json.parser.JSONCReg;
 
@@ -101,7 +101,7 @@ interface JSONC extends JSON {
      * @return JSON2系ListとMapのJavaっぽいデータ
      */
     public static Object valueMap(Object src) {
-        return OMAP.valueOf(src, Object.class);
+        return Rebind.valueOf(src, Object.class);
     }
 
     /**
@@ -113,7 +113,7 @@ interface JSONC extends JSON {
      * @return JSON2Valueな値
      */
     public static JSONValue valueOf(Object src) {
-        return OMAP.valueOf(src, JSONValue.class);
+        return Rebind.valueOf(src, JSONValue.class);
     }
 
     /**

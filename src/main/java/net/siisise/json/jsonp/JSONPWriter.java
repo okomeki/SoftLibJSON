@@ -24,35 +24,17 @@ public class JSONPWriter implements JsonWriter {
 
     @Override
     public void writeArray(JsonArray array) {
-        try {
-            writer.write(JSON.valueOf(array).toJSON());
-            writer.flush();
-        } catch (IOException ex) {
-            Logger.getLogger(JSONPWriter.class.getName()).log(Level.SEVERE, null, ex);
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
+        write(array);
     }
 
     @Override
     public void writeObject(JsonObject object) {
-        try {
-            writer.write(JSON.valueOf(object).toJSON());
-            writer.flush();
-        } catch (IOException ex) {
-            Logger.getLogger(JSONPWriter.class.getName()).log(Level.SEVERE, null, ex);
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
+        write(object);
     }
 
     @Override
     public void write(JsonStructure value) {
-        try {
-            writer.write(JSON.valueOf(value).toJSON());
-            writer.flush();
-        } catch (IOException ex) {
-            Logger.getLogger(JSONPWriter.class.getName()).log(Level.SEVERE, null, ex);
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
+        write((JsonValue)value);
     }
 
     @Override
@@ -61,8 +43,7 @@ public class JSONPWriter implements JsonWriter {
             writer.write(JSON.valueOf(value).toJSON());
             writer.flush();
         } catch (IOException ex) {
-            Logger.getLogger(JSONPWriter.class.getName()).log(Level.SEVERE, null, ex);
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            throw new IllegalStateException(ex);
         }
     }
 
@@ -71,7 +52,7 @@ public class JSONPWriter implements JsonWriter {
         try {
             writer.close();
         } catch (IOException ex) {
-            Logger.getLogger(JSONPWriter.class.getName()).log(Level.SEVERE, null, ex);
+//            throw new IllegalStateException(ex);
         }
     }
     

@@ -13,7 +13,7 @@ import net.siisise.bind.format.BindObject;
 import net.siisise.bind.format.TypeBind;
 
 /**
- * NumberとStringに変換できるだけ
+ * NumberとStringから変換できるだけ
  */
 public class DateConvert extends TypeFallFormat implements TypeBind, BindObject {
 

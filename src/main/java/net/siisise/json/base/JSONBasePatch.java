@@ -16,6 +16,7 @@
 package net.siisise.json.base;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import net.siisise.json.JSON;
 import net.siisise.json.JSONArray;
@@ -163,7 +164,7 @@ public class JSONBasePatch {
     public JSONBasePatch() {
     }
 
-    public JSONBasePatch(JSONArray patchList) {
+    public JSONBasePatch(List patchList) {
         for (Object patch : patchList) {
             cmds.add(cmd((JSONObject) JSON.valueOf(patch)));
         }
@@ -347,7 +348,7 @@ public class JSONBasePatch {
         JSONArray src = source.clone();
 
         for (int t = 0; t < target.size(); t++) {
-//            System.out.println("S:" + src.toJSON() + " T:" + target.toJSON());
+//            System.out.println("S:" + src.rebind() + " T:" + target.rebind());
 //            System.out.println(t);
             Object newVal = target.get(t);
             // 変換先データの数
