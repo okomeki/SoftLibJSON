@@ -1,6 +1,5 @@
 package net.siisise.json.bind.target;
 
-import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
@@ -15,25 +14,20 @@ import net.siisise.bind.format.TypeBind;
 /**
  * NumberとStringから変換できるだけ
  */
-public class DateConvert extends TypeFallFormat implements TypeBind, BindObject {
+public class DateConvert extends TypeFallFormat<Date> implements TypeBind<Date>, BindObject<Date> {
 
     @Override
-    public Type targetClass() {
-        return Date.class;
-    }
-
-    @Override
-    public Object nullFormat() {
+    public Date nullFormat() {
         return null;
     }
 
     @Override
-    public Object booleanFormat(boolean bool) {
+    public Date booleanFormat(boolean bool) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Object numberFormat(Number num) {
+    public Date numberFormat(Number num) {
         return new Date(num.longValue());
     }
 
@@ -41,7 +35,7 @@ public class DateConvert extends TypeFallFormat implements TypeBind, BindObject 
     static String ISO2 = "yyyy-MM-dd'T'HH:mm:ssX";
 
     @Override
-    public Object stringFormat(String val) {
+    public Date stringFormat(String val) {
         try {
             SimpleDateFormat format;
             if (val.length() <= 20) {
@@ -59,25 +53,25 @@ public class DateConvert extends TypeFallFormat implements TypeBind, BindObject 
     }
 
     @Override
-    public Object collectionFormat(Collection list) {
+    public Date collectionFormat(Collection list) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Object mapFormat(Map map) {
+    public Date mapFormat(Map map) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Object objectFormat(Object obj) {
+    public Date objectFormat(Object obj) {
         if (obj instanceof Date) {
-            return obj;
+            return (Date) obj;
         }
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Object arrayFormat(Object array) {
+    public Date arrayFormat(Object array) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

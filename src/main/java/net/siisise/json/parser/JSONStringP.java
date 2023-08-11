@@ -29,6 +29,7 @@ public class JSONStringP extends BNFList<String, Integer> {
             });
         }
         return sb.toString();
+//        return (String) ((UnbindABNFReg)base).getFormat().stringFormat(sb.toString());
     }
     
 }

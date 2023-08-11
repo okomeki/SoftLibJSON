@@ -15,7 +15,6 @@
  */
 package net.siisise.json.bind.target;
 
-import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Collection;
@@ -37,11 +36,6 @@ public class JsonpProviderConvert implements TypeBind<JsonValue> {
     
     public JsonpProviderConvert() {
         provider = JsonProvider.provider();
-    }
-
-    @Override
-    public Type targetClass() {
-        return JsonValue.class;
     }
 
     @Override

@@ -18,6 +18,7 @@ public class JSONArrayP extends BNFList<JSONArray, Object> {
 
     @Override
     protected JSONArray build(List<Object> val) {
+//        return (JSONArray)((UnbindABNFReg)base).getFormat().collectionFormat(val);
         return new JSONArray(val);
     }
 }

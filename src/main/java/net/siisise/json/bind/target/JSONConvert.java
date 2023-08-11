@@ -18,11 +18,6 @@ import net.siisise.json.base.JSONBaseNULL;
 public class JSONConvert implements TypeBind<JSONValue> {
 
     @Override
-    public Class<JSONValue> targetClass() {
-        return JSONValue.class;
-    }
-
-    @Override
     public JSONBaseNULL nullFormat() {
         return JSONBaseNULL.NULL;
     }

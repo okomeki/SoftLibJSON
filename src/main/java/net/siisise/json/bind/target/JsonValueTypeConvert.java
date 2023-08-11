@@ -1,6 +1,5 @@
 package net.siisise.json.bind.target;
 
-import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.Map;
 import javax.json.JsonValue;
@@ -11,11 +10,6 @@ import net.siisise.bind.format.TypeBind;
  * 使う?
  */
 public class JsonValueTypeConvert implements TypeBind<JsonValue.ValueType> {
-
-    @Override
-    public Type targetClass() {
-        return JsonValue.ValueType.class;
-    }
 
     @Override
     public JsonValue.ValueType nullFormat() {

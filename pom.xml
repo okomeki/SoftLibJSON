@@ -149,6 +149,12 @@
             <version>5.9.2</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>net.siisise</groupId>
+            <artifactId>softlib-unbind-abnf</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <type>jar</type>
+        </dependency>
     </dependencies>
     <distributionManagement>
         <snapshotRepository>

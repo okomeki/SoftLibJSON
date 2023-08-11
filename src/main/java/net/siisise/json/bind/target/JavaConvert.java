@@ -10,12 +10,7 @@ import net.siisise.bind.format.TypeBind;
  * Java Object を Java Object にするので何もしないかもしれない。
  * 特定型に変換するにはOMAPConvert などを使用する
  */
-public class JavaConvert extends TypeFallFormat implements TypeBind,BindObject {
-
-    @Override
-    public Class targetClass() {
-        return Object.class;
-    }
+public class JavaConvert extends TypeFallFormat<Object> implements TypeBind<Object>,BindObject<Object> {
 
     @Override
     public Object nullFormat() {

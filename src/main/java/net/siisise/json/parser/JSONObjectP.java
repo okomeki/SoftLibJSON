@@ -24,6 +24,7 @@ public class JSONObjectP extends BNFList<JSONObject, JSONMember> {
                 obj.put(mem.key, mem.value);
             });
         }
+//        return (JSONObject) ((UnbindABNFReg)base).getFormat().mapFormat(obj);
         return obj;
     }
 

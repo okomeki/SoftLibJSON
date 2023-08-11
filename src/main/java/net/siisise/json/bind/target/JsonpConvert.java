@@ -19,11 +19,6 @@ import net.siisise.json.jsonp.JSONPObject;
 public class JsonpConvert implements TypeBind<JsonValue> {
 
     @Override
-    public Class<JsonValue> targetClass() {
-        return JsonValue.class;
-    }
-
-    @Override
     public JsonValue nullFormat() {
         return JsonValue.NULL;
     }
