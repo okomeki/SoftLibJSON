@@ -119,18 +119,6 @@
             <artifactId>javax.json.bind-api</artifactId>
             <version>1.0</version>
         </dependency>
-        <!--
-        <dependency>
-            <groupId>jakarta.json</groupId>
-            <artifactId>jakarta.json-api</artifactId>
-            <version>[2.0.0,)</version>
-        </dependency>
-        <dependency>
-            <groupId>jakarta.json.bind</groupId>
-            <artifactId>jakarta.json.bind-api</artifactId>
-            <version>[2.0.0,)</version>
-        </dependency>
-                -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
@@ -148,12 +136,6 @@
             <artifactId>junit-jupiter-engine</artifactId>
             <version>5.9.2</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>net.siisise</groupId>
-            <artifactId>softlib-unbind-abnf</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-            <type>jar</type>
         </dependency>
     </dependencies>
     <distributionManagement>
