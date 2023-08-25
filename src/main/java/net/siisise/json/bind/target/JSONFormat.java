@@ -72,7 +72,7 @@ public class JSONFormat implements ContentBind<String> {
             switch (ch) {
                 case 0x2f: // solidus /
                     if ( !max ) {
-                        sb.append(ch);
+                        sb.append((char) ch);
                         break;
                     }
                 case 0x22: // quotation mark " *必須
@@ -132,7 +132,7 @@ public class JSONFormat implements ContentBind<String> {
             switch (ch) {
                 case 0x2f: // solidus /
                     if ( !max ) {
-                        sb.append(ch);
+                        sb.append((char) ch);
                         break;
                     }
                 case 0x22: // quotation mark " *必須

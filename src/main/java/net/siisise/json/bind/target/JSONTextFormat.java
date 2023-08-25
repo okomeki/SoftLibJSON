@@ -69,7 +69,7 @@ public class JSONTextFormat implements ContentBind<String> {
             switch (ch) {
                 case 0x2f: // solidus / optional
                     if ( !max ) {
-                        sb.append(ch);
+                        sb.append((char) ch);
                         break;
                     }
                 case 0x22: // quotation mark " *必須
