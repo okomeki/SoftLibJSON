@@ -3,8 +3,10 @@ package net.siisise.json.parser;
 import net.siisise.abnf.ABNF;
 import net.siisise.abnf.ABNFReg;
 import net.siisise.abnf.parser5234.ABNF5234;
+import net.siisise.bind.format.TypeFormat;
 import net.siisise.block.ReadableBlock;
 import net.siisise.io.FrontPacket;
+import net.siisise.json.bind.target.JSONInConvert;
 
 /**
  * RFC 8259 The JavaScript Object Notation (JSON) Data Interchange Format.
@@ -13,10 +15,10 @@ import net.siisise.io.FrontPacket;
  */
 public class JSON8259Reg {
     
-//    static final TypeFormat format = new JSONInConvert();
-//    static final UnbindABNFReg REG = new UnbindABNFReg(ABNF5234.BASE, format);
+    static final TypeFormat<Object> format = new JSONInConvert();
+    public static final ABNFReg REG = new UnbindABNFReg(ABNF5234.BASE, format);
 
-    static final ABNFReg REG = new ABNFReg(ABNF5234.BASE);
+//    static final ABNFReg REG = new ABNFReg(ABNF5234.BASE);
 
     public static final ABNF FALSE = REG.rule("false", "%x66.61.6c.73.65");
     public static final ABNF NULL = REG.rule("null", "%x6e.75.6c.6c");
@@ -57,16 +59,32 @@ public class JSON8259Reg {
         return REG.parse("JSON-text", json);
     }
 
+    public static <T> T parse(String json, TypeFormat<T> format) {
+        return format(format).parse("JSON-text", json);
+    }
+
     public static Object parse(byte[] json) {
         return REG.parse("JSON-text", json);
+    }
+
+    public static <T> T parse(byte[] json, TypeFormat<T> format) {
+        return format(format).parse("JSON-text", json);
     }
 
     public static Object parse(FrontPacket json) {
         return REG.parse("JSON-text", json);
     }
     
+    public static <T> T parse(FrontPacket json, TypeFormat<T> format) {
+        return (T) format(format).parse("JSON-text", json);
+    }
+
     public static Object parse(ReadableBlock json) {
         return REG.parse("JSON-text", json);
+    }
+
+    public static <T> T parse(ReadableBlock json, TypeFormat<T> format) {
+        return format(format).parse("JSON-text", json);
     }
     
     public static <T> T parse(String name, FrontPacket json) {
@@ -75,5 +93,9 @@ public class JSON8259Reg {
             
     public static <T> T parse(String name, ReadableBlock json) {
         return (T)REG.parse(name, json);
+    }
+    
+    public static UnbindABNFReg format(TypeFormat format) {
+        return new UnbindABNFReg(REG, format);
     }
 }

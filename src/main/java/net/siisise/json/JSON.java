@@ -15,6 +15,8 @@
  */
 package net.siisise.json;
 
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collector;
 import javax.json.JsonValue;
 import net.siisise.bind.Rebind;
@@ -48,6 +50,10 @@ public interface JSON {
         return JSON8259Reg.parse(json);
     }
 
+    static <T> T parse(String json, TypeFormat<T> format) {
+        return JSON8259Reg.parse(json, format);
+    }
+
     /**
      * JSONっぽくくるんで返す。
      * 
@@ -55,7 +61,7 @@ public interface JSON {
      * @param json
      * @return JSON2Valueな値
      */
-    public static JSONValue parseWrap(String json) {
+    static JSONValue parseWrap(String json) {
         return valueWrap(JSON8259Reg.parse(json));
     }
 
@@ -69,13 +75,17 @@ public interface JSON {
         return JSON8259Reg.parse(json);
     }
 
+    static <T> T parse(byte[] json, TypeFormat<T> format) {
+        return JSON8259Reg.parse(json, format);
+    }
+
     /**
      * JSONっぽくくるんで返す。
      * 中身はJavaっぽくなっているのかも。
      * @param json json stream
      * @return JSON2Valueな値
      */
-    public static JSONValue parseWrap(byte[] json) {
+    static JSONValue parseWrap(byte[] json) {
         return valueWrap(JSON8259Reg.parse(json));
     }
 
@@ -89,13 +99,17 @@ public interface JSON {
         return JSON8259Reg.parse(json);
     }
 
+    static <T> T parse(FrontPacket json, TypeFormat<T> format) {
+        return JSON8259Reg.parse(json, format);
+    }
+
     /**
      * JSONっぽくくるんで返す。
      * 中身はJavaっぽくなっているのかも。
      * @param json json stream
      * @return JSON2Valueな値
      */
-    public static JSONValue parseWrap(FrontPacket json) {
+    static JSONValue parseWrap(FrontPacket json) {
         return valueWrap(JSON8259Reg.parse(json));
     }
 
@@ -115,7 +129,7 @@ public interface JSON {
      * @param src
      * @return JSON2Valueな値
      */
-    public static JSONValue valueOf(Object src) {
+    static JSONValue valueOf(Object src) {
         return Rebind.valueOf(src, JSON);
     }
 
@@ -135,6 +149,10 @@ public interface JSON {
             return new JSONNumber((Number) val);
         } else if (val instanceof CharSequence) {
             return new JSONString((CharSequence) val);
+        } else if (val instanceof List) {
+            return new JSONArray((List)val);
+        } else if (val instanceof Map) {
+            return new JSONObject((Map)val);
         }
         throw new UnsupportedOperationException("未" + val.getClass().getName());
     }

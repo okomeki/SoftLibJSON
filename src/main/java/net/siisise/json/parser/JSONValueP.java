@@ -19,15 +19,15 @@ public class JSONValueP extends BNFSelect<Object> {
     protected Object other(ReadableBlock pac) {
         ReadableBlock p = JSON8259Reg.FALSE.is(pac);
         if (p != null) {
-            return Boolean.FALSE;
+            return ((UnbindABNFReg)base).getFormat().booleanFormat(false);
         }
         p = JSON8259Reg.NULL.is(pac);
         if (p != null) {
-            return null;
+            return ((UnbindABNFReg)base).getFormat().nullFormat();
         }
         p = JSON8259Reg.TRUE.is(pac);
         if (p != null) {
-            return Boolean.TRUE;
+            return ((UnbindABNFReg)base).getFormat().booleanFormat(true);
         }
         return null;
     }

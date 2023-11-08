@@ -13,29 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.siisise.json.unbind;
+package net.siisise.json.parser;
 
-import net.siisise.bind.TypeUnbind;
-import net.siisise.bind.UnbindList;
-import net.siisise.json.map.JSONDateM;
+import net.siisise.abnf.ABNFReg;
+import net.siisise.bind.format.TypeFormat;
 
 /**
- *
+ * 仮置き場
  */
-public class JSONUnbindList implements UnbindList {
+public class UnbindABNFReg extends ABNFReg {
 
-    @Override
-    public TypeUnbind[] getList() {
-        return new TypeUnbind[] {
-        new UnbindJSONValue(),
-        new UnbindJSONNumber(),
-//        new UnbindUUID(),
-        new JSONDateM(),
-        new UnbindJSONString(),
-        new UnbindToJSON()
-    };
+    private TypeFormat format;
+    
+    public UnbindABNFReg(ABNFReg up, TypeFormat format) {
+        super(null);
+        this.format = format;
     }
-
     
+    public void setFormat(TypeFormat format) {
+        this.format = format;
+    }
     
+    public TypeFormat getFormat() {
+        return format;
+    }
 }

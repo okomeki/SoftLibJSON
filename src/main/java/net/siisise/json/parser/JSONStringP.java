@@ -9,7 +9,7 @@ import net.siisise.bnf.parser.BNFList;
  * 文字列の組み立て
  * char を codepointとして扱う
  */
-public class JSONStringP extends BNFList<String, Integer> {
+public class JSONStringP extends BNFList<Object, Integer> {
 
     public JSONStringP(BNF rule, BNFReg base) {
         super(rule, base, "char");
@@ -21,15 +21,15 @@ public class JSONStringP extends BNFList<String, Integer> {
      * @return Javaな文字列
      */
     @Override
-    protected String build(List<Integer> val) {
+    protected Object build(List<Integer> val) {
         StringBuilder sb = new StringBuilder();
         if ( val != null ) {
             val.forEach(ch -> {
                 sb.appendCodePoint(ch);
             });
         }
-        return sb.toString();
-//        return (String) ((UnbindABNFReg)base).getFormat().stringFormat(sb.toString());
+//        return sb.toString();
+        return ((UnbindABNFReg)base).getFormat().stringFormat(sb.toString());
     }
     
 }

@@ -16,13 +16,14 @@
 package net.siisise.json.bind.target;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import net.siisise.bind.format.TypeFormat;
 import net.siisise.json.JSONArray;
 import net.siisise.json.JSONObject;
 
 /**
- *
+ * それっぽく
  */
 public class JSONInConvert implements TypeFormat<Object> {
 
@@ -52,7 +53,7 @@ public class JSONInConvert implements TypeFormat<Object> {
     }
 
     @Override
-    public Object collectionFormat(Collection col) {
+    public List collectionFormat(Collection col) {
         return new JSONArray(col);
     }
     

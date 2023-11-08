@@ -10,22 +10,22 @@ import net.siisise.json.JSONObject;
 /**
  * JSON Objectの組み立て
  */
-public class JSONObjectP extends BNFList<JSONObject, JSONMember> {
+public class JSONObjectP extends BNFList<Object, JSONMember> {
 
     public JSONObjectP(BNF rule, BNFReg base) {
         super(rule, base, "member");
     }
 
     @Override
-    protected JSONObject build(List<JSONMember> mlist) {
+    protected Object build(List<JSONMember> mlist) {
         JSONObject obj = new JSONObject();
         if (mlist != null) {
             mlist.forEach(mem -> {
                 obj.put(mem.key, mem.value);
             });
         }
-//        return (JSONObject) ((UnbindABNFReg)base).getFormat().mapFormat(obj);
-        return obj;
+        return (JSONObject) ((UnbindABNFReg)base).getFormat().mapFormat(obj);
+//        return obj;
     }
 
 }
