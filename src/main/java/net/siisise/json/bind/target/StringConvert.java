@@ -12,6 +12,7 @@ import net.siisise.bind.format.ContentBind;
  * エスケープしないJSONっぽいもの.
  * @deprecated 使い処が見つからない
  */
+@Deprecated
 public class StringConvert extends TypeFallFormat<String> implements BindObject<String>, ContentBind<String> {
 
     @Override

@@ -25,7 +25,6 @@ import javax.json.JsonPointer;
 import javax.json.JsonStructure;
 import javax.json.JsonValue;
 import net.siisise.abnf.AbstractABNF;
-import net.siisise.bind.Rebind;
 import net.siisise.io.FrontPacket;
 
 /**
