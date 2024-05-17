@@ -74,8 +74,9 @@ public interface JSONValue {
      * 固定のJava寄りの型に変換する。
      * List,Map,primitive対応データ型など
      * array, object, またはその中身は型変換が介入しない場合は複製されない
-     * @param <T>
-     * @return 
+     * JSONFormat を使うのもいいのかも.
+     * @param <T> 型
+     * @return Javaっぽい値
      */
     <T> T map();
     
