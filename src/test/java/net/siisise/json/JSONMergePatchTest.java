@@ -1,10 +1,7 @@
-package net.siisise.json.mergepatch;
+package net.siisise.json;
 
-import net.siisise.json.JSONMergePatch7396;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
-import net.siisise.json.JSON;
-import net.siisise.json.JSONValue;
 
 /**
  *

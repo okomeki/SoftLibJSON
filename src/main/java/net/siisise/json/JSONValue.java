@@ -99,6 +99,7 @@ public interface JSONValue {
      * @return JSON-P 的なもの
      * @deprecated Rebind へ統合する?
      */
+    @Deprecated
     default JsonValue toJson() {
         return rebind(JSON.JSONP);
     };
